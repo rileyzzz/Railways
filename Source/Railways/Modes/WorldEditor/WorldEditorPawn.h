@@ -1,0 +1,71 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Pawn.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
+#include "WorldEditPlayerController.h"
+#include "../../World/HeightWorld.h"
+#include "../../World/WorldTileDynamic.h"
+#include "WorldEditorPawn.generated.h"
+
+UCLASS()
+class RAILWAYS_API AWorldEditorPawn : public APawn
+{
+	GENERATED_BODY()
+
+public:
+	// Sets default values for this pawn's properties
+	AWorldEditorPawn();
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+private:
+	bool b_draggingMouse = false;
+	AWorldEditPlayerController* Controller;
+
+	void UpdatePositionToGround(FVector& Position);
+	void InputFlyForward(float AxisValue);
+	void InputFlyRight(float AxisValue);
+
+	void InputCameraX(float AxisValue);
+	void InputCameraY(float AxisValue);
+	void InputCameraZoom(float AxisValue);
+
+	void StartDrag();
+	void EndDrag();
+
+	int EditMode = -1;
+	UWorldTileDynamic* CurrentEditingTile = nullptr;
+	FVector LastHit;
+	bool GetMouseHit(FHitResult& OutHit);
+	void StartMouse();
+	void EndMouse();
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+
+	UFUNCTION(Category = "WorldPawn|Events", BlueprintCallable)
+	void SetEditMode(int mode);
+
+
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* MainMesh;
+
+	UPROPERTY(EditAnywhere)
+	UMaterialInterface* DecalMaterial;
+
+	UDecalComponent* Cursor;
+
+	USpringArmComponent* SpringArm;
+	UCameraComponent* Camera;
+	FVector Velocity;
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+};
