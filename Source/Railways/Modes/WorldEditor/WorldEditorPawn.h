@@ -26,6 +26,7 @@ protected:
 
 private:
 	bool b_draggingMouse = false;
+	bool b_leftMouse = false;
 	AWorldEditPlayerController* Controller;
 
 	void UpdatePositionToGround(FVector& Position);
@@ -39,21 +40,27 @@ private:
 	void StartDrag();
 	void EndDrag();
 
+	int EditCategory = -1;
 	int EditMode = -1;
-	UWorldTileDynamic* CurrentEditingTile = nullptr;
-	FVector LastHit;
+	float TargetHeight = 0.0;
+	//FVector LastHit;
 	bool GetMouseHit(FHitResult& OutHit);
 	void StartMouse();
 	void EndMouse();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
 #if UE_BUILD_DEBUG
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
 
 	UFUNCTION(Category = "WorldPawn|Events", BlueprintCallable)
+	void SetEditCategory(int category);
+	UFUNCTION(Category = "WorldPawn|Events", BlueprintCallable)
 	void SetEditMode(int mode);
+	UFUNCTION(Category = "WorldPawn|Events", BlueprintCallable)
+	void SetTargetHeight(float height);
 
 
 	UPROPERTY(EditAnywhere)
@@ -62,7 +69,11 @@ public:
 	UPROPERTY(EditAnywhere)
 	UMaterialInterface* DecalMaterial;
 
+	UPROPERTY(EditAnywhere)
+	UMaterialInterface* PaintMaterial;
+
 	UDecalComponent* Cursor;
+	UDecalComponent* EditCursor;
 
 	USpringArmComponent* SpringArm;
 	UCameraComponent* Camera;

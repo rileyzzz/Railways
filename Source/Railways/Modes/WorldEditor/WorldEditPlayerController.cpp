@@ -9,7 +9,7 @@ void AWorldEditPlayerController::BeginPlay()
 	UE_LOG(LogTemp, Warning, TEXT("BEGIN PLAY!"));
 	
 	FInputModeGameAndUI InputMode;
-	//InputMode.SetHideCursorDuringCapture(false);
+	InputMode.SetHideCursorDuringCapture(false);
 	SetInputMode(InputMode);
 	bShowMouseCursor = true;
 }

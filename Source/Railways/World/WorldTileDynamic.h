@@ -17,6 +17,7 @@ class RAILWAYS_API UWorldTileDynamic : public URuntimeMeshComponent
 private:
 	UWorldTileProvider* Provider;
 public:
-	void Build(UMaterialInterface* Material);
+	void Build(UMaterialInterface* Material, int X, int Y);
 	void TerrainInfluence(FVector Pos, float Direction, int Radius);
+	void TerrainApproach(FVector Pos, float Height, float Strength, int Radius);
 };

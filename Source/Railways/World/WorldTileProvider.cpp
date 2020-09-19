@@ -75,9 +75,9 @@ void UWorldTileProvider::Initialize()
 
 FBoxSphereBounds UWorldTileProvider::GetBounds()
 {
-	FVector Ext(7200.0f, 7200.0f, 7200.0f);
+	FVector Ext(WORLD_SIZE * WORLD_SCALE, WORLD_SIZE * WORLD_SCALE, 10000.0f);
 	//FBox Box = FBox(-Ext / 2, Ext / 2);
-	FBox Box = FBox(FVector(0.0f, 0.0f, 0.0f), Ext);
+	FBox Box = FBox(FVector(0.0f, 0.0f, -10000.0f), Ext);
 	return FBoxSphereBounds(Box);
 }
 
@@ -145,7 +145,8 @@ bool UWorldTileProvider::GetSectionMeshForLOD(int32 LODIndex, int32 SectionId, F
 FRuntimeMeshCollisionSettings UWorldTileProvider::GetCollisionSettings()
 {
 	FRuntimeMeshCollisionSettings Settings;
-	Settings.bUseAsyncCooking = false;
+	//Settings.bUseAsyncCooking = false;
+	Settings.bUseAsyncCooking = true;
 	Settings.bUseComplexAsSimple = true;
 
 	//Settings.Boxes.Emplace(7200.0f, 7200.0f, 7200.0f);
@@ -160,12 +161,12 @@ bool UWorldTileProvider::HasCollisionMesh()
 
 bool UWorldTileProvider::GetCollisionMesh(FRuntimeMeshCollisionData& CollisionData)
 {
-	constexpr int COLLISION_RESOLUTION = 10;
-	constexpr int COLLISION_SIZE = WORLD_SIZE / COLLISION_RESOLUTION;
+	constexpr int COLLISION_RESOLUTION = 4;
+	constexpr int COLLISION_SIZE = WORLD_SIZE / COLLISION_RESOLUTION + 1;
 
-	constexpr int COLLISION_COUNT = ((COLLISION_SIZE - 1) * (COLLISION_SIZE - 1)) * 2;
+	constexpr int COLLISION_COUNT = ((COLLISION_SIZE) * (COLLISION_SIZE)) * 2;
 	// Add the single collision section
-	CollisionData.CollisionSources.Emplace(0, COLLISION_COUNT, this, 0, ERuntimeMeshCollisionFaceSourceType::Collision);
+	//CollisionData.CollisionSources.Emplace(0, COLLISION_COUNT, this, 0, ERuntimeMeshCollisionFaceSourceType::Collision);
 
 	FRuntimeMeshCollisionVertexStream& CollisionVertices = CollisionData.Vertices;
 	FRuntimeMeshCollisionTriangleStream& CollisionTriangles = CollisionData.Triangles;
@@ -176,7 +177,7 @@ bool UWorldTileProvider::GetCollisionMesh(FRuntimeMeshCollisionData& CollisionDa
 		{
 			float height = GetHeight(x * COLLISION_RESOLUTION, y * COLLISION_RESOLUTION);
 
-			FVector Position((float)x * WORLD_SCALE * (float)COLLISION_RESOLUTION, (float)y * WORLD_SCALE * (float)COLLISION_RESOLUTION, height);
+			FVector Position((float)x * (float)WORLD_SCALE * (float)COLLISION_RESOLUTION, (float)y * (float)WORLD_SCALE * (float)COLLISION_RESOLUTION, height);
 
 			CollisionVertices.Add(Position);
 

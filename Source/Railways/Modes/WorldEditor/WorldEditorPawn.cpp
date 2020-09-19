@@ -13,8 +13,6 @@ AWorldEditorPawn::AWorldEditorPawn()
 	PrimaryActorTick.bCanEverTick = true;
 	UE_LOG(LogTemp, Warning, TEXT("actor constructor"));
 
-	
-
 	// Set this pawn to be controlled by the lowest-numbered player
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 
@@ -25,6 +23,13 @@ AWorldEditorPawn::AWorldEditorPawn()
 	Cursor->SetupAttachment(RootComponent);
 	Cursor->SetRelativeRotation(FRotator(-90.0f, 0.0f, 90.0f));
 	Cursor->DecalSize = FVector(128.0f, 128.0f, 128.0f);
+
+	EditCursor = CreateDefaultSubobject<UDecalComponent>(TEXT("EditCursor"));
+	EditCursor->SetDecalMaterial(PaintMaterial);
+	EditCursor->SetupAttachment(RootComponent);
+	EditCursor->SetRelativeRotation(FRotator(-90.0f, 0.0f, 90.0f));
+	EditCursor->DecalSize = FVector(512.0f, 800.0f, 800.0f);
+	EditCursor->SetVisibility(true);
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraAttachmentArm"));
 	SpringArm->SetupAttachment(RootComponent);
@@ -45,13 +50,42 @@ void AWorldEditorPawn::PostEditChangeProperty(FPropertyChangedEvent& PropertyCha
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 	Cursor->SetDecalMaterial(DecalMaterial);
+	EditCursor->SetDecalMaterial(PaintMaterial);
 }
 #endif
+
+void AWorldEditorPawn::SetEditCategory(int category)
+{
+	UE_LOG(LogTemp, Warning, TEXT("edit category changed to %i"), category);
+	EditCategory = category;
+	EditCursor->SetVisibility(false);
+}
 
 void AWorldEditorPawn::SetEditMode(int mode)
 {
 	UE_LOG(LogTemp, Warning, TEXT("edit mode changed to %i"), mode);
 	EditMode = mode;
+
+	if (EditCategory == 0)
+	{
+		switch (mode)
+		{
+		case 0:
+		case 1:
+		case 2:
+			EditCursor->SetVisibility(true);
+			break;
+		default:
+		case -1:
+			EditCursor->SetVisibility(false);
+			break;
+		}
+	}
+}
+
+void AWorldEditorPawn::SetTargetHeight(float height)
+{
+	TargetHeight = height;
 }
 
 // Called when the game starts or when spawned
@@ -61,6 +95,7 @@ void AWorldEditorPawn::BeginPlay()
 	Controller = dynamic_cast<AWorldEditPlayerController*>(GetController());
 
 	Cursor->SetDecalMaterial(DecalMaterial);
+	EditCursor->SetDecalMaterial(PaintMaterial);
 }
 
 // Called every frame
@@ -74,7 +109,7 @@ void AWorldEditorPawn::Tick(float DeltaTime)
 	//	FVector NewLocation = GetActorLocation() + (Velocity * DeltaTime);
 	//	SetActorLocation(NewLocation);
 	//}
-	if (CurrentEditingTile)
+	/*if (CurrentEditingTile)
 	{
 		switch (EditMode)
 		{
@@ -87,7 +122,60 @@ void AWorldEditorPawn::Tick(float DeltaTime)
 		case -1:
 			break;
 		}
+	}*/
+	FHitResult Target;
+	if (GetMouseHit(Target))
+	{
+		if (EditCategory == 0)
+		{
+			AHeightWorld* CurrentWorld = dynamic_cast<AHeightWorld*>(Target.Actor.Get());
+			if (b_leftMouse && (EditMode == 0 || EditMode == 1))
+			{
+				if (CurrentWorld)
+				{
+					auto SortedTiles = CurrentWorld->GetSortedTilesToPoint(Target.ImpactPoint);
+					const int TileCount = (SortedTiles.Num() < 4) ? SortedTiles.Num() : 4;
+					for (int i = 0; i < TileCount; i++)
+						SortedTiles[i]->TerrainInfluence(Target.ImpactPoint, EditMode == 0 ? 1.0f : -1.0f, 200);
+
+					/*for (auto& tile : CurrentWorld->Tiles)
+					{
+						tile->TerrainInfluence(Target.ImpactPoint, EditMode == 0 ? 1.0f : -1.0f, 800);
+					}*/
+				}
+				/*UWorldTileDynamic* CurrentEditingTile = dynamic_cast<UWorldTileDynamic*>(Target.Component.Get());
+
+				if (CurrentEditingTile)
+				{
+					CurrentEditingTile->TerrainInfluence(Target.ImpactPoint, EditMode == 0 ? 1.0f : -1.0f, 800);
+					DrawDebugLine(GetWorld(), Target.TraceStart, Target.ImpactPoint, FColor::Green, false);
+					DrawDebugLine(GetWorld(), Target.ImpactPoint, Target.ImpactPoint + Target.ImpactNormal * 100.0f, FColor::Blue, false);
+				}*/
+				
+			}
+			else if (b_leftMouse && (EditMode == 2))
+			{
+				/*UWorldTileDynamic* CurrentEditingTile = dynamic_cast<UWorldTileDynamic*>(Target.Component.Get());
+
+				if (CurrentEditingTile)
+				{
+					CurrentEditingTile->TerrainApproach(Target.ImpactPoint, TargetHeight, 0.4f, 800);
+				}*/
+				if (CurrentWorld)
+				{
+					auto SortedTiles = CurrentWorld->GetSortedTilesToPoint(Target.ImpactPoint);
+					const int TileCount = (SortedTiles.Num() < 4) ? SortedTiles.Num() : 4;
+					for (int i = 0; i < TileCount; i++)
+						SortedTiles[i]->TerrainApproach(Target.ImpactPoint, TargetHeight, 0.4f, 200);
+
+				}
+			}
+		}
+
+		//FTransform transform = GetTransform();
+		if(EditCursor) EditCursor->SetWorldLocation(Target.ImpactPoint);
 	}
+	
 }
 
 // Called to bind functionality to input
@@ -198,42 +286,24 @@ void AWorldEditorPawn::EndDrag()
 	b_draggingMouse = false;
 }
 
+void AWorldEditorPawn::StartMouse()
+{
+	b_leftMouse = true;
+}
+
+void AWorldEditorPawn::EndMouse()
+{
+	b_leftMouse = false;
+}
+
 bool AWorldEditorPawn::GetMouseHit(FHitResult& OutHit)
 {
-	UE_LOG(LogTemp, Warning, TEXT("tracing line"));
+	//UE_LOG(LogTemp, Warning, TEXT("tracing line"));
 	FVector Position, Direction;
 	Controller->DeprojectMousePositionToWorld(Position, Direction);
 	FVector End = Position + Direction * 10000.0f;
 	FCollisionQueryParams CollisionParams;
 	return GetWorld()->LineTraceSingleByChannel(OutHit, Position, End, ECC_Visibility, CollisionParams);
 
-}
-
-void AWorldEditorPawn::StartMouse()
-{
-	FHitResult Target;
-	if (GetMouseHit(Target))
-	{
-		LastHit = Target.ImpactPoint;
-		CurrentEditingTile = dynamic_cast<UWorldTileDynamic*>(Target.Component.Get());
-		if (CurrentEditingTile)
-		{
-			DrawDebugLine(GetWorld(), Target.TraceStart, Target.ImpactPoint, FColor::Green, true);
-			DrawDebugLine(GetWorld(), Target.ImpactPoint, Target.ImpactPoint + Target.ImpactNormal * 100.0f, FColor::Blue, true);
-		}
-	}
-}
-
-void AWorldEditorPawn::EndMouse()
-{
-	CurrentEditingTile = nullptr;
-	switch (EditMode)
-	{
-	case 0:
-		break;
-	default:
-	case -1:
-		break;
-	}
 }
 

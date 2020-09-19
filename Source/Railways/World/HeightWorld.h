@@ -28,5 +28,7 @@ public:
 	UMaterialInterface* Material;
 
 	TArray<UWorldTileDynamic*> Tiles;
+
+	TArray<UWorldTileDynamic*> GetSortedTilesToPoint(FVector point);
 	//URuntimeMeshComponent* Tile;
 };

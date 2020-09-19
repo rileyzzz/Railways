@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
-#define WORLD_SIZE 400
-#define WORLD_SCALE 10.0f
+#define WORLD_SIZE 100
+#define WORLD_SCALE 40.0f
 #include "CoreMinimal.h"
 #include "RuntimeMeshProvider.h"
 #include "WorldTileProvider.generated.h"
@@ -23,13 +23,14 @@ private:
 	UMaterialInterface* Material;
 
 	float** f_heightData;
-	float GetHeight(int x, int y);
+	
 public:
 
 	UMaterialInterface* GetTileMaterial() const;
 	void SetTileMaterial(UMaterialInterface* InMaterial);
 	void SetHeightData(int x, int y, float height);
 	void AddHeight(int x, int y, float height);
+	float GetHeight(int x, int y);
 	bool WithinBounds(int x, int y);
 	void InvalidateMeshData();
 	//UWorldTileProvider();
