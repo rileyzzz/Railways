@@ -43,9 +43,10 @@ void ADynamicSplineSection::BuildSplineSegment(int32 index, UStaticMesh* Mesh, b
 			NewMesh->RegisterComponent();
 			NewMesh->AttachToComponent(RootComponent, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
 		}
-		NewMesh->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
+		
 		NewMesh->SetStaticMesh(Mesh);
-		NewMesh->SetCollisionProfileName(TEXT("BlockAll"));
+		NewMesh->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
+		NewMesh->SetCollisionProfileName(TEXT("InitialHitOnly"));
 		NewMesh->bSmoothInterpRollScale = true;
 		//NewMesh->SetForwardAxis(ESplineMeshAxis::Type::Y);
 		//NewMesh->SetSplineUpDir(FVector(0.0f, -1.0f, 0.0f));
@@ -59,7 +60,19 @@ void ADynamicSplineSection::BuildSplineSegment(int32 index, UStaticMesh* Mesh, b
 	//NewMesh->SetStaticMesh(Mesh);
 }
 
-void ADynamicSplineSection::RefreshSpline(bool Constructor)
+void ADynamicSplineSection::UpdateSplineSegment(int32 index)
+{
+	int32 nextindex = (index + 1) % Spline->GetNumberOfSplinePoints();
+	FVector StartPos, StartTangent;
+	FVector EndPos, EndTangent;
+	Spline->GetLocalLocationAndTangentAtSplinePoint(index, StartPos, StartTangent);
+	Spline->GetLocalLocationAndTangentAtSplinePoint(nextindex, EndPos, EndTangent);
+
+	Segments[index]->SetStartAndEnd(StartPos, StartTangent, EndPos, EndTangent, false);
+	Segments[index]->UpdateMesh();
+}
+
+void ADynamicSplineSection::BuildSpline(bool Constructor)
 {
 	for (auto component : Segments)
 	{
@@ -84,7 +97,7 @@ void ADynamicSplineSection::RefreshSpline(bool Constructor)
 
 	for (int i = 0; i < Spline->GetNumberOfSplinePoints(); i++)
 	{
-		if(i != Spline->GetNumberOfSplinePoints() - 1)
+		if (i != Spline->GetNumberOfSplinePoints() - 1)
 			BuildSplineSegment(i, SplineMesh, Constructor);
 
 		UDecalComponent* Decal = NewObject<UDecalComponent>(this, UDecalComponent::StaticClass(), NAME_None);
@@ -103,8 +116,35 @@ void ADynamicSplineSection::RefreshSpline(bool Constructor)
 		}
 	}
 
-	//auto meta = Spline->GetSplinePointsMetadata();
+	CachedSplineCount = Spline->GetNumberOfSplinePoints();
+}
 
+
+void ADynamicSplineSection::EnableCollision()
+{
+	for (auto& segment : Segments)
+		segment->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
+}
+
+void ADynamicSplineSection::DisableCollision()
+{
+	for (auto& segment : Segments)
+		segment->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+}
+
+
+void ADynamicSplineSection::RefreshSpline()
+{
+	for (int i = 0; i < CachedSplineCount; i++)
+	{
+		if (i != CachedSplineCount - 1)
+			UpdateSplineSegment(i);
+
+		FVector PointLocation;
+		FVector PointTangent;
+		Spline->GetLocalLocationAndTangentAtSplinePoint(i, PointLocation, PointTangent);
+		Decals[i]->SetRelativeLocation(PointLocation);
+	}
 }
 
 
@@ -112,14 +152,14 @@ void ADynamicSplineSection::RefreshSpline(bool Constructor)
 void ADynamicSplineSection::BeginPlay()
 {
 	Super::BeginPlay();
-	RefreshSpline(false);
+	//RefreshSpline(false);
+	BuildSpline(false);
 }
 
 // Called every frame
 void ADynamicSplineSection::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 #if WITH_EDITOR

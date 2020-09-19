@@ -52,7 +52,7 @@ private:
 	FVector EditSplineStart;
 
 	//FVector LastHit;
-	bool GetMouseHit(FHitResult& OutHit);
+	bool GetMouseHit(FHitResult& OutHit, ECollisionChannel channel = ECC_Visibility);
 	void StartMouse();
 	void EndMouse();
 public:	

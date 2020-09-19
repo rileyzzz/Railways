@@ -21,9 +21,10 @@ class RAILWAYS_API ADynamicSplineSection : public ARuntimeActorAsset
 	GENERATED_BODY()
 	
 private:
-	
+	void BuildSpline(bool Constructor);
 	void BuildSplineSegment(int32 index, UStaticMesh* Mesh, bool Constructor);
-
+	void UpdateSplineSegment(int32 index);
+	int CachedSplineCount = 0;
 public:
 	USplineComponent* Spline;
 	//TMap<int32, SplinePointMetadata> PointMetadata;
@@ -36,7 +37,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	UMaterialInterface* DecalMaterial;
 
-	void RefreshSpline(bool Constructor);
+	void EnableCollision();
+	void DisableCollision();
+	void RefreshSpline();
 
 	// Sets default values for this actor's properties
 	ADynamicSplineSection();

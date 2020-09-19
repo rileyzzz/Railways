@@ -171,7 +171,15 @@ void AWorldEditorPawn::Tick(float DeltaTime)
 				if (EditSpline)
 				{
 					EditSpline->SetWorldLocationAtSplinePoint(EditSplinePoint, Target.ImpactPoint);
-					EditSplineSection->RefreshSpline(false);
+					EditSplineSection->RefreshSpline();
+					//static int EditTick = 0; //performance stuff
+					//EditTick++;
+					//if (EditTick > 32)
+					//{
+					//	EditTick = 0;
+					//	EditSpline->SetWorldLocationAtSplinePoint(EditSplinePoint, Target.ImpactPoint);
+					//	EditSplineSection->RefreshSpline();
+					//}
 				}
 				
 				//ADynamicSplineSection* Section = dynamic_cast<ADynamicSplineSection*>(Target.Actor.Get());
@@ -303,10 +311,10 @@ void AWorldEditorPawn::EndDrag()
 void AWorldEditorPawn::StartMouse()
 {
 	FHitResult Target;
-	if (GetMouseHit(Target))
+	if (GetMouseHit(Target, ECollisionChannel::ECC_GameTraceChannel1))
 	{
-		DrawDebugLine(GetWorld(), Target.TraceStart, Target.ImpactPoint, FColor::Green, true);
-		DrawDebugLine(GetWorld(), Target.ImpactPoint, Target.ImpactPoint + Target.ImpactNormal * 100.0f, FColor::Blue, true);
+		//DrawDebugLine(GetWorld(), Target.TraceStart, Target.ImpactPoint, FColor::Green, true);
+		//DrawDebugLine(GetWorld(), Target.ImpactPoint, Target.ImpactPoint + Target.ImpactNormal * 100.0f, FColor::Blue, true);
 		if (EditCategory == 1)
 		{
 			EditSplineSection = dynamic_cast<ADynamicSplineSection*>(Target.Actor.Get());
@@ -318,6 +326,7 @@ void AWorldEditorPawn::StartMouse()
 				EditSplinePoint = FMath::RoundToInt(EditSpline->FindInputKeyClosestToWorldLocation(Target.ImpactPoint));
 				EditSplineStart = Target.ImpactPoint;
 				UE_LOG(LogTemp, Warning, TEXT("SPLINE HIT INITIAL %i"), EditSplinePoint);
+				EditSplineSection->DisableCollision();
 			}
 			else
 			{
@@ -331,19 +340,19 @@ void AWorldEditorPawn::StartMouse()
 
 void AWorldEditorPawn::EndMouse()
 {
+	if(EditSplineSection) EditSplineSection->EnableCollision();
 	b_leftMouse = false;
 	EditSpline = nullptr;
 	EditSplineSection = nullptr;
 }
 
-bool AWorldEditorPawn::GetMouseHit(FHitResult& OutHit)
+bool AWorldEditorPawn::GetMouseHit(FHitResult& OutHit, ECollisionChannel channel)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("tracing line"));
 	FVector Position, Direction;
 	Controller->DeprojectMousePositionToWorld(Position, Direction);
 	FVector End = Position + Direction * 10000.0f;
 	FCollisionQueryParams CollisionParams;
-	return GetWorld()->LineTraceSingleByChannel(OutHit, Position, End, ECC_Visibility, CollisionParams);
-
+	return GetWorld()->LineTraceSingleByChannel(OutHit, Position, End, channel, CollisionParams);
 }
 
