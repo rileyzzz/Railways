@@ -11,6 +11,6 @@ void URailwaysGameInstance::Init()
 
 void URailwaysGameInstance::Shutdown()
 {
-	Super::Shutdown();
 	UE_LOG(LogTemp, Warning, TEXT("Shutdown"));
+	Super::Shutdown();
 }

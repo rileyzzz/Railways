@@ -9,6 +9,7 @@
 #include "WorldEditPlayerController.h"
 #include "../../World/HeightWorld.h"
 #include "../../World/WorldTileDynamic.h"
+#include "../../Core/Objects/DynamicSplineSection.h"
 #include "WorldEditorPawn.generated.h"
 
 UCLASS()
@@ -42,7 +43,14 @@ private:
 
 	int EditCategory = -1;
 	int EditMode = -1;
+
 	float TargetHeight = 0.0;
+
+	ADynamicSplineSection* EditSplineSection;
+	USplineComponent* EditSpline;
+	int EditSplinePoint = 0;
+	FVector EditSplineStart;
+
 	//FVector LastHit;
 	bool GetMouseHit(FHitResult& OutHit);
 	void StartMouse();

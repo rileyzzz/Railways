@@ -155,20 +155,34 @@ void AWorldEditorPawn::Tick(float DeltaTime)
 			}
 			else if (b_leftMouse && (EditMode == 2))
 			{
-				/*UWorldTileDynamic* CurrentEditingTile = dynamic_cast<UWorldTileDynamic*>(Target.Component.Get());
-
-				if (CurrentEditingTile)
-				{
-					CurrentEditingTile->TerrainApproach(Target.ImpactPoint, TargetHeight, 0.4f, 800);
-				}*/
 				if (CurrentWorld)
 				{
 					auto SortedTiles = CurrentWorld->GetSortedTilesToPoint(Target.ImpactPoint);
 					const int TileCount = (SortedTiles.Num() < 4) ? SortedTiles.Num() : 4;
 					for (int i = 0; i < TileCount; i++)
 						SortedTiles[i]->TerrainApproach(Target.ImpactPoint, TargetHeight, 0.4f, 200);
-
 				}
+			}
+		}
+		else if (EditCategory == 1)
+		{
+			if (b_leftMouse)
+			{
+				if (EditSpline)
+				{
+					EditSpline->SetWorldLocationAtSplinePoint(EditSplinePoint, Target.ImpactPoint);
+					EditSplineSection->RefreshSpline(false);
+				}
+				
+				//ADynamicSplineSection* Section = dynamic_cast<ADynamicSplineSection*>(Target.Actor.Get());
+				//if (Section)
+				//{
+				//	USplineMeshComponent* SplineMesh = dynamic_cast<USplineMeshComponent*>(Target.Component.Get());
+				//	USplineComponent* spline = Section->Spline;
+				//	auto SplinePoint = spline->FindInputKeyClosestToWorldLocation(Target.ImpactPoint);
+				//	
+				//}
+				//UE_LOG(LogTemp, Log, TEXT("Dragging point"));
 			}
 		}
 
@@ -288,12 +302,29 @@ void AWorldEditorPawn::EndDrag()
 
 void AWorldEditorPawn::StartMouse()
 {
+	FHitResult Target;
+	if (GetMouseHit(Target))
+	{
+		if (EditCategory == 1)
+		{
+			EditSplineSection = dynamic_cast<ADynamicSplineSection*>(Target.Actor.Get());
+			if (Section)
+			{
+				USplineMeshComponent* SplineMesh = dynamic_cast<USplineMeshComponent*>(Target.Component.Get());
+				EditSpline = EditSplineSection->Spline;
+				EditSplinePoint = FMath::RoundToInt(EditSpline->FindInputKeyClosestToWorldLocation(Target.ImpactPoint));
+				EditSplineStart = Target.ImpactPoint;
+			}
+		}
+	}
 	b_leftMouse = true;
 }
 
 void AWorldEditorPawn::EndMouse()
 {
 	b_leftMouse = false;
+	EditSpline = nullptr;
+	EditSplineSection = nullptr;
 }
 
 bool AWorldEditorPawn::GetMouseHit(FHitResult& OutHit)
