@@ -305,16 +305,25 @@ void AWorldEditorPawn::StartMouse()
 	FHitResult Target;
 	if (GetMouseHit(Target))
 	{
+		DrawDebugLine(GetWorld(), Target.TraceStart, Target.ImpactPoint, FColor::Green, true);
+		DrawDebugLine(GetWorld(), Target.ImpactPoint, Target.ImpactPoint + Target.ImpactNormal * 100.0f, FColor::Blue, true);
 		if (EditCategory == 1)
 		{
 			EditSplineSection = dynamic_cast<ADynamicSplineSection*>(Target.Actor.Get());
-			if (Section)
+			if (EditSplineSection)
 			{
+				
 				USplineMeshComponent* SplineMesh = dynamic_cast<USplineMeshComponent*>(Target.Component.Get());
 				EditSpline = EditSplineSection->Spline;
 				EditSplinePoint = FMath::RoundToInt(EditSpline->FindInputKeyClosestToWorldLocation(Target.ImpactPoint));
 				EditSplineStart = Target.ImpactPoint;
+				UE_LOG(LogTemp, Warning, TEXT("SPLINE HIT INITIAL %i"), EditSplinePoint);
 			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("SPLINE FAIL"));
+			}
+				
 		}
 	}
 	b_leftMouse = true;

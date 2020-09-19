@@ -13,7 +13,7 @@ ADynamicSplineSection::ADynamicSplineSection()
 	//RootComponent->SetMobility(EComponentMobility::Static);
 	Spline = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
 	Spline->SetupAttachment(RootComponent);
-
+	Spline->SetMobility(EComponentMobility::Movable);
 	//RefreshSpline(true);
 }
 
@@ -43,8 +43,9 @@ void ADynamicSplineSection::BuildSplineSegment(int32 index, UStaticMesh* Mesh, b
 			NewMesh->RegisterComponent();
 			NewMesh->AttachToComponent(RootComponent, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
 		}
-
+		NewMesh->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
 		NewMesh->SetStaticMesh(Mesh);
+		NewMesh->SetCollisionProfileName(TEXT("BlockAll"));
 		NewMesh->bSmoothInterpRollScale = true;
 		//NewMesh->SetForwardAxis(ESplineMeshAxis::Type::Y);
 		//NewMesh->SetSplineUpDir(FVector(0.0f, -1.0f, 0.0f));
@@ -62,10 +63,24 @@ void ADynamicSplineSection::RefreshSpline(bool Constructor)
 {
 	for (auto component : Segments)
 	{
-		component->UnregisterComponent();
-		component->DestroyComponent();
+		if (component)
+		{
+			component->UnregisterComponent();
+			component->DestroyComponent();
+			component = nullptr;
+		}
+	}
+	for (auto component : Decals)
+	{
+		if (component)
+		{
+			component->UnregisterComponent();
+			component->DestroyComponent();
+			component = nullptr;
+		}
 	}
 	Segments.Empty();
+	Decals.Empty();
 
 	for (int i = 0; i < Spline->GetNumberOfSplinePoints(); i++)
 	{
@@ -84,6 +99,7 @@ void ADynamicSplineSection::RefreshSpline(bool Constructor)
 			FVector PointTangent;
 			Spline->GetLocalLocationAndTangentAtSplinePoint(i, PointLocation, PointTangent);
 			Decal->SetRelativeLocation(PointLocation);
+			Decals.Add(Decal);
 		}
 	}
 

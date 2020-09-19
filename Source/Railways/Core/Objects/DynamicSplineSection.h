@@ -28,6 +28,7 @@ public:
 	USplineComponent* Spline;
 	//TMap<int32, SplinePointMetadata> PointMetadata;
 	TArray<USplineMeshComponent*> Segments;
+	TArray<UDecalComponent*> Decals;
 
 	UPROPERTY(EditAnywhere)
 	UStaticMesh* SplineMesh;
