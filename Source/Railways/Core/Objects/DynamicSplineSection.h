@@ -8,6 +8,7 @@
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
 #include "Components/DecalComponent.h"
+#include "Components/SphereComponent.h"
 #include "DynamicSplineSection.generated.h"
 
 //struct SplinePointMetadata
@@ -21,6 +22,7 @@ class RAILWAYS_API ADynamicSplineSection : public ARuntimeActorAsset
 	GENERATED_BODY()
 	
 private:
+	void GenerateTrackTiles(int32 index, TArray<USplineMeshComponent*>& Segment, UStaticMesh* Mesh, int TileCount, bool Constructor);
 	void BuildSpline(bool Constructor);
 	void BuildSplineSegment(int32 index, UStaticMesh* Mesh, bool Constructor);
 	void UpdateSplineSegment(int32 index);
@@ -28,14 +30,16 @@ private:
 public:
 	USplineComponent* Spline;
 	//TMap<int32, SplinePointMetadata> PointMetadata;
-	TArray<USplineMeshComponent*> Segments;
+	TArray<TArray<USplineMeshComponent*>> Segments;
 	TArray<UDecalComponent*> Decals;
+	TArray<USphereComponent*> Dummies;
 
 	UPROPERTY(EditAnywhere)
 	UStaticMesh* SplineMesh;
 
 	UPROPERTY(EditAnywhere)
 	UMaterialInterface* DecalMaterial;
+
 
 	void EnableCollision();
 	void DisableCollision();

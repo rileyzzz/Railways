@@ -317,21 +317,38 @@ void AWorldEditorPawn::StartMouse()
 		//DrawDebugLine(GetWorld(), Target.ImpactPoint, Target.ImpactPoint + Target.ImpactNormal * 100.0f, FColor::Blue, true);
 		if (EditCategory == 1)
 		{
-			EditSplineSection = dynamic_cast<ADynamicSplineSection*>(Target.Actor.Get());
-			if (EditSplineSection)
+			USphereComponent* dummy = dynamic_cast<USphereComponent*>(Target.Component.Get());
+			if (dummy)
 			{
-				
-				USplineMeshComponent* SplineMesh = dynamic_cast<USplineMeshComponent*>(Target.Component.Get());
-				EditSpline = EditSplineSection->Spline;
-				EditSplinePoint = FMath::RoundToInt(EditSpline->FindInputKeyClosestToWorldLocation(Target.ImpactPoint));
-				EditSplineStart = Target.ImpactPoint;
-				UE_LOG(LogTemp, Warning, TEXT("SPLINE HIT INITIAL %i"), EditSplinePoint);
-				EditSplineSection->DisableCollision();
+				EditSplineSection = dynamic_cast<ADynamicSplineSection*>(dummy->GetAttachmentRootActor());
+				if (EditSplineSection)
+				{
+					EditSpline = EditSplineSection->Spline;
+					EditSplinePoint = FMath::RoundToInt(EditSpline->FindInputKeyClosestToWorldLocation(Target.ImpactPoint));
+					EditSplineStart = Target.ImpactPoint;
+					UE_LOG(LogTemp, Warning, TEXT("SPLINE HIT INITIAL %i"), EditSplinePoint);
+					//EditSplineSection->DisableCollision();
+				}
 			}
 			else
 			{
 				UE_LOG(LogTemp, Warning, TEXT("SPLINE FAIL"));
 			}
+			//EditSplineSection = dynamic_cast<ADynamicSplineSection*>(Target.Actor.Get());
+			//if (EditSplineSection)
+			//{
+			//	
+			//	USplineMeshComponent* SplineMesh = dynamic_cast<USplineMeshComponent*>(Target.Component.Get());
+			//	EditSpline = EditSplineSection->Spline;
+			//	EditSplinePoint = FMath::RoundToInt(EditSpline->FindInputKeyClosestToWorldLocation(Target.ImpactPoint));
+			//	EditSplineStart = Target.ImpactPoint;
+			//	UE_LOG(LogTemp, Warning, TEXT("SPLINE HIT INITIAL %i"), EditSplinePoint);
+			//	//EditSplineSection->DisableCollision();
+			//}
+			//else
+			//{
+			//	UE_LOG(LogTemp, Warning, TEXT("SPLINE FAIL"));
+			//}
 				
 		}
 	}
@@ -340,7 +357,7 @@ void AWorldEditorPawn::StartMouse()
 
 void AWorldEditorPawn::EndMouse()
 {
-	if(EditSplineSection) EditSplineSection->EnableCollision();
+	//if(EditSplineSection) EditSplineSection->EnableCollision();
 	b_leftMouse = false;
 	EditSpline = nullptr;
 	EditSplineSection = nullptr;
