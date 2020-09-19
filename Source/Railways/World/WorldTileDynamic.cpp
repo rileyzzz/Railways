@@ -61,7 +61,7 @@ void UWorldTileDynamic::TerrainInfluence(FVector Pos, float Direction, int Radiu
 {
     int LocalRadius = Radius / 10.0f;
     FTransform transform = GetComponentToWorld();
-    FVector InflPos = transform.InverseTransformPosition(Pos) / 10.0f;
+    FVector InflPos = transform.InverseTransformPosition(Pos) / WORLD_SCALE;
     InflPos.Z = 0.0f;
     FVector Corner = InflPos - FVector(LocalRadius, LocalRadius, 0.0);
 
@@ -79,7 +79,7 @@ void UWorldTileDynamic::TerrainInfluence(FVector Pos, float Direction, int Radiu
             if (dist > 0.0f && Provider->WithinBounds(xpos, ypos))
             {
                 float Interpolated = (FMath::Sin(dist * PI - (PI / 2.0f)) + 1.0f) / 2.0f;
-                Provider->AddHeight(xpos, ypos, Interpolated * 8.0f);
+                Provider->AddHeight(xpos, ypos, Interpolated * WORLD_SCALE);
             }
         }
     }

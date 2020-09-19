@@ -106,9 +106,9 @@ bool UWorldTileProvider::GetSectionMeshForLOD(int32 LODIndex, int32 SectionId, F
 			float xalpha = (float)x / (float)(WORLD_SIZE - 1);
 			//float xpos = FMath::Lerp(-WORLD_SIZE / 2, WORLD_SIZE / 2, xalpha);
 
-			float height = GetHeight(x, y);
+			//float height = GetHeight(x, y);
 
-			FVector Position((float)x * 10.0f, (float)y * 10.0f, height);
+			FVector Position((float)x * WORLD_SCALE, (float)y * WORLD_SCALE, GetHeight(x, y));
 			//UE_LOG(LogTemp, Warning, TEXT("created vert at %f %f %f"), Position.X, Position.Y, Position.Z);
 			float dfdx = (GetHeight(x + dx, y) - GetHeight(x - dx, y)) / (2 * (float)dx); //derivative of f over x
 			float dfdy = (GetHeight(x, y + dy) - GetHeight(x, y - dy)) / (2 * (float)dy); //derivative of f over y
@@ -176,7 +176,7 @@ bool UWorldTileProvider::GetCollisionMesh(FRuntimeMeshCollisionData& CollisionDa
 		{
 			float height = GetHeight(x * COLLISION_RESOLUTION, y * COLLISION_RESOLUTION);
 
-			FVector Position((float)x * 10.0f * (float)COLLISION_RESOLUTION, (float)y * 10.0f * (float)COLLISION_RESOLUTION, height);
+			FVector Position((float)x * WORLD_SCALE * (float)COLLISION_RESOLUTION, (float)y * WORLD_SCALE * (float)COLLISION_RESOLUTION, height);
 
 			CollisionVertices.Add(Position);
 

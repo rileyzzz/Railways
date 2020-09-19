@@ -40,11 +40,13 @@ AWorldEditorPawn::AWorldEditorPawn()
 	//Camera->SetRelativeRotation(FRotator(-45.0f, 0.0f, 0.0f));
 }
 
+#if UE_BUILD_DEBUG
 void AWorldEditorPawn::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 	Cursor->SetDecalMaterial(DecalMaterial);
 }
+#endif
 
 void AWorldEditorPawn::SetEditMode(int mode)
 {

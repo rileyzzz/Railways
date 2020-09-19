@@ -48,7 +48,9 @@ private:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+#if UE_BUILD_DEBUG
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 
 	UFUNCTION(Category = "WorldPawn|Events", BlueprintCallable)
 	void SetEditMode(int mode);

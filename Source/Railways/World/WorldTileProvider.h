@@ -2,6 +2,7 @@
 
 #pragma once
 #define WORLD_SIZE 400
+#define WORLD_SCALE 10.0f
 #include "CoreMinimal.h"
 #include "RuntimeMeshProvider.h"
 #include "WorldTileProvider.generated.h"
