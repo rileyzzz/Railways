@@ -170,7 +170,6 @@ void AWorldEditorPawn::Tick(float DeltaTime)
 			{
 				if (EditSplinePoint)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("setting world location"));
 					EditSplinePoint->SetWorldLocation(Target.ImpactPoint);
 					EditSplinePoint->ParentSection->RefreshSection();
 				}
@@ -322,9 +321,16 @@ void AWorldEditorPawn::StartMouse()
 							HitPoint->Paths.Add(NewPoint);
 							NewPoint->Paths.Add(HitPoint);
 
+							if (HitPoint->index == 0) HitPoint->ParentSection->RootPoint = NewPoint; //beginning
+
 							HitPoint->ParentSection->RootPoint->RootBuild();
 
 							EditSplinePoint = NewPoint;
+						}
+						else
+						{
+							//create a junction
+
 						}
 					}
 					else
