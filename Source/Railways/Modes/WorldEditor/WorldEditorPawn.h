@@ -48,7 +48,7 @@ private:
 
 	ADynamicSplineSection* EditSplineSection = nullptr;
 	USplineComponent* EditSpline = nullptr;
-	DynamicSplinePoint* EditSplinePoint = nullptr;
+	UDynamicSplinePoint* EditSplinePoint = nullptr;
 	//FVector EditSplineStart;
 
 	//FVector LastHit;

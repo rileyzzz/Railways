@@ -171,6 +171,7 @@ void AWorldEditorPawn::Tick(float DeltaTime)
 				if (EditSplinePoint)
 				{
 					EditSplinePoint->SetWorldLocation(Target.ImpactPoint);
+					EditSplinePoint->ParentSection->RefreshSection();
 				}
 			}
 		}
@@ -299,59 +300,83 @@ void AWorldEditorPawn::StartMouse()
 			USphereComponent* dummy = dynamic_cast<USphereComponent*>(Target.Component.Get());
 			if (dummy)
 			{
-				EditSplineSection = dynamic_cast<ADynamicSplineSection*>(dummy->GetAttachmentRootActor());
-				if (EditSplineSection)
+				UDynamicSplinePoint* HitPoint = dynamic_cast<UDynamicSplinePoint*>(dummy->GetAttachParent());
+				if (HitPoint)
 				{
-					EditSpline = EditSplineSection->Spline;
-					int HitIndex = FMath::RoundToInt(EditSpline->FindInputKeyClosestToWorldLocation(Target.ImpactPoint));
-					DynamicSplinePoint* HitPoint = &EditSplineSection->Points[HitIndex];
-
 					if (EditMode == 0)
 					{
-						int NewIndex = HitIndex;
-						if (NewIndex == EditSpline->GetNumberOfSplinePoints() - 1) NewIndex++;
-						if (NewIndex == 0 || NewIndex == EditSpline->GetNumberOfSplinePoints())
-						{
-							//create new at end
-							EditSpline->AddSplinePointAtIndex(Target.ImpactPoint, NewIndex, ESplineCoordinateSpace::World);
-							EditSplineSection->BuildSpline();
 
-							//change point to new nearest
-							EditSplinePoint = &EditSplineSection->Points[FMath::RoundToInt(EditSpline->FindInputKeyClosestToWorldLocation(Target.ImpactPoint))];
-						}
-						else
-						{
-							//junction
-							FActorSpawnParameters SpawnParams;
-							ADynamicSplineSection* NewSection = GetWorld()->SpawnActor<ADynamicSplineSection>(SpawnParams);
-							NewSection->SetActorLocation(HitPoint->GetWorldLocation());
-							
-							NewSection->SplineMesh = EditSplineSection->SplineMesh;
-							NewSection->DecalMaterial = EditSplineSection->DecalMaterial;
-
-							/*HitPoint->JunctionSection = NewSection;
-							NewSection->Points[0]->JunctionSection = EditSplineSection;*/
-							
-
-							EditSplineSection = NewSection;
-							EditSpline = EditSplineSection->Spline;
-							EditSplineSection->BuildSpline();
-							EditSplinePoint = &EditSplineSection->Points[1];
-							HitPoint->CreateJunction(&EditSplineSection->Points[0]);
-
-							//EditSplineSection->BranchJunction(HitPoint, &EditSplineSection->Points[0]);
-							
-						}
 					}
 					else
 					{
 						EditSplinePoint = HitPoint;
 					}
-					
-
-					UE_LOG(LogTemp, Warning, TEXT("SPLINE HIT INITIAL %i"), EditSplinePoint);
-					//EditSplineSection->DisableCollision();
 				}
+				//EditSplineSection = dynamic_cast<ADynamicSplineSection*>(dummy->GetAttachmentRootActor());
+				//if (EditSplineSection)
+				//{
+				//	EditSpline = EditSplineSection->Spline;
+				//	int HitIndex = FMath::RoundToInt(EditSpline->FindInputKeyClosestToWorldLocation(Target.ImpactPoint));
+				//	DynamicSplinePoint* HitPoint = &EditSplineSection->Points[HitIndex];
+
+				//	if (EditMode == 0)
+				//	{
+				//		int NewIndex = HitIndex;
+				//		if (NewIndex == EditSpline->GetNumberOfSplinePoints() - 1) NewIndex++;
+				//		if (NewIndex == 0 || NewIndex == EditSpline->GetNumberOfSplinePoints())
+				//		{
+				//			//create new at end
+				//			EditSpline->AddSplinePointAtIndex(Target.ImpactPoint, NewIndex, ESplineCoordinateSpace::World);
+				//			EditSplineSection->BuildSpline();
+
+				//			//change point to new nearest
+				//			EditSplinePoint = &EditSplineSection->Points[FMath::RoundToInt(EditSpline->FindInputKeyClosestToWorldLocation(Target.ImpactPoint))];
+				//		}
+				//		else
+				//		{
+				//			//junction
+				//			FActorSpawnParameters SpawnParams;
+				//			ADynamicSplineSection* NewSection = GetWorld()->SpawnActor<ADynamicSplineSection>(SpawnParams);
+				//			NewSection->SetActorLocation(HitPoint->GetWorldLocation());
+				//			
+				//			NewSection->SplineMesh = EditSplineSection->SplineMesh;
+				//			NewSection->DecalMaterial = EditSplineSection->DecalMaterial;
+
+				//			/*HitPoint->JunctionSection = NewSection;
+				//			NewSection->Points[0]->JunctionSection = EditSplineSection;*/
+				//			
+
+				//			EditSplineSection = NewSection;
+				//			EditSpline = EditSplineSection->Spline;
+				//			EditSplineSection->BuildSpline();
+				//			EditSplinePoint = &EditSplineSection->Points[1];
+				//			HitPoint->CreateJunction(&EditSplineSection->Points[0]);
+				//			if (!HitPoint->JunctionSection)
+				//			{
+				//				UE_LOG(LogTemp, Warning, TEXT("SOURCE JUNCTION NONEXISTENT"));
+				//			}
+				//			else if (!EditSplineSection->Points[0].JunctionSection)
+				//			{
+				//				UE_LOG(LogTemp, Warning, TEXT("OUTER JUNCTION NONEXISTENT"));
+				//			}
+				//			else
+				//			{
+				//				UE_LOG(LogTemp, Warning, TEXT("JUNCTION CREATED SUCCESSFULLY"));
+				//			}
+
+				//			//EditSplineSection->BranchJunction(HitPoint, &EditSplineSection->Points[0]);
+				//			
+				//		}
+				//	}
+				//	else
+				//	{
+				//		EditSplinePoint = HitPoint;
+				//	}
+				//	
+
+				//	UE_LOG(LogTemp, Warning, TEXT("SPLINE HIT INITIAL %i"), EditSplinePoint);
+				//	//EditSplineSection->DisableCollision();
+				//}
 			}
 			else
 			{

@@ -17,7 +17,6 @@
 //};
 
 struct DynamicSplineSegment;
-struct DynamicSplinePoint;
 
 UCLASS()
 class RAILWAYS_API ADynamicSplineSection : public ARuntimeActorAsset
@@ -25,14 +24,14 @@ class RAILWAYS_API ADynamicSplineSection : public ARuntimeActorAsset
 	GENERATED_BODY()
 	
 private:
-	void GenerateTrackTiles(int32 index, DynamicSplineSegment& Segment, UStaticMesh* Mesh, int TileCount);
-	
-	void BuildSplineSegment(DynamicSplinePoint* Point, UStaticMesh* Mesh);
-	void UpdateSplineSegment(int32 index);
+	//void GenerateTrackTiles(int32 index, DynamicSplineSegment& Segment, UStaticMesh* Mesh, int TileCount);
+	//
+	//void BuildSplineSegment(DynamicSplinePoint* Point, UStaticMesh* Mesh);
+	//void UpdateSplineSegment(int32 index);
 public:
 	USplineComponent* Spline;
 	//TMap<int32, SplinePointMetadata> PointMetadata;
-	TArray<DynamicSplinePoint> Points;
+	//TArray<DynamicSplinePoint> Points;
 	TArray<UDecalComponent*> Decals;
 	TArray<USphereComponent*> Dummies;
 
@@ -42,10 +41,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	UMaterialInterface* DecalMaterial;
 
-	void BuildSpline();
-	void EnableCollision();
-	void DisableCollision();
-	void RefreshSpline();
+	UDynamicSplinePoint* RootPoint;
+	void RefreshSection();
+	//void BuildSpline();
+	//void EnableCollision();
+	//void DisableCollision();
+	//void RefreshSpline();
 
 	//void BranchJunction(DynamicSplinePoint* A, DynamicSplinePoint* B);
 
@@ -63,6 +64,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	//USceneComponent* GetRootComponent();
 };
 
 struct DynamicSplineSegment
@@ -70,72 +72,61 @@ struct DynamicSplineSegment
 	TArray<USplineMeshComponent*> Tiles;
 };
 
-struct DynamicSplinePoint
+UCLASS()
+class RAILWAYS_API UDynamicSplinePoint : public USceneComponent
 {
+	GENERATED_BODY()
+
+public:
 	int32 index;
+	TArray<UDynamicSplinePoint*> Paths;
+	UStaticMesh* Mesh;
+
+	FVector Location;
 	ADynamicSplineSection* ParentSection;
-	ADynamicSplineSection* JunctionSection = nullptr;
+
+private:
+	//used only on the root, for initial placement purposes
+	USplineComponent* RootStartSpline;
+
+	TArray<USplineComponent*> BranchSplines;
 	DynamicSplineSegment Segment;
-	DynamicSplinePoint(ADynamicSplineSection* in_parent, int32 in_index) : ParentSection(in_parent), index(in_index) { }
+	UDecalComponent* Decal;
+	USphereComponent* Dummy;
+
+	void ClearBranches();
+
+	void GenerateTiles(USplineComponent* Spline, int TileCount);
+	void BuildSegment(int32 SegmentIndex, USplineComponent* Spline);
+	void UpdateSegment(int32 SegmentIndex, USplineComponent* Spline);
+	void RecursiveBuild(USplineComponent* Spline, TArray<UDynamicSplinePoint*>& Coverage);
+	void RecursiveRefresh(USplineComponent* Spline, TArray<UDynamicSplinePoint*>& Coverage);
+public:
+	UDynamicSplinePoint();
+
 	FVector GetWorldLocation()
 	{
-		return ParentSection->Spline->GetWorldLocationAtSplinePoint(index);
+		return Location;
 	}
-	DynamicSplinePoint* GetJunction()
-	{
-		if (JunctionSection)
-		{
-			int Point = FMath::RoundToInt(JunctionSection->Spline->FindInputKeyClosestToWorldLocation(GetWorldLocation()));
-			return &JunctionSection->Points[Point];
-		}
-		else
-			return nullptr;
-	}
-	~DynamicSplinePoint()
-	{
-		//clear associated junction
-		auto Junction = GetJunction();
-		if (Junction) Junction->JunctionSection = nullptr;
-	}
-public:
-	void UpdateJunctionTangent(DynamicSplinePoint* Other)
-	{
-		FVector SrcTangent = GetTangent(ESplineCoordinateSpace::Type::World);
-		FVector OtherTangent = Other->GetTangent(ESplineCoordinateSpace::Type::World);
-		FVector MixedTangent = FMath::Lerp(SrcTangent, OtherTangent, 0.5f);
-		SetTangent(MixedTangent, ESplineCoordinateSpace::Type::World);
-		Other->SetTangent(MixedTangent, ESplineCoordinateSpace::Type::World);
-	}
-
-	void CreateJunction(DynamicSplinePoint* Other)
-	{
-		JunctionSection = Other->ParentSection;
-		Other->JunctionSection = ParentSection;
-
-		FVector SrcTangent = GetTangent(ESplineCoordinateSpace::Type::World);
-		Other->SetTangent(SrcTangent, ESplineCoordinateSpace::Type::World);
-		//UpdateJunctionTangent(Other);
-	}
-	
 	void SetWorldLocation(FVector& InLocation)
 	{
-		ParentSection->Spline->SetWorldLocationAtSplinePoint(index, InLocation);
-		ParentSection->RefreshSpline();
-		auto Junction = GetJunction();
-		if (Junction)
-		{
-			//UpdateJunctionTangent(Junction);
-			Junction->ParentSection->Spline->SetWorldLocationAtSplinePoint(Junction->index, InLocation);
-			Junction->ParentSection->RefreshSpline();
-		}
+		Location = InLocation;
+		//RootRefresh();
+		//ParentSection->RootPoint->RootRefresh();
 	}
+
 	void SetTangent(FVector& InTangent, ESplineCoordinateSpace::Type CoordSpace)
 	{
-		ParentSection->Spline->SetTangentAtSplinePoint(index, InTangent, CoordSpace);
-		ParentSection->RefreshSpline();
+		//ParentSection->Spline->SetTangentAtSplinePoint(index, InTangent, CoordSpace);
+		//ParentSection->RefreshSpline();
 	}
 	FVector GetTangent(ESplineCoordinateSpace::Type CoordSpace)
 	{
-		return ParentSection->Spline->GetTangentAtSplinePoint(index, CoordSpace);
+		return FVector();
+		//return ParentSection->Spline->GetTangentAtSplinePoint(index, CoordSpace);
 	}
+
+	void RootBuild();
+	
+	void RootRefresh();
 };
