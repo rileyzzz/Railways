@@ -72,10 +72,12 @@ class UDynamicSplinePoint;
 
 struct DynamicSplineSegment
 {
+	int32 StartIndex;
 	TArray<USplineMeshComponent*> Tiles;
 	USplineComponent* Spline;
-	UDynamicSplinePoint* ParentPoint;
-	DynamicSplineSegment(UDynamicSplinePoint* InParent, USplineComponent* InSpline) : ParentPoint(InParent), Spline(InSpline)
+	UDynamicSplinePoint* StartPoint;
+	UDynamicSplinePoint* EndPoint;
+	DynamicSplineSegment(UDynamicSplinePoint* InStart, UDynamicSplinePoint* InEnd, int32 InIndex, USplineComponent* InSpline) : StartPoint(InStart), EndPoint(InEnd), StartIndex(InIndex), Spline(InSpline)
 	{
 
 	}
@@ -97,7 +99,7 @@ class RAILWAYS_API UDynamicSplinePoint : public USceneComponent
 	GENERATED_BODY()
 
 public:
-	int32 index;
+	//int32 index;
 	TArray<UDynamicSplinePoint*> Paths;
 	UStaticMesh* Mesh;
 
@@ -119,8 +121,9 @@ private:
 	//needs to be spline based so we can have doubles
 	void BuildSegment(DynamicSplineSegment* Segment);
 	void UpdateSegment(DynamicSplineSegment* Segment);
-	void RecursiveBuild(USplineComponent* Spline, TArray<UDynamicSplinePoint*>& Coverage);
-	void RecursiveRefresh(USplineComponent* Spline, TArray<UDynamicSplinePoint*>& Coverage);
+	void RecursiveBuild(USplineComponent* Spline, TArray<UDynamicSplinePoint*>& Coverage, UDynamicSplinePoint* Last = nullptr);
+	//void RecursiveRefresh(USplineComponent* Spline, TArray<UDynamicSplinePoint*>& Coverage);
+	void RefreshSegment(DynamicSplineSegment* Segment);
 public:
 	UDynamicSplinePoint();
 

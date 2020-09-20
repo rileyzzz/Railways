@@ -352,11 +352,12 @@ void UDynamicSplinePoint::ClearBranches()
 	BranchSplines.Empty();
 }
 
-void UDynamicSplinePoint::RecursiveBuild(USplineComponent* Spline, TArray<UDynamicSplinePoint*>& Coverage)
+void UDynamicSplinePoint::RecursiveBuild(USplineComponent* Spline, TArray<UDynamicSplinePoint*>& Coverage, UDynamicSplinePoint* Last)
 {
-	index = Spline->GetNumberOfSplinePoints();
+	int32 index = Spline->GetNumberOfSplinePoints();
 	//add current point to spline
 	Spline->AddSplinePoint(GetComponentTransform().GetLocation(), ESplineCoordinateSpace::World);
+	if (Last) ParentSection->Segments.Emplace(Last, this, index - 1, Spline);
 
 	ClearBranches();
 	Coverage.Add(this);
@@ -376,14 +377,14 @@ void UDynamicSplinePoint::RecursiveBuild(USplineComponent* Spline, TArray<UDynam
 	UE_LOG(LogTemp, Warning, TEXT("Spline has %i paths and %i new branches"), Paths.Num(), NewBranches.Num());
 
 	
-
+	
 	if (NewBranches.Num() == 1)
 	{
-		ParentSection->Segments.Emplace(this, Spline);
-		NewBranches[0]->RecursiveBuild(Spline, Coverage);
+		NewBranches[0]->RecursiveBuild(Spline, Coverage, this);
 	}
 	else
 	{
+		TArray<FVector> BranchTangents;
 		for (auto& NewBranch : NewBranches)
 		{
 			//junction
@@ -396,11 +397,25 @@ void UDynamicSplinePoint::RecursiveBuild(USplineComponent* Spline, TArray<UDynam
 				NewSpline->AttachToComponent(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
 				NewSpline->ClearSplinePoints();
 				NewSpline->AddSplinePoint(GetComponentToWorld().GetLocation(), ESplineCoordinateSpace::World);
+				FVector PointTangent = Spline->GetTangentAtSplinePoint(index, ESplineCoordinateSpace::World);
+				NewSpline->SetTangentAtSplinePoint(0, PointTangent, ESplineCoordinateSpace::World);
 
-				ParentSection->Segments.Emplace(this, NewSpline);
-				NewBranch->RecursiveBuild(NewSpline, Coverage);
+				NewBranch->RecursiveBuild(NewSpline, Coverage, this);
+
+				//get initial tangent after build
+				BranchTangents.Add(NewSpline->GetTangentAtSplinePoint(0, ESplineCoordinateSpace::World));
+
 				BranchSplines.Add(NewSpline);
 			}
+		}
+
+		if (BranchTangents.Num())
+		{
+			//FVector TangentAverage;
+			//for (auto& BranchTangent : BranchTangents)
+			//	TangentAverage += BranchTangent;
+			//TangentAverage /= BranchTangents.Num();
+			Spline->SetTangentAtSplinePoint(index, BranchTangents[0], ESplineCoordinateSpace::World);
 		}
 
 		//Generate mesh if a dead end or a split
@@ -446,56 +461,64 @@ void UDynamicSplinePoint::RecursiveBuild(USplineComponent* Spline, TArray<UDynam
 	}
 }
 
-void UDynamicSplinePoint::RecursiveRefresh(USplineComponent* Spline, TArray<UDynamicSplinePoint*>& Coverage)
+//void UDynamicSplinePoint::RecursiveRefresh(USplineComponent* Spline, TArray<UDynamicSplinePoint*>& Coverage)
+//{
+//	Spline->SetWorldLocationAtSplinePoint(++index, GetComponentTransform().GetLocation());
+//	
+//	Coverage.Add(this);
+//	TArray<UDynamicSplinePoint*> NewBranches;
+//	for (auto NewBranch : Paths)
+//	{
+//		if (!Coverage.Contains(NewBranch))
+//			NewBranches.Add(NewBranch);
+//	}
+//
+//	if (NewBranches.Num() == 1)
+//	{
+//		//continue down the spline
+//		NewBranches[0]->RecursiveRefresh(Spline, index, Coverage);
+//	}
+//	else
+//	{
+//		for (int i = 0; i < NewBranches.Num(); i++)
+//		{
+//			auto& Path = NewBranches[i];
+//			auto& Branch = BranchSplines[i];
+//			int32 NewStartIndex = 0;
+//			Path->RecursiveRefresh(Branch, NewStartIndex, Coverage);
+//		}
+//
+//		//clear initial segments, need to do this here so we dont destroy previous tiles in the segment updater
+//		//for (auto tile : Segment.Tiles)
+//		//{
+//		//	if (tile)
+//		//	{
+//		//		tile->UnregisterComponent();
+//		//		tile->DestroyComponent();
+//		//		tile = nullptr;
+//		//	}
+//		//}
+//		//Segment.Tiles.Empty();
+//
+//		//dead end or split, update mesh
+//		/*for (int i = 0; i < Spline->GetNumberOfSplinePoints() - 1; i++)
+//			UpdateSegment(i, Spline);*/
+//		for(auto& segment : ParentSection->Segments)
+//			UpdateSegment(&segment);
+//	}
+//}
+
+void UDynamicSplinePoint::RefreshSegment(DynamicSplineSegment* Segment)
 {
-	Spline->SetWorldLocationAtSplinePoint(index, GetComponentTransform().GetLocation());
-	
-	Coverage.Add(this);
-	TArray<UDynamicSplinePoint*> NewBranches;
-	for (auto NewBranch : Paths)
-	{
-		if (!Coverage.Contains(NewBranch))
-			NewBranches.Add(NewBranch);
-	}
-
-	if (NewBranches.Num() == 1)
-	{
-		//continue down the spline
-		NewBranches[0]->RecursiveRefresh(Spline, Coverage);
-	}
-	else
-	{
-		for (int i = 0; i < NewBranches.Num(); i++)
-		{
-			auto& Path = NewBranches[i];
-			auto& Branch = BranchSplines[i];
-			Path->RecursiveRefresh(Branch, Coverage);
-		}
-
-		//clear initial segments, need to do this here so we dont destroy previous tiles in the segment updater
-		//for (auto tile : Segment.Tiles)
-		//{
-		//	if (tile)
-		//	{
-		//		tile->UnregisterComponent();
-		//		tile->DestroyComponent();
-		//		tile = nullptr;
-		//	}
-		//}
-		//Segment.Tiles.Empty();
-
-		//dead end or split, update mesh
-		/*for (int i = 0; i < Spline->GetNumberOfSplinePoints() - 1; i++)
-			UpdateSegment(i, Spline);*/
-		for(auto& segment : ParentSection->Segments)
-			UpdateSegment(&segment);
-	}
+	Segment->Spline->SetWorldLocationAtSplinePoint(Segment->StartIndex, Segment->StartPoint->GetComponentTransform().GetLocation());
+	Segment->Spline->SetWorldLocationAtSplinePoint(Segment->StartIndex + 1, Segment->EndPoint->GetComponentTransform().GetLocation());
+	UpdateSegment(Segment);
 }
 
 //Segment index is index into the spline!
 void UDynamicSplinePoint::BuildSegment(DynamicSplineSegment* Segment)
 {
-	int32 SegmentIndex = Segment->ParentPoint->index;
+	int32 SegmentIndex = Segment->StartIndex;
 	UE_LOG(LogTemp, Warning, TEXT("BUILDING A SEGMENT %i"), SegmentIndex);
 	int32 nextindex = (SegmentIndex + 1) % Segment->Spline->GetNumberOfSplinePoints();
 	FVector StartPos, StartTangent;
@@ -505,6 +528,9 @@ void UDynamicSplinePoint::BuildSegment(DynamicSplineSegment* Segment)
 
 	UE_LOG(LogTemp, Warning, TEXT("start %f %f %f end %f %f %f"), StartPos.X, StartPos.Y, StartPos.Z, EndPos.X, EndPos.Y, EndPos.Z);
 
+	//DrawDebugLine(GetWorld(), StartPos, StartPos + FVector(0.0f, 0.0f, 500.0f), FColor::Blue, true);
+	//DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Green, true);
+
 	int TileCount = FVector::Distance(StartPos, EndPos) / TILE_FACTOR;
 	if (TileCount == 0) TileCount = 1;
 
@@ -513,7 +539,7 @@ void UDynamicSplinePoint::BuildSegment(DynamicSplineSegment* Segment)
 
 void UDynamicSplinePoint::UpdateSegment(DynamicSplineSegment* Segment)
 {
-	int32 SegmentIndex = Segment->ParentPoint->index;
+	int32 SegmentIndex = Segment->StartIndex;
 	int32 nextindex = (SegmentIndex + 1) % Segment->Spline->GetNumberOfSplinePoints();
 	FVector StartPos, StartTangent;
 	FVector EndPos, EndTangent;
@@ -561,7 +587,7 @@ void UDynamicSplinePoint::GenerateTiles(DynamicSplineSegment* Segment, int TileC
 	}
 	Segment->Tiles.Empty();
 
-	int32 SegmentIndex = Segment->ParentPoint->index;
+	int32 SegmentIndex = Segment->StartIndex;
 	for (int Tile = 0; Tile < TileCount; Tile++)
 	{
 		float alpha = (float)Tile / (float)TileCount;
@@ -631,7 +657,12 @@ void UDynamicSplinePoint::RootBuild()
 void UDynamicSplinePoint::RootRefresh()
 {
 	TArray<UDynamicSplinePoint*> Coverage;
-	RecursiveRefresh(RootStartSpline, Coverage);
+	//RecursiveRefresh(RootStartSpline, StartIndex, Coverage);
+	for (auto& Segment : ParentSection->Segments)
+	{
+		RefreshSegment(&Segment);
+		//Segment.Spline->SetWorldLocationAtSplinePoint(Segment.StartIndex, GetComponentTransform().GetLocation());
+	}
 	/*for (auto& Path : Paths)
 	{
 		for (int i = 0; i < Spline->GetNumberOfSplinePoints(); i++)

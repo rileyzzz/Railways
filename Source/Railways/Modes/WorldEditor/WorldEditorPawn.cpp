@@ -307,31 +307,23 @@ void AWorldEditorPawn::StartMouse()
 					UE_LOG(LogTemp, Warning, TEXT("point found"));
 					if (EditMode == 0)
 					{
-						if (HitPoint->Paths.Num() == 1)
-						{
-							//extension
-							UDynamicSplinePoint* NewPoint = NewObject<UDynamicSplinePoint>(HitPoint->ParentSection, UDynamicSplinePoint::StaticClass(), NAME_None);
-							NewPoint->ParentSection = HitPoint->ParentSection;
-							NewPoint->Mesh = HitPoint->ParentSection->SplineMesh;
-							NewPoint->RegisterComponent();
-							NewPoint->SetMobility(EComponentMobility::Movable);
-							NewPoint->AttachToComponent(HitPoint->ParentSection->GetRootComponent(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
-							NewPoint->SetWorldLocation(Target.ImpactPoint);
+						UDynamicSplinePoint* NewPoint = NewObject<UDynamicSplinePoint>(HitPoint->ParentSection, UDynamicSplinePoint::StaticClass(), NAME_None);
+						NewPoint->ParentSection = HitPoint->ParentSection;
+						NewPoint->Mesh = HitPoint->ParentSection->SplineMesh;
+						NewPoint->RegisterComponent();
+						NewPoint->SetMobility(EComponentMobility::Movable);
+						NewPoint->AttachToComponent(HitPoint->ParentSection->GetRootComponent(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
+						NewPoint->SetWorldLocation(Target.ImpactPoint);
 
-							HitPoint->Paths.Add(NewPoint);
-							NewPoint->Paths.Add(HitPoint);
+						HitPoint->Paths.Add(NewPoint);
+						NewPoint->Paths.Add(HitPoint);
 
-							if (HitPoint->index == 0) HitPoint->ParentSection->RootPoint = NewPoint; //beginning
 
-							HitPoint->ParentSection->RootPoint->RootBuild();
+						if (HitPoint == HitPoint->ParentSection->RootPoint) HitPoint->ParentSection->RootPoint = NewPoint; //beginning
 
-							EditSplinePoint = NewPoint;
-						}
-						else
-						{
-							//create a junction
+						HitPoint->ParentSection->RootPoint->RootBuild();
 
-						}
+						EditSplinePoint = NewPoint;
 					}
 					else
 					{
