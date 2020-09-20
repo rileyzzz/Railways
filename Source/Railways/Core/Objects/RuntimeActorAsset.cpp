@@ -25,3 +25,23 @@ void ARuntimeActorAsset::Tick(float DeltaTime)
 
 }
 
+void ARuntimeActorAsset::UpdatePositionToGround(FVector& Position)
+{
+	constexpr float range = 10000.0f;
+	FVector Start = Position + FVector(0.0f, 0.0f, range);
+	FVector End = Position - FVector(0.0f, 0.0f, range);
+	FCollisionQueryParams CollisionParams;
+	FHitResult OutHit;
+	if (GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECC_Visibility, CollisionParams))
+	{
+		Position = OutHit.ImpactPoint;
+	}
+}
+
+void ARuntimeActorAsset::UpdatePositionToGroundLocal(FVector& Position)
+{
+	FTransform Transform = GetTransform();
+	FVector WorldTransform = Transform.GetLocation() + Position;
+	UpdatePositionToGround(WorldTransform);
+	Position = Transform.InverseTransformPosition(WorldTransform);
+}

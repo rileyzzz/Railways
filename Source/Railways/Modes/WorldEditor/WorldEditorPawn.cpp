@@ -168,29 +168,10 @@ void AWorldEditorPawn::Tick(float DeltaTime)
 		{
 			if (b_leftMouse)
 			{
-				if (EditSpline)
+				if (EditSplinePoint)
 				{
-					EditSpline->SetWorldLocationAtSplinePoint(EditSplinePoint, Target.ImpactPoint);
-					EditSplineSection->RefreshSpline();
-					//static int EditTick = 0; //performance stuff
-					//EditTick++;
-					//if (EditTick > 32)
-					//{
-					//	EditTick = 0;
-					//	EditSpline->SetWorldLocationAtSplinePoint(EditSplinePoint, Target.ImpactPoint);
-					//	EditSplineSection->RefreshSpline();
-					//}
+					EditSplinePoint->SetWorldLocation(Target.ImpactPoint);
 				}
-				
-				//ADynamicSplineSection* Section = dynamic_cast<ADynamicSplineSection*>(Target.Actor.Get());
-				//if (Section)
-				//{
-				//	USplineMeshComponent* SplineMesh = dynamic_cast<USplineMeshComponent*>(Target.Component.Get());
-				//	USplineComponent* spline = Section->Spline;
-				//	auto SplinePoint = spline->FindInputKeyClosestToWorldLocation(Target.ImpactPoint);
-				//	
-				//}
-				//UE_LOG(LogTemp, Log, TEXT("Dragging point"));
 			}
 		}
 
@@ -313,8 +294,6 @@ void AWorldEditorPawn::StartMouse()
 	FHitResult Target;
 	if (GetMouseHit(Target, ECollisionChannel::ECC_GameTraceChannel1))
 	{
-		//DrawDebugLine(GetWorld(), Target.TraceStart, Target.ImpactPoint, FColor::Green, true);
-		//DrawDebugLine(GetWorld(), Target.ImpactPoint, Target.ImpactPoint + Target.ImpactNormal * 100.0f, FColor::Blue, true);
 		if (EditCategory == 1)
 		{
 			USphereComponent* dummy = dynamic_cast<USphereComponent*>(Target.Component.Get());
@@ -324,8 +303,54 @@ void AWorldEditorPawn::StartMouse()
 				if (EditSplineSection)
 				{
 					EditSpline = EditSplineSection->Spline;
-					EditSplinePoint = FMath::RoundToInt(EditSpline->FindInputKeyClosestToWorldLocation(Target.ImpactPoint));
-					EditSplineStart = Target.ImpactPoint;
+					int HitIndex = FMath::RoundToInt(EditSpline->FindInputKeyClosestToWorldLocation(Target.ImpactPoint));
+					DynamicSplinePoint* HitPoint = &EditSplineSection->Points[HitIndex];
+
+					if (EditMode == 0)
+					{
+						int NewIndex = HitIndex;
+						if (NewIndex == EditSpline->GetNumberOfSplinePoints() - 1) NewIndex++;
+						if (NewIndex == 0 || NewIndex == EditSpline->GetNumberOfSplinePoints())
+						{
+							//create new at end
+							EditSpline->AddSplinePointAtIndex(Target.ImpactPoint, NewIndex, ESplineCoordinateSpace::World);
+							EditSplineSection->BuildSpline();
+
+							//change point to new nearest
+							EditSplinePoint = &EditSplineSection->Points[FMath::RoundToInt(EditSpline->FindInputKeyClosestToWorldLocation(Target.ImpactPoint))];
+						}
+						else
+						{
+							//junction
+							FActorSpawnParameters SpawnParams;
+							ADynamicSplineSection* NewSection = GetWorld()->SpawnActor<ADynamicSplineSection>(SpawnParams);
+							NewSection->SetActorLocation(HitPoint->GetWorldLocation());
+							
+							NewSection->SplineMesh = EditSplineSection->SplineMesh;
+							NewSection->DecalMaterial = EditSplineSection->DecalMaterial;
+
+							/*HitPoint->JunctionSection = NewSection;
+							NewSection->Points[0]->JunctionSection = EditSplineSection;*/
+							
+
+							EditSplineSection = NewSection;
+							EditSpline = EditSplineSection->Spline;
+							EditSplineSection->BuildSpline();
+							FVector SrcTangent = HitPoint->GetTangent(ESplineCoordinateSpace::Type::World);
+							EditSplineSection->Points[0].SetTangent(SrcTangent, ESplineCoordinateSpace::Type::World);
+							EditSplinePoint = &EditSplineSection->Points[1];
+							HitPoint->CreateJunction(&EditSplineSection->Points[0]);
+
+							//EditSplineSection->BranchJunction(HitPoint, &EditSplineSection->Points[0]);
+							
+						}
+					}
+					else
+					{
+						EditSplinePoint = HitPoint;
+					}
+					
+
 					UE_LOG(LogTemp, Warning, TEXT("SPLINE HIT INITIAL %i"), EditSplinePoint);
 					//EditSplineSection->DisableCollision();
 				}
@@ -334,22 +359,6 @@ void AWorldEditorPawn::StartMouse()
 			{
 				UE_LOG(LogTemp, Warning, TEXT("SPLINE FAIL"));
 			}
-			//EditSplineSection = dynamic_cast<ADynamicSplineSection*>(Target.Actor.Get());
-			//if (EditSplineSection)
-			//{
-			//	
-			//	USplineMeshComponent* SplineMesh = dynamic_cast<USplineMeshComponent*>(Target.Component.Get());
-			//	EditSpline = EditSplineSection->Spline;
-			//	EditSplinePoint = FMath::RoundToInt(EditSpline->FindInputKeyClosestToWorldLocation(Target.ImpactPoint));
-			//	EditSplineStart = Target.ImpactPoint;
-			//	UE_LOG(LogTemp, Warning, TEXT("SPLINE HIT INITIAL %i"), EditSplinePoint);
-			//	//EditSplineSection->DisableCollision();
-			//}
-			//else
-			//{
-			//	UE_LOG(LogTemp, Warning, TEXT("SPLINE FAIL"));
-			//}
-				
 		}
 	}
 	b_leftMouse = true;
@@ -361,6 +370,7 @@ void AWorldEditorPawn::EndMouse()
 	b_leftMouse = false;
 	EditSpline = nullptr;
 	EditSplineSection = nullptr;
+	EditSplinePoint = nullptr;
 }
 
 bool AWorldEditorPawn::GetMouseHit(FHitResult& OutHit, ECollisionChannel channel)

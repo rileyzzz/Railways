@@ -20,10 +20,10 @@ ADynamicSplineSection::ADynamicSplineSection()
 
 #define TILE_FACTOR 400.0f
 
-void ADynamicSplineSection::GenerateTrackTiles(int32 index, TArray<USplineMeshComponent*>& Segment, UStaticMesh* Mesh, int TileCount, bool Constructor)
+void ADynamicSplineSection::GenerateTrackTiles(int32 index, DynamicSplineSegment& Segment, UStaticMesh* Mesh, int TileCount)
 {
 	//clear initial segments
-	for (auto& tile : Segment)
+	for (auto tile : Segment.Tiles)
 	{
 		if (tile)
 		{
@@ -32,33 +32,22 @@ void ADynamicSplineSection::GenerateTrackTiles(int32 index, TArray<USplineMeshCo
 			tile = nullptr;
 		}
 	}
-	Segment.Empty();
+	Segment.Tiles.Empty();
 
 	for (int Tile = 0; Tile < TileCount; Tile++)
 	{
-		static int TileID = 0;
-		TileID++;
-
 		float alpha = (float)Tile / (float)TileCount;
 		float endalpha = alpha + (1.0f / (float)TileCount);
 
-		FString ComponentName = FString::Printf(TEXT("SplineMesh_%i"), TileID);
 		USplineMeshComponent* NewMesh;
-		if (Constructor)
-			NewMesh = CreateDefaultSubobject<USplineMeshComponent>(*ComponentName);
-		else
-			NewMesh = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass(), NAME_None);
+
+		NewMesh = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass(), NAME_None);
 
 		if (NewMesh)
 		{
+			NewMesh->RegisterComponent();
 			NewMesh->SetMobility(EComponentMobility::Movable);
-			if (Constructor)
-				NewMesh->SetupAttachment(RootComponent);
-			else
-			{
-				NewMesh->RegisterComponent();
-				NewMesh->AttachToComponent(RootComponent, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
-			}
+			NewMesh->AttachToComponent(RootComponent, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
 
 			NewMesh->SetStaticMesh(Mesh);
 			NewMesh->bSmoothInterpRollScale = true;
@@ -74,25 +63,25 @@ void ADynamicSplineSection::GenerateTrackTiles(int32 index, TArray<USplineMeshCo
 			//DrawDebugLine(GetWorld(), TileEnd, TileEndTangent, FColor::Orange, true);
 
 			NewMesh->SetStartAndEnd(TileStart, TileStartTangent, TileEnd, TileEndTangent);
-			Segment.Add(NewMesh);
+			//UE_LOG(LogTemp, Warning, TEXT("generated tile %i"), TileID);
+			Segment.Tiles.Add(NewMesh);
 		}
 	}
 }
 
-void ADynamicSplineSection::BuildSplineSegment(int32 index, UStaticMesh* Mesh, bool Constructor)
+void ADynamicSplineSection::BuildSplineSegment(DynamicSplinePoint* Point, UStaticMesh* Mesh)
 {
-	int32 nextindex = (index + 1) % Spline->GetNumberOfSplinePoints();
+	int32 nextindex = (Point->index + 1) % Spline->GetNumberOfSplinePoints();
 	FVector StartPos, StartTangent;
 	FVector EndPos, EndTangent;
-	Spline->GetLocalLocationAndTangentAtSplinePoint(index, StartPos, StartTangent);
+	Spline->GetLocalLocationAndTangentAtSplinePoint(Point->index, StartPos, StartTangent);
 	Spline->GetLocalLocationAndTangentAtSplinePoint(nextindex, EndPos, EndTangent);
 	
 	int TileCount = FVector::Distance(StartPos, EndPos) / TILE_FACTOR;
 	if (TileCount == 0) TileCount = 1;
 
-	TArray<USplineMeshComponent*> Segment;
-	GenerateTrackTiles(index, Segment, Mesh, TileCount, Constructor);
-	Segments.Add(Segment);
+	//Point->Segment = new DynamicSplineSegment();
+	GenerateTrackTiles(Point->index, Point->Segment, Mesh, TileCount);
 }
 
 void ADynamicSplineSection::UpdateSplineSegment(int32 index)
@@ -106,29 +95,40 @@ void ADynamicSplineSection::UpdateSplineSegment(int32 index)
 	int TileCount = FVector::Distance(StartPos, EndPos) / TILE_FACTOR;
 	if (TileCount == 0) TileCount = 1;
 
-	auto& Segment = Segments[index];
-	if (Segment.Num() == TileCount)
+	DynamicSplineSegment& Segment = Points[index].Segment;
+	if (Segment.Tiles.Num() == TileCount)
 	{
 		//refresh
-		for(auto& tile : Segment)
-			tile->SetStartAndEnd(StartPos, StartTangent, EndPos, EndTangent);
+		for (int Tile = 0; Tile < TileCount; Tile++)
+		{
+			float alpha = (float)Tile / (float)TileCount;
+			float endalpha = alpha + (1.0f / (float)TileCount);
+
+			FVector TileStart = Spline->GetLocationAtSplineInputKey((float)index + alpha, ESplineCoordinateSpace::Local);
+			FVector TileEnd = Spline->GetLocationAtSplineInputKey((float)index + endalpha, ESplineCoordinateSpace::Local);
+
+			FVector TileStartTangent = Spline->GetTangentAtSplineInputKey((float)index + alpha, ESplineCoordinateSpace::Local) * (1.0f / (float)TileCount);
+			FVector TileEndTangent = Spline->GetTangentAtSplineInputKey((float)index + endalpha, ESplineCoordinateSpace::Local) * (1.0f / (float)TileCount);
+
+			Segment.Tiles[Tile]->SetStartAndEnd(TileStart, TileStartTangent, TileEnd, TileEndTangent);
+		}
 	}
 	else
 	{
 		//regenerate block
-		UE_LOG(LogTemp, Warning, TEXT("tile discrepancy old %i new %i"), Segment.Num(), TileCount);
-		GenerateTrackTiles(index, Segment, SplineMesh, TileCount, false);
+		UE_LOG(LogTemp, Warning, TEXT("tile discrepancy old %i new %i"), Segment.Tiles.Num(), TileCount);
+		GenerateTrackTiles(index, Segment, SplineMesh, TileCount);
 	}
 
 	//Segments[index]->SetStartAndEnd(StartPos, StartTangent, EndPos, EndTangent, false);
 	//Segments[index]->UpdateMesh();
 }
 
-void ADynamicSplineSection::BuildSpline(bool Constructor)
+void ADynamicSplineSection::BuildSpline()
 {
-	for (auto& component : Segments)
+	for (auto& point : Points)
 	{
-		for (auto& tile : component)
+		for (auto tile : point.Segment.Tiles)
 		{
 			if (tile)
 			{
@@ -136,6 +136,15 @@ void ADynamicSplineSection::BuildSpline(bool Constructor)
 				tile->DestroyComponent();
 				tile = nullptr;
 			}
+		}
+	}
+	for (auto& component : Dummies)
+	{
+		if (component)
+		{
+			component->UnregisterComponent();
+			component->DestroyComponent();
+			component = nullptr;
 		}
 	}
 	for (auto& component : Decals)
@@ -147,13 +156,16 @@ void ADynamicSplineSection::BuildSpline(bool Constructor)
 			component = nullptr;
 		}
 	}
-	Segments.Empty();
+	Points.Empty();
 	Decals.Empty();
+	Dummies.Empty();
 
 	for (int i = 0; i < Spline->GetNumberOfSplinePoints(); i++)
 	{
+		DynamicSplinePoint NewPoint(this, i);
+
 		if (i != Spline->GetNumberOfSplinePoints() - 1)
-			BuildSplineSegment(i, SplineMesh, Constructor);
+			BuildSplineSegment(&NewPoint, SplineMesh);
 
 		UDecalComponent* Decal = NewObject<UDecalComponent>(this, UDecalComponent::StaticClass(), NAME_None);
 		if (Decal)
@@ -171,45 +183,42 @@ void ADynamicSplineSection::BuildSpline(bool Constructor)
 
 			USphereComponent* Dummy = NewObject<USphereComponent>(this, USphereComponent::StaticClass(), NAME_None);
 			Dummy->RegisterComponent();
-			
-			Dummy->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
+			Dummy->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
 			Dummy->SetCollisionProfileName(TEXT("InitialHitOnly"));
-			//Dummy->SetCollisionProfileName(TEXT("BlockAll"));
-			//Dummy->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
-			//Decal->AttachToComponent(RootComponent, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
 			Dummy->AttachToComponent(Decal, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
 			Dummy->SetSphereRadius(128.0f);
-			//Dummy->SetGenerateOverlapEvents(true);
-			//Dummy->SetRelativeLocation(PointLocation);
 			Dummies.Add(Dummy);
 		}
-	}
-	//EnableCollision();
 
-	CachedSplineCount = Spline->GetNumberOfSplinePoints();
+		Points.Add(NewPoint);
+	}
 }
 
 
 void ADynamicSplineSection::EnableCollision()
 {
-	for (auto& segment : Segments)
-		for(auto& tile : segment)
+	for (auto& point : Points)
+	{
+		for (auto& tile : point.Segment.Tiles)
 			tile->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
+	}	
 }
 
 void ADynamicSplineSection::DisableCollision()
 {
-	for (auto& segment : Segments)
-		for (auto& tile : segment)
+	for (auto& point : Points)
+	{
+		for (auto& tile : point.Segment.Tiles)
 			tile->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+	}
 }
 
 
 void ADynamicSplineSection::RefreshSpline()
 {
-	for (int i = 0; i < CachedSplineCount; i++)
+	for (int i = 0; i < Points.Num(); i++)
 	{
-		if (i != CachedSplineCount - 1)
+		if (i != Points.Num() - 1)
 			UpdateSplineSegment(i);
 
 		FVector PointLocation;
@@ -218,6 +227,12 @@ void ADynamicSplineSection::RefreshSpline()
 		Decals[i]->SetRelativeLocation(PointLocation);
 	}
 }
+//
+//void ADynamicSplineSection::BranchJunction(DynamicSplinePoint* A, DynamicSplinePoint* B)
+//{
+//	A->Junction = B;
+//	B->Junction = A;
+//}
 
 
 // Called when the game starts or when spawned
@@ -225,7 +240,7 @@ void ADynamicSplineSection::BeginPlay()
 {
 	Super::BeginPlay();
 	//RefreshSpline(false);
-	BuildSpline(false);
+	BuildSpline();
 }
 
 // Called every frame

@@ -46,10 +46,10 @@ private:
 
 	float TargetHeight = 0.0;
 
-	ADynamicSplineSection* EditSplineSection;
-	USplineComponent* EditSpline;
-	int EditSplinePoint = 0;
-	FVector EditSplineStart;
+	ADynamicSplineSection* EditSplineSection = nullptr;
+	USplineComponent* EditSpline = nullptr;
+	DynamicSplinePoint* EditSplinePoint = nullptr;
+	//FVector EditSplineStart;
 
 	//FVector LastHit;
 	bool GetMouseHit(FHitResult& OutHit, ECollisionChannel channel = ECC_Visibility);

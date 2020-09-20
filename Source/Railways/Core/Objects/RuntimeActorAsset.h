@@ -23,4 +23,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+public:
+	void UpdatePositionToGround(FVector& Position);
+	void UpdatePositionToGroundLocal(FVector& Position);
 };
