@@ -312,6 +312,11 @@ void ADynamicSplineSection::BeginPlay()
 	SecondPoint->Paths.Add(ThirdPoint);
 	ThirdPoint->Paths.Add(FourthPoint);
 
+	
+	FourthPoint->Paths.Add(ThirdPoint);
+	ThirdPoint->Paths.Add(SecondPoint);
+	SecondPoint->Paths.Add(RootPoint);
+
 	RootPoint->RootBuild();
 	//RefreshSpline(false);
 	//BuildSpline();
@@ -354,17 +359,21 @@ void UDynamicSplinePoint::RecursiveBuild(USplineComponent* Spline, TArray<UDynam
 	Spline->AddSplinePoint(GetComponentTransform().GetLocation(), ESplineCoordinateSpace::World);
 
 	ClearBranches();
+	Coverage.Add(this);
 	TArray<UDynamicSplinePoint*> NewBranches;
 	for (auto& NewBranch : Paths)
 	{
 		if (!Coverage.Contains(NewBranch))
 		{
 			NewBranches.Add(NewBranch);
-			Coverage.Add(NewBranch);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Branch already discovered!"));
 		}
 	}
 	
-	UE_LOG(LogTemp, Warning, TEXT("Spline has %i new branches"), NewBranches.Num());
+	UE_LOG(LogTemp, Warning, TEXT("Spline has %i paths and %i new branches"), Paths.Num(), NewBranches.Num());
 
 	
 
@@ -441,14 +450,12 @@ void UDynamicSplinePoint::RecursiveRefresh(USplineComponent* Spline, TArray<UDyn
 {
 	Spline->SetWorldLocationAtSplinePoint(index, GetComponentTransform().GetLocation());
 	
+	Coverage.Add(this);
 	TArray<UDynamicSplinePoint*> NewBranches;
 	for (auto NewBranch : Paths)
 	{
 		if (!Coverage.Contains(NewBranch))
-		{
 			NewBranches.Add(NewBranch);
-			Coverage.Add(NewBranch);
-		}
 	}
 
 	if (NewBranches.Num() == 1)
