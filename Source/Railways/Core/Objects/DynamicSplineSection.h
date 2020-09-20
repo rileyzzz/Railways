@@ -98,10 +98,23 @@ struct DynamicSplinePoint
 		if (Junction) Junction->JunctionSection = nullptr;
 	}
 public:
+	void UpdateJunctionTangent(DynamicSplinePoint* Other)
+	{
+		FVector SrcTangent = GetTangent(ESplineCoordinateSpace::Type::World);
+		FVector OtherTangent = Other->GetTangent(ESplineCoordinateSpace::Type::World);
+		FVector MixedTangent = FMath::Lerp(SrcTangent, OtherTangent, 0.5f);
+		SetTangent(MixedTangent, ESplineCoordinateSpace::Type::World);
+		Other->SetTangent(MixedTangent, ESplineCoordinateSpace::Type::World);
+	}
+
 	void CreateJunction(DynamicSplinePoint* Other)
 	{
 		JunctionSection = Other->ParentSection;
 		Other->JunctionSection = ParentSection;
+
+		FVector SrcTangent = GetTangent(ESplineCoordinateSpace::Type::World);
+		Other->SetTangent(SrcTangent, ESplineCoordinateSpace::Type::World);
+		//UpdateJunctionTangent(Other);
 	}
 	
 	void SetWorldLocation(FVector& InLocation)
@@ -111,6 +124,7 @@ public:
 		auto Junction = GetJunction();
 		if (Junction)
 		{
+			//UpdateJunctionTangent(Junction);
 			Junction->ParentSection->Spline->SetWorldLocationAtSplinePoint(Junction->index, InLocation);
 			Junction->ParentSection->RefreshSpline();
 		}

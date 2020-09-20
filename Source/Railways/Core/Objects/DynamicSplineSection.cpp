@@ -126,6 +126,7 @@ void ADynamicSplineSection::UpdateSplineSegment(int32 index)
 
 void ADynamicSplineSection::BuildSpline()
 {
+	TMap<FVector, ADynamicSplineSection*> PersistJunctions;
 	for (auto& point : Points)
 	{
 		for (auto tile : point.Segment.Tiles)
@@ -136,6 +137,10 @@ void ADynamicSplineSection::BuildSpline()
 				tile->DestroyComponent();
 				tile = nullptr;
 			}
+		}
+		if (point.JunctionSection)
+		{
+			PersistJunctions.Add(point.GetWorldLocation(), point.JunctionSection);
 		}
 	}
 	for (auto& component : Dummies)
@@ -188,6 +193,17 @@ void ADynamicSplineSection::BuildSpline()
 			Dummy->AttachToComponent(Decal, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
 			Dummy->SetSphereRadius(128.0f);
 			Dummies.Add(Dummy);
+		}
+
+		FVector Location = NewPoint.GetWorldLocation();
+		//if (PersistJunctions.Contains(Location)) NewPoint.JunctionSection = PersistJunctions[Location];
+		for (auto& junction : PersistJunctions)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Junction dist %f"), FVector::Distance(Location, junction.Key));
+			if (FVector::Distance(Location, junction.Key) < 10.0f)
+			{
+				NewPoint.JunctionSection = junction.Value;
+			}
 		}
 
 		Points.Add(NewPoint);

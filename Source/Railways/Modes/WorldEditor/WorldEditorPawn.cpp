@@ -336,8 +336,6 @@ void AWorldEditorPawn::StartMouse()
 							EditSplineSection = NewSection;
 							EditSpline = EditSplineSection->Spline;
 							EditSplineSection->BuildSpline();
-							FVector SrcTangent = HitPoint->GetTangent(ESplineCoordinateSpace::Type::World);
-							EditSplineSection->Points[0].SetTangent(SrcTangent, ESplineCoordinateSpace::Type::World);
 							EditSplinePoint = &EditSplineSection->Points[1];
 							HitPoint->CreateJunction(&EditSplineSection->Points[0]);
 
