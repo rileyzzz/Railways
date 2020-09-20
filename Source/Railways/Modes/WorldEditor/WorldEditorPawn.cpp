@@ -170,6 +170,7 @@ void AWorldEditorPawn::Tick(float DeltaTime)
 			{
 				if (EditSplinePoint)
 				{
+					UE_LOG(LogTemp, Warning, TEXT("setting world location"));
 					EditSplinePoint->SetWorldLocation(Target.ImpactPoint);
 					EditSplinePoint->ParentSection->RefreshSection();
 				}
@@ -300,9 +301,11 @@ void AWorldEditorPawn::StartMouse()
 			USphereComponent* dummy = dynamic_cast<USphereComponent*>(Target.Component.Get());
 			if (dummy)
 			{
+				UE_LOG(LogTemp, Warning, TEXT("sphere found"));
 				UDynamicSplinePoint* HitPoint = dynamic_cast<UDynamicSplinePoint*>(dummy->GetAttachParent());
 				if (HitPoint)
 				{
+					UE_LOG(LogTemp, Warning, TEXT("point found"));
 					if (EditMode == 0)
 					{
 
