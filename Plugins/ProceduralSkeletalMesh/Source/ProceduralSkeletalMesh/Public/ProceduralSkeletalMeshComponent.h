@@ -9,6 +9,23 @@
 /**
  * 
  */
+
+struct SkeletalVert
+{
+	FVector Location;
+	FVector Normal;
+	FVector Tangent;
+	FVector2D TexCoords;
+
+	SkeletalVert(FVector InLocation, FVector InNormal, FVector InTangent, FVector2D InTexCoords) : Location(InLocation), Normal(InNormal), Tangent(InTangent), TexCoords(InTexCoords) { }
+};
+
+struct SkeletalMeshData
+{
+	TArray<SkeletalVert> Vertices;
+	TArray<uint32> Elements;
+};
+
 UCLASS()
 class PROCEDURALSKELETALMESH_API UProceduralSkeletalMeshComponent : public USkeletalMeshComponent
 {
@@ -30,6 +47,7 @@ public:
 	//UMeshComponent overrides
 	virtual int32 GetNumMaterials() const override;
 
+	void LoadMeshData(TArray<SkeletalMeshData>& data);
 
 	friend class FProceduralSkeletalMeshSceneProxy;
 };

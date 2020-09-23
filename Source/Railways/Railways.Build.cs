@@ -11,6 +11,7 @@ public class Railways : ModuleRules
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 		PublicDependencyModuleNames.Add("RuntimeMeshComponent");
 		PublicDependencyModuleNames.Add("ContentSystem");
+		PublicDependencyModuleNames.Add("ProceduralSkeletalMesh");
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
 		// Uncomment if you are using Slate UI

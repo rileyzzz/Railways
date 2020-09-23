@@ -13,7 +13,8 @@
 	"CanContainContent": true,
 	"IsBetaVersion": false,
 	"IsExperimentalVersion": false,
-	"Installed": false,
+	"Installed": true,
+	"EnabledByDefault": true,
 	"Modules": [
 		{
 			"Name": "ProceduralSkeletalMesh",

@@ -22,7 +22,6 @@ struct FSkeletonDynamicData
 	//TArray<FVector> CablePoints;
 };
 
-
 class FProceduralSkeletalMeshSceneProxy final : public FPrimitiveSceneProxy
 {
 private:
@@ -50,6 +49,15 @@ public:
 		return reinterpret_cast<size_t>(&UniquePointer);
 	}
 
+	TArray<SkeletalMeshData> LoadedMeshes;
+	void InitBuffersWithSize(uint32 NumVertices, uint32 NumIndices)
+	{
+		VertexBuffers.InitWithDummyData(&VertexFactory, NumVertices);
+		IndexBuffer.NumIndices = NumIndices;
+		BeginInitResource(&IndexBuffer);
+	}
+
+
 	FProceduralSkeletalMeshSceneProxy(UProceduralSkeletalMeshComponent* Component) :
 		FPrimitiveSceneProxy(Component)
 		, Material(NULL)
@@ -57,12 +65,12 @@ public:
 		//, DynamicData(NULL)
 		, MaterialRelevance(Component->GetMaterialRelevance(GetScene().GetFeatureLevel()))
 	{
-		//VertexBuffers.InitWithDummyData(&VertexFactory, GetRequiredVertexCount());
+		//VertexBuffers.InitWithDummyData(&VertexFactory, LoadedMeshes[0].Vertices.Num());
 
 		//IndexBuffer.NumIndices = GetRequiredIndexCount();
 
 		// Enqueue initialization of render resource
-		BeginInitResource(&IndexBuffer);
+		//BeginInitResource(&IndexBuffer);
 
 		// Grab material
 		Material = Component->GetMaterial(0);
@@ -86,12 +94,22 @@ public:
 		}
 	}
 
-	void BuildSkeletalMesh(const TArray<FVector>& InPoints, TArray<FDynamicMeshVertex>& OutVertices, TArray<int32>& OutIndices)
+	void BuildSkeletalMesh(TArray<FDynamicMeshVertex>& OutVertices, TArray<int32>& OutIndices)
 	{
 		//const FColor VertexColor(255, 255, 255);
 		//const int32 NumPoints = InPoints.Num();
 		//const int32 SegmentCount = NumPoints - 1;
 
+		for (const auto& mesh : LoadedMeshes)
+		{
+			for (const auto& vert : mesh.Vertices)
+			{
+				//FDynamicMeshVertex NewVert;
+				OutVertices.Emplace(vert.Location);
+			}
+			for (const auto& element : mesh.Elements)
+				OutIndices.Add(element);
+		}
 		//// Build vertices
 
 		//// We double up the first and last vert of the ring, because the UVs are different
@@ -169,58 +187,68 @@ public:
 		// Build mesh
 		TArray<FDynamicMeshVertex> Vertices;
 		TArray<int32> Indices;
-		//BuildSkeletalMesh(NewDynamicData->CablePoints, Vertices, Indices);
+		BuildSkeletalMesh(Vertices, Indices);
 
 		//check(Vertices.Num() == GetRequiredVertexCount());
 		//check(Indices.Num() == GetRequiredIndexCount());
 
-		//for (int i = 0; i < Vertices.Num(); i++)
-		//{
-		//	const FDynamicMeshVertex& Vertex = Vertices[i];
+		for (int i = 0; i < Vertices.Num(); i++)
+		{
+			const FDynamicMeshVertex& Vertex = Vertices[i];
 
-		//	VertexBuffers.PositionVertexBuffer.VertexPosition(i) = Vertex.Position;
-		//	VertexBuffers.StaticMeshVertexBuffer.SetVertexTangents(i, Vertex.TangentX.ToFVector(), Vertex.GetTangentY(), Vertex.TangentZ.ToFVector());
-		//	VertexBuffers.StaticMeshVertexBuffer.SetVertexUV(i, 0, Vertex.TextureCoordinate[0]);
-		//	VertexBuffers.ColorVertexBuffer.VertexColor(i) = Vertex.Color;
-		//}
+			VertexBuffers.PositionVertexBuffer.VertexPosition(i) = Vertex.Position;
+			VertexBuffers.StaticMeshVertexBuffer.SetVertexTangents(i, Vertex.TangentX.ToFVector(), Vertex.GetTangentY(), Vertex.TangentZ.ToFVector());
+			VertexBuffers.StaticMeshVertexBuffer.SetVertexUV(i, 0, Vertex.TextureCoordinate[0]);
+			VertexBuffers.ColorVertexBuffer.VertexColor(i) = Vertex.Color;
+		}
 
-		//{
-		//	auto& VertexBuffer = VertexBuffers.PositionVertexBuffer;
-		//	void* VertexBufferData = RHILockVertexBuffer(VertexBuffer.VertexBufferRHI, 0, VertexBuffer.GetNumVertices() * VertexBuffer.GetStride(), RLM_WriteOnly);
-		//	FMemory::Memcpy(VertexBufferData, VertexBuffer.GetVertexData(), VertexBuffer.GetNumVertices() * VertexBuffer.GetStride());
-		//	RHIUnlockVertexBuffer(VertexBuffer.VertexBufferRHI);
-		//}
+		{
+			auto& VertexBuffer = VertexBuffers.PositionVertexBuffer;
+			void* VertexBufferData = RHILockVertexBuffer(VertexBuffer.VertexBufferRHI, 0, VertexBuffer.GetNumVertices() * VertexBuffer.GetStride(), RLM_WriteOnly);
+			FMemory::Memcpy(VertexBufferData, VertexBuffer.GetVertexData(), VertexBuffer.GetNumVertices() * VertexBuffer.GetStride());
+			RHIUnlockVertexBuffer(VertexBuffer.VertexBufferRHI);
+		}
 
-		//{
-		//	auto& VertexBuffer = VertexBuffers.ColorVertexBuffer;
-		//	void* VertexBufferData = RHILockVertexBuffer(VertexBuffer.VertexBufferRHI, 0, VertexBuffer.GetNumVertices() * VertexBuffer.GetStride(), RLM_WriteOnly);
-		//	FMemory::Memcpy(VertexBufferData, VertexBuffer.GetVertexData(), VertexBuffer.GetNumVertices() * VertexBuffer.GetStride());
-		//	RHIUnlockVertexBuffer(VertexBuffer.VertexBufferRHI);
-		//}
+		{
+			auto& VertexBuffer = VertexBuffers.ColorVertexBuffer;
+			void* VertexBufferData = RHILockVertexBuffer(VertexBuffer.VertexBufferRHI, 0, VertexBuffer.GetNumVertices() * VertexBuffer.GetStride(), RLM_WriteOnly);
+			FMemory::Memcpy(VertexBufferData, VertexBuffer.GetVertexData(), VertexBuffer.GetNumVertices() * VertexBuffer.GetStride());
+			RHIUnlockVertexBuffer(VertexBuffer.VertexBufferRHI);
+		}
 
-		//{
-		//	auto& VertexBuffer = VertexBuffers.StaticMeshVertexBuffer;
-		//	void* VertexBufferData = RHILockVertexBuffer(VertexBuffer.TangentsVertexBuffer.VertexBufferRHI, 0, VertexBuffer.GetTangentSize(), RLM_WriteOnly);
-		//	FMemory::Memcpy(VertexBufferData, VertexBuffer.GetTangentData(), VertexBuffer.GetTangentSize());
-		//	RHIUnlockVertexBuffer(VertexBuffer.TangentsVertexBuffer.VertexBufferRHI);
-		//}
+		{
+			auto& VertexBuffer = VertexBuffers.StaticMeshVertexBuffer;
+			void* VertexBufferData = RHILockVertexBuffer(VertexBuffer.TangentsVertexBuffer.VertexBufferRHI, 0, VertexBuffer.GetTangentSize(), RLM_WriteOnly);
+			FMemory::Memcpy(VertexBufferData, VertexBuffer.GetTangentData(), VertexBuffer.GetTangentSize());
+			RHIUnlockVertexBuffer(VertexBuffer.TangentsVertexBuffer.VertexBufferRHI);
+		}
 
-		//{
-		//	auto& VertexBuffer = VertexBuffers.StaticMeshVertexBuffer;
-		//	void* VertexBufferData = RHILockVertexBuffer(VertexBuffer.TexCoordVertexBuffer.VertexBufferRHI, 0, VertexBuffer.GetTexCoordSize(), RLM_WriteOnly);
-		//	FMemory::Memcpy(VertexBufferData, VertexBuffer.GetTexCoordData(), VertexBuffer.GetTexCoordSize());
-		//	RHIUnlockVertexBuffer(VertexBuffer.TexCoordVertexBuffer.VertexBufferRHI);
-		//}
+		{
+			auto& VertexBuffer = VertexBuffers.StaticMeshVertexBuffer;
+			void* VertexBufferData = RHILockVertexBuffer(VertexBuffer.TexCoordVertexBuffer.VertexBufferRHI, 0, VertexBuffer.GetTexCoordSize(), RLM_WriteOnly);
+			FMemory::Memcpy(VertexBufferData, VertexBuffer.GetTexCoordData(), VertexBuffer.GetTexCoordSize());
+			RHIUnlockVertexBuffer(VertexBuffer.TexCoordVertexBuffer.VertexBufferRHI);
+		}
 
-		//void* IndexBufferData = RHILockIndexBuffer(IndexBuffer.IndexBufferRHI, 0, Indices.Num() * sizeof(int32), RLM_WriteOnly);
-		//FMemory::Memcpy(IndexBufferData, &Indices[0], Indices.Num() * sizeof(int32));
-		//RHIUnlockIndexBuffer(IndexBuffer.IndexBufferRHI);
+		void* IndexBufferData = RHILockIndexBuffer(IndexBuffer.IndexBufferRHI, 0, Indices.Num() * sizeof(int32), RLM_WriteOnly);
+		FMemory::Memcpy(IndexBufferData, &Indices[0], Indices.Num() * sizeof(int32));
+		RHIUnlockIndexBuffer(IndexBuffer.IndexBufferRHI);
 	}
 
 	virtual uint32 GetMemoryFootprint(void) const override { return(sizeof(*this) + GetAllocatedSize()); }
 
 	uint32 GetAllocatedSize(void) const { return(FPrimitiveSceneProxy::GetAllocatedSize()); }
 };
+
+void UProceduralSkeletalMeshComponent::LoadMeshData(TArray<SkeletalMeshData>& data)
+{
+	FProceduralSkeletalMeshSceneProxy* SkeletalMeshSceneProxy = (FProceduralSkeletalMeshSceneProxy*)SceneProxy;
+	SkeletalMeshSceneProxy->InitBuffersWithSize(data[0].Vertices.Num(), data[0].Elements.Num());
+	for (const auto& mesh : data)
+	{
+		SkeletalMeshSceneProxy->LoadedMeshes.Add(mesh);
+	}
+}
 
 void UProceduralSkeletalMeshComponent::OnRegister()
 {

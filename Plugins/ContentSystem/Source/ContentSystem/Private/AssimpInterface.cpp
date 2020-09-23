@@ -6,8 +6,6 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
-Assimp::Importer importer;
-
 #define AIVEC3_TO_FVEC(vector) FVector(vector->x, vector->y, vector->z)
 
 void ProcessNode(const aiScene* scene, aiNode* node, AssimpImportData* ImportData)
@@ -54,6 +52,8 @@ void ProcessNode(const aiScene* scene, aiNode* node, AssimpImportData* ImportDat
 
 AssimpImportData* UAssimpInterface::ImportFBX()
 {
+    Assimp::Importer importer;
+
 	auto FileDir = FPaths::ProjectPluginsDir() + "ContentSystem/Content/Samples/icosphere.fbx";
 	UE_LOG(LogTemp, Display, TEXT("Importing FBX file %s"), *FileDir);
 
@@ -80,5 +80,15 @@ AssimpImportData* UAssimpInterface::ImportFBX()
 
 void UAssimpInterface::BuildComponent(UProceduralSkeletalMeshComponent* Component, AssimpImportData* Data)
 {
+    TArray<SkeletalMeshData> newdata;
+    for (const auto& mesh : Data->Meshes)
+    {
+        SkeletalMeshData skeletalmesh;
+        for (const auto& vert : mesh->Vertices)
+            skeletalmesh.Vertices.Emplace(vert.Location, vert.Normal, vert.Tangent, vert.TexCoords);
+        skeletalmesh.Elements = mesh->Elements;
+        newdata.Add(skeletalmesh);
+    }
 
+    Component->LoadMeshData(newdata);
 }

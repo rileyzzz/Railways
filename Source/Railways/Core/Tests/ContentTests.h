@@ -14,6 +14,7 @@ class RAILWAYS_API AContentTests : public AActor
 	
 private:
 	UAssimpInterface* Interface;
+	UProceduralSkeletalMeshComponent* Skeleton;
 public:	
 	// Sets default values for this actor's properties
 	AContentTests();

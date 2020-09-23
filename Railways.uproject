@@ -29,6 +29,14 @@
 				"Linux",
 				"Mac"
 			]
+		},
+		{
+			"Name": "ContentSystem",
+			"Enabled": true
+		},
+		{
+			"Name": "ProceduralSkeletalMesh",
+			"Enabled": true
 		}
 	]
 }
