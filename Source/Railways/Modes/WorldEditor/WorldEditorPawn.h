@@ -20,7 +20,7 @@ class RAILWAYS_API AWorldEditorPawn : public APawn
 public:
 	// Sets default values for this pawn's properties
 	AWorldEditorPawn();
-
+	virtual void PostInitializeComponents() override;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -49,10 +49,11 @@ private:
 	ADynamicSplineSection* EditSplineSection = nullptr;
 	USplineComponent* EditSpline = nullptr;
 	UDynamicSplinePoint* EditSplinePoint = nullptr;
+	USphereComponent* EditSplineDummy = nullptr;
 	//FVector EditSplineStart;
 
 	//FVector LastHit;
-	bool GetMouseHit(FHitResult& OutHit, ECollisionChannel channel = ECC_Visibility);
+	bool GetMouseHit(FHitResult& OutHit, ECollisionChannel channel = ECC_Visibility, const TArray<UPrimitiveComponent*>& Ignore = TArray<UPrimitiveComponent*>());
 	void StartMouse();
 	void EndMouse();
 public:	

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\build\CMakeFiles\dc996daf2dc6b8d826d30b1acddfbd48\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{2142AC74-A4AE-3A97-8441-0F6EE83B6A57}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

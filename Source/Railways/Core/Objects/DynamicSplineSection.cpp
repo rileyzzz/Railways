@@ -312,7 +312,6 @@ void ADynamicSplineSection::BeginPlay()
 	SecondPoint->Paths.Add(ThirdPoint);
 	ThirdPoint->Paths.Add(FourthPoint);
 
-	
 	FourthPoint->Paths.Add(ThirdPoint);
 	ThirdPoint->Paths.Add(SecondPoint);
 	SecondPoint->Paths.Add(RootPoint);

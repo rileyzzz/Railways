@@ -1,0 +1,30 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "ContentSystem",
+	"Description": "Local content storage and management system.",
+	"Category": "Other",
+	"CreatedBy": "Michael Lemmler",
+	"CreatedByURL": "https://rileyzzz.dev/",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "ContentSystem",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "ProceduralSkeletalMesh",
+			"Enabled": true
+		}
+	]
+}

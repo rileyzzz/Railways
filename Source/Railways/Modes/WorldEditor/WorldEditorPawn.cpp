@@ -88,21 +88,25 @@ void AWorldEditorPawn::SetTargetHeight(float height)
 	TargetHeight = height;
 }
 
+void AWorldEditorPawn::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	Cursor->SetDecalMaterial(DecalMaterial);
+	EditCursor->SetDecalMaterial(PaintMaterial);
+}
+
 // Called when the game starts or when spawned
 void AWorldEditorPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	Controller = dynamic_cast<AWorldEditPlayerController*>(GetController());
-
-	Cursor->SetDecalMaterial(DecalMaterial);
-	EditCursor->SetDecalMaterial(PaintMaterial);
 }
 
 // Called every frame
 void AWorldEditorPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 	//UE_LOG(LogTemp, Warning, TEXT("tick"));
 	//if (!Velocity.IsZero())
 	//{
@@ -297,11 +301,11 @@ void AWorldEditorPawn::StartMouse()
 	{
 		if (EditCategory == 1)
 		{
-			USphereComponent* dummy = dynamic_cast<USphereComponent*>(Target.Component.Get());
-			if (dummy)
+			EditSplineDummy = dynamic_cast<USphereComponent*>(Target.Component.Get());
+			if (EditSplineDummy)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("sphere found"));
-				UDynamicSplinePoint* HitPoint = dynamic_cast<UDynamicSplinePoint*>(dummy->GetAttachParent());
+				UDynamicSplinePoint* HitPoint = dynamic_cast<UDynamicSplinePoint*>(EditSplineDummy->GetAttachParent());
 				if (HitPoint)
 				{
 					UE_LOG(LogTemp, Warning, TEXT("point found"));
@@ -407,20 +411,82 @@ void AWorldEditorPawn::StartMouse()
 
 void AWorldEditorPawn::EndMouse()
 {
+	UE_LOG(LogTemp, Warning, TEXT("end mouse"));
+	//join points
+	if (EditSplinePoint)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("tracing"));
+		TArray<UPrimitiveComponent*> IgnoreComponents;
+		IgnoreComponents.Add(EditSplineDummy);
+		FHitResult Target;
+		if (GetMouseHit(Target, ECollisionChannel::ECC_GameTraceChannel1, IgnoreComponents))
+		{
+			if (EditCategory == 1)
+			{
+				USphereComponent* dummy = dynamic_cast<USphereComponent*>(Target.Component.Get());
+				if (dummy)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("other sphere found"));
+					UDynamicSplinePoint* HitPoint = dynamic_cast<UDynamicSplinePoint*>(dummy->GetAttachParent());
+					if (HitPoint && HitPoint != EditSplinePoint)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("other point found"));
+						if (EditMode == 0 || EditMode == 2)
+						{
+							/*if (!EditSplinePoint->Paths.Contains(HitPoint) && !HitPoint->Paths.Contains(EditSplinePoint))
+							{
+								EditSplinePoint->Paths.Add(HitPoint);
+								HitPoint->Paths.Add(EditSplinePoint);
+							}*/
+							for (auto& segment : HitPoint->ParentSection->Segments)
+							{
+								auto& Start = segment.StartPoint;
+								auto& End = segment.EndPoint;
+
+								for (auto& path : Start->Paths)
+								{
+									if (path == EditSplinePoint)
+										path = HitPoint;
+								}
+
+								for (auto& path : End->Paths)
+								{
+									if (path == EditSplinePoint)
+										path = HitPoint;
+								}
+							}
+
+							EditSplinePoint->UnregisterComponent();
+							EditSplinePoint->DestroyComponent();
+
+							//EditSplinePoint = HitPoint;
+
+							//if (HitPoint == HitPoint->ParentSection->RootPoint) HitPoint->ParentSection->RootPoint = NewPoint; //beginning
+
+							HitPoint->ParentSection->RootPoint->RootBuild();
+						}
+					}
+				}
+			}
+		}
+	}
+
 	//if(EditSplineSection) EditSplineSection->EnableCollision();
 	b_leftMouse = false;
 	EditSpline = nullptr;
 	EditSplineSection = nullptr;
 	EditSplinePoint = nullptr;
+	EditSplineDummy = nullptr;
 }
 
-bool AWorldEditorPawn::GetMouseHit(FHitResult& OutHit, ECollisionChannel channel)
+bool AWorldEditorPawn::GetMouseHit(FHitResult& OutHit, ECollisionChannel channel, const TArray<UPrimitiveComponent*>& Ignore)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("tracing line"));
 	FVector Position, Direction;
 	Controller->DeprojectMousePositionToWorld(Position, Direction);
 	FVector End = Position + Direction * 10000.0f;
 	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredComponents(Ignore);
 	return GetWorld()->LineTraceSingleByChannel(OutHit, Position, End, channel, CollisionParams);
 }
 

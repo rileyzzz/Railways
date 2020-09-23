@@ -1,0 +1,1859 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\Assimp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\CApi\CInterfaceIOWrapper.cpp">
+      <Filter>CApi</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\BaseImporter.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\BaseProcess.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\PostStepRegistry.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\ImporterRegistry.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\DefaultIOStream.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\DefaultIOSystem.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\ZipArchiveIOSystem.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\Importer.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\SGSpatialSort.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\VertexTriangleAdjacency.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\SpatialSort.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\SceneCombiner.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\ScenePreprocessor.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\SkeletonMeshBuilder.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\SplitByBoneCountProcess.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\StandardShapes.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\TargetAnimation.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\RemoveComments.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\Subdivision.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\scene.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\Bitmap.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\Version.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\CreateAnimMesh.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\simd.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\DefaultLogger.cpp">
+      <Filter>Logging</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\Exporter.cpp">
+      <Filter>Exporter</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\CApi\AssimpCExport.cpp">
+      <Filter>Exporter</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\CalcTangentsProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\ComputeUVMappingProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\ConvertToLHProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\EmbedTexturesProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\FindDegenerates.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\FindInstancesProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\FindInvalidDataProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\FixNormalsStep.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\DropFaceNormalsProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\GenFaceNormalsProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\GenVertexNormalsProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\PretransformVertices.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\ImproveCacheLocality.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\JoinVerticesProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\LimitBoneWeightsProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\RemoveRedundantMaterials.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\RemoveVCProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\SortByPTypeProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\SplitLargeMeshes.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\TextureTransform.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\TriangulateProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\ValidateDataStructure.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\OptimizeGraph.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\OptimizeMeshes.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\DeboneProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\ProcessHelper.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\MakeVerboseFormat.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\ScaleProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\GenBoundingBoxesProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Material\MaterialSystem.cpp">
+      <Filter>MaterialSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\STEPParser\STEPFileReader.cpp">
+      <Filter>STEPParser</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\STEPParser\STEPFileEncoding.cpp">
+      <Filter>STEPParser</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\AMF\AMFImporter.cpp">
+      <Filter>AMF</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\AMF\AMFImporter_Geometry.cpp">
+      <Filter>AMF</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\AMF\AMFImporter_Material.cpp">
+      <Filter>AMF</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\AMF\AMFImporter_Postprocess.cpp">
+      <Filter>AMF</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\3DS\3DSConverter.cpp">
+      <Filter>3DS</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\3DS\3DSLoader.cpp">
+      <Filter>3DS</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\AC\ACLoader.cpp">
+      <Filter>AC</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\ASE\ASELoader.cpp">
+      <Filter>ASE</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\ASE\ASEParser.cpp">
+      <Filter>ASE</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Assbin\AssbinLoader.cpp">
+      <Filter>ASSBIN</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\B3D\B3DImporter.cpp">
+      <Filter>B3D</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\BVH\BVHLoader.cpp">
+      <Filter>BVH</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Collada\ColladaLoader.cpp">
+      <Filter>COLLADA</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Collada\ColladaParser.cpp">
+      <Filter>COLLADA</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\DXF\DXFLoader.cpp">
+      <Filter>DXF</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\CSM\CSMLoader.cpp">
+      <Filter>CSM</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\HMP\HMPLoader.cpp">
+      <Filter>HMP</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Irr\IRRMeshLoader.cpp">
+      <Filter>IRRMESH</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Irr\IRRShared.cpp">
+      <Filter>IRR</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Irr\IRRLoader.cpp">
+      <Filter>IRR</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\LWO\LWOAnimation.cpp">
+      <Filter>LWO</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\LWO\LWOBLoader.cpp">
+      <Filter>LWO</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\LWO\LWOLoader.cpp">
+      <Filter>LWO</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\LWO\LWOMaterial.cpp">
+      <Filter>LWO</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\LWS\LWSLoader.cpp">
+      <Filter>LWS</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MD2\MD2Loader.cpp">
+      <Filter>MD2</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MD3\MD3Loader.cpp">
+      <Filter>MD3</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MD5\MD5Loader.cpp">
+      <Filter>MD5</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MD5\MD5Parser.cpp">
+      <Filter>MD5</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MDC\MDCLoader.cpp">
+      <Filter>MDC</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MDL\MDLLoader.cpp">
+      <Filter>MDL</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MDL\MDLMaterialLoader.cpp">
+      <Filter>MDL</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\NFF\NFFLoader.cpp">
+      <Filter>NFF</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\NDO\NDOLoader.cpp">
+      <Filter>NDO</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\OFF\OFFLoader.cpp">
+      <Filter>OFF</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Obj\ObjFileImporter.cpp">
+      <Filter>OBJ</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Obj\ObjFileMtlImporter.cpp">
+      <Filter>OBJ</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Obj\ObjFileParser.cpp">
+      <Filter>OBJ</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Ogre\OgreImporter.cpp">
+      <Filter>OGRE</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Ogre\OgreStructs.cpp">
+      <Filter>OGRE</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Ogre\OgreBinarySerializer.cpp">
+      <Filter>OGRE</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Ogre\OgreXmlSerializer.cpp">
+      <Filter>OGRE</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Ogre\OgreMaterial.cpp">
+      <Filter>OGRE</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\OpenGEX\OpenGEXImporter.cpp">
+      <Filter>OPENGEX</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Ply\PlyLoader.cpp">
+      <Filter>PLY</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Ply\PlyParser.cpp">
+      <Filter>PLY</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MS3D\MS3DLoader.cpp">
+      <Filter>MS3D</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\COB\COBLoader.cpp">
+      <Filter>COB</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Blender\BlenderLoader.cpp">
+      <Filter>BLEND</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Blender\BlenderDNA.cpp">
+      <Filter>BLEND</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Blender\BlenderScene.cpp">
+      <Filter>BLEND</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Blender\BlenderModifier.cpp">
+      <Filter>BLEND</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Blender\BlenderBMesh.cpp">
+      <Filter>BLEND</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Blender\BlenderTessellator.cpp">
+      <Filter>BLEND</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Blender\BlenderCustomData.cpp">
+      <Filter>BLEND</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\IFC\IFCLoader.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\IFC\IFCReaderGen1_2x3.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\IFC\IFCReaderGen2_2x3.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\IFC\IFCUtil.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\IFC\IFCGeometry.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\IFC\IFCMaterial.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\IFC\IFCProfile.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\IFC\IFCCurve.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\IFC\IFCBoolean.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\IFC\IFCOpenings.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\XGL\XGLLoader.cpp">
+      <Filter>XGL</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXImporter.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXParser.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXTokenizer.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXConverter.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXUtil.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXDocument.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXProperties.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXMeshGeometry.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXMaterial.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXModel.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXAnimation.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXNodeAttribute.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXDeformer.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXBinaryTokenizer.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXDocumentUtil.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Q3D\Q3DLoader.cpp">
+      <Filter>Q3D</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Q3BSP\Q3BSPFileParser.cpp">
+      <Filter>Q3BSP</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Q3BSP\Q3BSPFileImporter.cpp">
+      <Filter>Q3BSP</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Raw\RawLoader.cpp">
+      <Filter>RAW</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\SIB\SIBImporter.cpp">
+      <Filter>SIB</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\SMD\SMDLoader.cpp">
+      <Filter>SMD</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\STL\STLLoader.cpp">
+      <Filter>STL</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Terragen\TerragenLoader.cpp">
+      <Filter>TERRAGEN</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Unreal\UnrealLoader.cpp">
+      <Filter>3D</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X\XFileImporter.cpp">
+      <Filter>X</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X\XFileParser.cpp">
+      <Filter>X</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X3D\X3DImporter.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X3D\X3DImporter_Geometry2D.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X3D\X3DImporter_Geometry3D.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X3D\X3DImporter_Group.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X3D\X3DImporter_Light.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X3D\X3DImporter_Metadata.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X3D\X3DImporter_Networking.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X3D\X3DImporter_Postprocess.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X3D\X3DImporter_Rendering.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X3D\X3DImporter_Shape.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X3D\X3DImporter_Texturing.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X3D\FIReader.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X3D\X3DVocabulary.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\glTF\glTFCommon.cpp">
+      <Filter>GLTF</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\glTF\glTFImporter.cpp">
+      <Filter>GLTF</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\glTF2\glTF2Importer.cpp">
+      <Filter>GLTF</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\3MF\D3MFImporter.cpp">
+      <Filter>3MF</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\3MF\D3MFOpcPackage.cpp">
+      <Filter>3MF</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MMD\MMDImporter.cpp">
+      <Filter>MMD</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MMD\MMDPmxParser.cpp">
+      <Filter>MMD</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\StepFile\StepFileImporter.cpp">
+      <Filter>STEP</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\StepFile\StepFileGen1.cpp">
+      <Filter>STEP</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\StepFile\StepFileGen2.cpp">
+      <Filter>STEP</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\StepFile\StepFileGen3.cpp">
+      <Filter>STEP</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\3DS\3DSExporter.cpp">
+      <Filter>3DS_EXPORTER</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Assbin\AssbinExporter.cpp">
+      <Filter>ASSBIN_EXPORTER</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Assxml\AssxmlExporter.cpp">
+      <Filter>ASSXML_EXPORTER</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Collada\ColladaExporter.cpp">
+      <Filter>COLLADA_EXPORTER</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Obj\ObjExporter.cpp">
+      <Filter>OBJ_EXPORTER</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\OpenGEX\OpenGEXExporter.cpp">
+      <Filter>OPENGEX_EXPORTER</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Ply\PlyExporter.cpp">
+      <Filter>PLY_EXPORTER</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXExporter.cpp">
+      <Filter>FBX_EXPORTER</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXExportNode.cpp">
+      <Filter>FBX_EXPORTER</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXExportProperty.cpp">
+      <Filter>FBX_EXPORTER</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\STL\STLExporter.cpp">
+      <Filter>STL_EXPORTER</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X\XFileExporter.cpp">
+      <Filter>X_EXPORTER</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X3D\X3DExporter.cpp">
+      <Filter>X3D_EXPORTER</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\glTF\glTFExporter.cpp">
+      <Filter>GLTF_EXPORTER</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\glTF2\glTF2Exporter.cpp">
+      <Filter>GLTF_EXPORTER</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\3MF\D3MFExporter.cpp">
+      <Filter>3MF_EXPORTER</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Assjson\cencode.c">
+      <Filter>ASSJSON_EXPORTER</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Assjson\json_exporter.cpp">
+      <Filter>ASSJSON_EXPORTER</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Assjson\mesh_splitter.cpp">
+      <Filter>ASSJSON_EXPORTER</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Step\StepExporter.cpp">
+      <Filter>STEP_EXPORTER</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\unzip\ioapi.c">
+      <Filter>Contrib\unzip</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\unzip\unzip.c">
+      <Filter>Contrib\unzip</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\poly2tri\poly2tri\common\shapes.cc">
+      <Filter>Contrib\Poly2Tri</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\poly2tri\poly2tri\sweep\advancing_front.cc">
+      <Filter>Contrib\Poly2Tri</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\poly2tri\poly2tri\sweep\cdt.cc">
+      <Filter>Contrib\Poly2Tri</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\poly2tri\poly2tri\sweep\sweep.cc">
+      <Filter>Contrib\Poly2Tri</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\poly2tri\poly2tri\sweep\sweep_context.cc">
+      <Filter>Contrib\Poly2Tri</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\clipper\clipper.cpp">
+      <Filter>Contrib\Clipper</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\openddlparser\code\OpenDDLParser.cpp">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\openddlparser\code\DDLNode.cpp">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\openddlparser\code\OpenDDLCommon.cpp">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\openddlparser\code\OpenDDLExport.cpp">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\openddlparser\code\Value.cpp">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\openddlparser\code\OpenDDLStream.cpp">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcArithmeticCodec.cpp">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcDynamicVectorDecoder.cpp">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcDynamicVectorEncoder.cpp">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcTools.cpp">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcTriangleFans.cpp">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\zip\src\zip.c">
+      <Filter>ziplib</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\CApi\CInterfaceIOWrapper.h">
+      <Filter>CApi</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\BaseProcess.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\Importer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\ScenePrivate.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\DefaultProgressHandler.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\PolyTools.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\IFF.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\VertexTriangleAdjacency.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\ScenePreprocessor.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\SplitByBoneCountProcess.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\TargetAnimation.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\simd.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\DefaultLogger.hpp">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\LogStream.hpp">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\Logger.hpp">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\NullLogger.hpp">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\Win32DebugLogStream.h">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\FileLogStream.h">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Common\StdOStreamLogStream.h">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\BlobIOSystem.h">
+      <Filter>Exporter</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\CalcTangentsProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\ComputeUVMappingProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\ConvertToLHProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\EmbedTexturesProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\FindDegenerates.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\FindInstancesProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\FindInvalidDataProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\FixNormalsStep.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\DropFaceNormalsProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\GenFaceNormalsProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\GenVertexNormalsProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\PretransformVertices.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\ImproveCacheLocality.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\JoinVerticesProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\LimitBoneWeightsProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\RemoveRedundantMaterials.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\RemoveVCProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\SortByPTypeProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\SplitLargeMeshes.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\TextureTransform.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\TriangulateProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\ValidateDataStructure.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\OptimizeGraph.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\OptimizeMeshes.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\DeboneProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\ProcessHelper.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\MakeVerboseFormat.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\ScaleProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\PostProcessing\GenBoundingBoxesProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Material\MaterialSystem.h">
+      <Filter>MaterialSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\STEPParser\STEPFileReader.h">
+      <Filter>STEPParser</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\STEPParser\STEPFileEncoding.h">
+      <Filter>STEPParser</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\AMF\AMFImporter.hpp">
+      <Filter>AMF</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\AMF\AMFImporter_Macro.hpp">
+      <Filter>AMF</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\AMF\AMFImporter_Node.hpp">
+      <Filter>AMF</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\3DS\3DSHelper.h">
+      <Filter>3DS</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\3DS\3DSLoader.h">
+      <Filter>3DS</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\AC\ACLoader.h">
+      <Filter>AC</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\ASE\ASELoader.h">
+      <Filter>ASE</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\ASE\ASEParser.h">
+      <Filter>ASE</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Assbin\AssbinLoader.h">
+      <Filter>ASSBIN</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\B3D\B3DImporter.h">
+      <Filter>B3D</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\BVH\BVHLoader.h">
+      <Filter>BVH</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Collada\ColladaHelper.h">
+      <Filter>COLLADA</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Collada\ColladaLoader.h">
+      <Filter>COLLADA</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Collada\ColladaParser.h">
+      <Filter>COLLADA</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\DXF\DXFLoader.h">
+      <Filter>DXF</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\DXF\DXFHelper.h">
+      <Filter>DXF</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\CSM\CSMLoader.h">
+      <Filter>CSM</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\HMP\HMPFileData.h">
+      <Filter>HMP</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\HMP\HMPLoader.h">
+      <Filter>HMP</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\HMP\HalfLifeFileData.h">
+      <Filter>HMP</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Irr\IRRMeshLoader.h">
+      <Filter>IRRMESH</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Irr\IRRShared.h">
+      <Filter>IRR</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Irr\IRRLoader.h">
+      <Filter>IRR</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\LWO\LWOAnimation.h">
+      <Filter>LWO</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\LWO\LWOFileData.h">
+      <Filter>LWO</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\LWO\LWOLoader.h">
+      <Filter>LWO</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\LWS\LWSLoader.h">
+      <Filter>LWS</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MD2\MD2FileData.h">
+      <Filter>MD2</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MD2\MD2Loader.h">
+      <Filter>MD2</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MD2\MD2NormalTable.h">
+      <Filter>MD2</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MD3\MD3FileData.h">
+      <Filter>MD3</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MD3\MD3Loader.h">
+      <Filter>MD3</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MD5\MD5Loader.h">
+      <Filter>MD5</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MD5\MD5Parser.h">
+      <Filter>MD5</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MDC\MDCFileData.h">
+      <Filter>MDC</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MDC\MDCLoader.h">
+      <Filter>MDC</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MDC\MDCNormalTable.h">
+      <Filter>MDC</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MDL\MDLDefaultColorMap.h">
+      <Filter>MDL</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MDL\MDLFileData.h">
+      <Filter>MDL</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MDL\MDLLoader.h">
+      <Filter>MDL</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\NFF\NFFLoader.h">
+      <Filter>NFF</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\NDO\NDOLoader.h">
+      <Filter>NDO</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\OFF\OFFLoader.h">
+      <Filter>OFF</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Obj\ObjFileData.h">
+      <Filter>OBJ</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Obj\ObjFileImporter.h">
+      <Filter>OBJ</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Obj\ObjFileMtlImporter.h">
+      <Filter>OBJ</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Obj\ObjFileParser.h">
+      <Filter>OBJ</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Obj\ObjTools.h">
+      <Filter>OBJ</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Ogre\OgreImporter.h">
+      <Filter>OGRE</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Ogre\OgreStructs.h">
+      <Filter>OGRE</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Ogre\OgreParsingUtils.h">
+      <Filter>OGRE</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Ogre\OgreBinarySerializer.h">
+      <Filter>OGRE</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Ogre\OgreXmlSerializer.h">
+      <Filter>OGRE</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\OpenGEX\OpenGEXImporter.h">
+      <Filter>OPENGEX</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\OpenGEX\OpenGEXStructs.h">
+      <Filter>OPENGEX</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Ply\PlyLoader.h">
+      <Filter>PLY</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Ply\PlyParser.h">
+      <Filter>PLY</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MS3D\MS3DLoader.h">
+      <Filter>MS3D</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\COB\COBLoader.h">
+      <Filter>COB</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\COB\COBScene.h">
+      <Filter>COB</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Blender\BlenderLoader.h">
+      <Filter>BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Blender\BlenderDNA.h">
+      <Filter>BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Blender\BlenderDNA.inl">
+      <Filter>BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Blender\BlenderScene.h">
+      <Filter>BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Blender\BlenderSceneGen.h">
+      <Filter>BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Blender\BlenderIntermediate.h">
+      <Filter>BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Blender\BlenderModifier.h">
+      <Filter>BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Blender\BlenderBMesh.h">
+      <Filter>BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Blender\BlenderTessellator.h">
+      <Filter>BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Blender\BlenderCustomData.h">
+      <Filter>BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\IFC\IFCLoader.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\IFC\IFCReaderGen_2x3.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\IFC\IFCUtil.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\XGL\XGLLoader.h">
+      <Filter>XGL</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXCompileConfig.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXImporter.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXParser.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXTokenizer.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXImportSettings.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXConverter.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXUtil.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXDocument.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXProperties.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXMeshGeometry.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXCommon.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Q3D\Q3DLoader.h">
+      <Filter>Q3D</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Q3BSP\Q3BSPFileData.h">
+      <Filter>Q3BSP</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Q3BSP\Q3BSPFileParser.h">
+      <Filter>Q3BSP</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Q3BSP\Q3BSPFileImporter.h">
+      <Filter>Q3BSP</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Raw\RawLoader.h">
+      <Filter>RAW</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\SIB\SIBImporter.h">
+      <Filter>SIB</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\SMD\SMDLoader.h">
+      <Filter>SMD</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\STL\STLLoader.h">
+      <Filter>STL</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Terragen\TerragenLoader.h">
+      <Filter>TERRAGEN</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Unreal\UnrealLoader.h">
+      <Filter>3D</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X\XFileHelper.h">
+      <Filter>X</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X\XFileImporter.h">
+      <Filter>X</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X\XFileParser.h">
+      <Filter>X</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X3D\X3DImporter.hpp">
+      <Filter>X3D</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X3D\X3DImporter_Macro.hpp">
+      <Filter>X3D</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X3D\X3DImporter_Node.hpp">
+      <Filter>X3D</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X3D\FIReader.hpp">
+      <Filter>X3D</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\glTF\glTFCommon.h">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\glTF\glTFAsset.h">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\glTF\glTFAsset.inl">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\glTF\glTFAssetWriter.h">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\glTF\glTFAssetWriter.inl">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\glTF\glTFImporter.h">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\glTF2\glTF2Asset.h">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\glTF2\glTF2Asset.inl">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\glTF2\glTF2AssetWriter.h">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\glTF2\glTF2AssetWriter.inl">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\glTF2\glTF2Importer.h">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\3MF\D3MFImporter.h">
+      <Filter>3MF</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\3MF\D3MFOpcPackage.h">
+      <Filter>3MF</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\3MF\3MFXmlTags.h">
+      <Filter>3MF</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MMD\MMDCpp14.h">
+      <Filter>MMD</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MMD\MMDImporter.h">
+      <Filter>MMD</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MMD\MMDPmdParser.h">
+      <Filter>MMD</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MMD\MMDPmxParser.h">
+      <Filter>MMD</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\MMD\MMDVmdParser.h">
+      <Filter>MMD</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Step\STEPFile.h">
+      <Filter>STEP</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\StepFile\StepFileImporter.h">
+      <Filter>STEP</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Importer\StepFile\StepReaderGen.h">
+      <Filter>STEP</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\3DS\3DSExporter.h">
+      <Filter>3DS_EXPORTER</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Assbin\AssbinExporter.h">
+      <Filter>ASSBIN_EXPORTER</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Assxml\AssxmlExporter.h">
+      <Filter>ASSXML_EXPORTER</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Collada\ColladaExporter.h">
+      <Filter>COLLADA_EXPORTER</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Obj\ObjExporter.h">
+      <Filter>OBJ_EXPORTER</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\OpenGEX\OpenGEXExporter.h">
+      <Filter>OPENGEX_EXPORTER</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Ply\PlyExporter.h">
+      <Filter>PLY_EXPORTER</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXExporter.h">
+      <Filter>FBX_EXPORTER</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXExportNode.h">
+      <Filter>FBX_EXPORTER</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\FBX\FBXExportProperty.h">
+      <Filter>FBX_EXPORTER</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\STL\STLExporter.h">
+      <Filter>STL_EXPORTER</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X\XFileExporter.h">
+      <Filter>X_EXPORTER</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\X3D\X3DExporter.hpp">
+      <Filter>X3D_EXPORTER</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\glTF\glTFExporter.h">
+      <Filter>GLTF_EXPORTER</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\glTF2\glTF2Exporter.h">
+      <Filter>GLTF_EXPORTER</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\3MF\D3MFExporter.h">
+      <Filter>3MF_EXPORTER</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Assjson\cencode.h">
+      <Filter>ASSJSON_EXPORTER</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Assjson\mesh_splitter.h">
+      <Filter>ASSJSON_EXPORTER</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\Step\StepExporter.h">
+      <Filter>STEP_EXPORTER</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\irrXMLWrapper.h">
+      <Filter>IrrXML</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\unzip\crypt.h">
+      <Filter>Contrib\unzip</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\unzip\ioapi.h">
+      <Filter>Contrib\unzip</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\unzip\unzip.h">
+      <Filter>Contrib\unzip</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\poly2tri\poly2tri\common\shapes.h">
+      <Filter>Contrib\Poly2Tri</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\poly2tri\poly2tri\common\utils.h">
+      <Filter>Contrib\Poly2Tri</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\poly2tri\poly2tri\sweep\advancing_front.h">
+      <Filter>Contrib\Poly2Tri</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\poly2tri\poly2tri\sweep\cdt.h">
+      <Filter>Contrib\Poly2Tri</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\poly2tri\poly2tri\sweep\sweep.h">
+      <Filter>Contrib\Poly2Tri</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\poly2tri\poly2tri\sweep\sweep_context.h">
+      <Filter>Contrib\Poly2Tri</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\clipper\clipper.hpp">
+      <Filter>Contrib\Clipper</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\openddlparser\include\openddlparser\OpenDDLParser.h">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\openddlparser\include\openddlparser\OpenDDLParserUtils.h">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\openddlparser\include\openddlparser\OpenDDLCommon.h">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\openddlparser\include\openddlparser\OpenDDLExport.h">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\openddlparser\include\openddlparser\OpenDDLStream.h">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\openddlparser\include\openddlparser\DDLNode.h">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\openddlparser\include\openddlparser\Value.h">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcAdjacencyInfo.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcArithmeticCodec.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcBinaryStream.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcCommon.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcDVEncodeParams.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcDynamicVectorDecoder.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcDynamicVectorEncoder.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcDynamicVector.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcFIFO.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcIndexedFaceSet.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcIndexedFaceSet.inl">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcSC3DMCDecoder.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcSC3DMCDecoder.inl">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcSC3DMCEncodeParams.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcSC3DMCEncoder.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcSC3DMCEncoder.inl">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcTimer.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcTriangleFans.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcTriangleListDecoder.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcTriangleListDecoder.inl">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcTriangleListEncoder.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcTriangleListEncoder.inl">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcVector.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\Open3DGC\o3dgcVector.inl">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\zip\src\miniz.h">
+      <Filter>ziplib</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\contrib\zip\src\zip.h">
+      <Filter>ziplib</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\anim.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\aabb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\ai_assert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\color4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\color4.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\build\include\assimp\config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\defs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\Defines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\cfileio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\material.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\matrix3x3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\matrix3x3.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\matrix4x4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\matrix4x4.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\pbrmaterial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\postprocess.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\quaternion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\quaternion.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\metadata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\vector2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\vector2.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\vector3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\vector3.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\cimport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\importerdesc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\Importer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\ProgressHandler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\IOStream.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\IOSystem.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\cexport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\Exporter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\DefaultIOStream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\DefaultIOSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\ZipArchiveIOSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\SceneCombiner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\fast_atof.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\qnan.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\BaseImporter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\Hash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\MemoryIOWrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\ParsingUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\StreamReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\StreamWriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\StringComparison.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\StringUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\SGSpatialSort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\GenericProperty.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\SpatialSort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\SkeletonMeshBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\SmoothingGroups.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\SmoothingGroups.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\StandardShapes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\RemoveComments.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\Subdivision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\Vertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\LineSplitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\TinyFormatter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\Profiler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\LogAux.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\Bitmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\XMLTools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\IOStreamBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\CreateAnimMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\MathFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\Macros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\Exceptional.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\ByteSwapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\Compiler\pushpack1.h">
+      <Filter>Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\Compiler\poppack1.h">
+      <Filter>Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\include\assimp\Compiler\pstdint.h">
+      <Filter>Compiler</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="E:\Users\riley_000\Documents\Unreal Projects\Railways\Plugins\ContentSystem\Source\ThirdParty\Assimp\assimp-5.0.1\code\res\assimp.rc">
+      <Filter>Source Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="3D">
+      <UniqueIdentifier>{174F75D0-6DC8-3BCD-92CB-CB622356F2CA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3DS">
+      <UniqueIdentifier>{D707AC56-9769-3B37-B06C-DABBD0909E91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3DS_EXPORTER">
+      <UniqueIdentifier>{F756E555-CBDD-3C4D-B0DB-362EFFFB9C35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3MF">
+      <UniqueIdentifier>{BCADD74D-89F4-3370-9876-39E87DCD0485}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3MF_EXPORTER">
+      <UniqueIdentifier>{D183C47C-A8F3-3734-B9C7-EDE0F5401518}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AC">
+      <UniqueIdentifier>{6C1F1801-4965-31FF-B1C8-B5B34404A80F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AMF">
+      <UniqueIdentifier>{C83508DB-8025-3CF8-A0AC-E28269298E29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASE">
+      <UniqueIdentifier>{EC7C1AC8-167A-333A-8539-449DF996266F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASSBIN">
+      <UniqueIdentifier>{1EF6EEBB-94C2-3C65-9AB9-AE60CC628A19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASSBIN_EXPORTER">
+      <UniqueIdentifier>{9664A4BB-ABC7-3D39-9838-D201BED8EE98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASSJSON_EXPORTER">
+      <UniqueIdentifier>{E9DFB390-FE1E-3170-A4A0-8D34B38A1757}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASSXML_EXPORTER">
+      <UniqueIdentifier>{04B747E4-3F15-366B-AC29-2EA6A001C560}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="B3D">
+      <UniqueIdentifier>{27364708-299F-3884-94C9-D6CCB5F68F17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BLEND">
+      <UniqueIdentifier>{B3545E1E-5FE4-346D-BC1C-2BAF169A2F08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BVH">
+      <UniqueIdentifier>{643E0C7E-127E-32BA-BE51-47C7A055C789}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CApi">
+      <UniqueIdentifier>{5F5B95A1-C8AB-332D-BC7B-16CB140D8DB6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="COB">
+      <UniqueIdentifier>{406FAF24-D45A-3E3E-846F-4E0537D59961}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="COLLADA">
+      <UniqueIdentifier>{14D7BF37-695C-3D3B-9328-8D123A847DF6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="COLLADA_EXPORTER">
+      <UniqueIdentifier>{42C293C5-1B3E-3E51-8D70-8219CC6802C6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CSM">
+      <UniqueIdentifier>{4E1AA9B7-5A94-3536-80A6-99BF9B0099E7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{3EADE02D-85FE-3A1A-BDF3-35D8CABD4F63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Compiler">
+      <UniqueIdentifier>{3A30A004-4C3D-368B-A625-F5B86DDA83B3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contrib">
+      <UniqueIdentifier>{41F3E730-0A33-367D-9A8B-E70535ACAB45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contrib\Clipper">
+      <UniqueIdentifier>{FAAC6182-B4B3-3DCA-981B-F85D18E742EA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contrib\Poly2Tri">
+      <UniqueIdentifier>{C763FC7A-8014-31AA-8D80-8DE8A62CF19C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contrib\open3dgc">
+      <UniqueIdentifier>{65D59391-8383-3BA1-9E69-1777D1E5999F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contrib\openddl_parser">
+      <UniqueIdentifier>{6EA6CA3F-AB7B-3C1B-BB3D-9CCC53EA58C9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contrib\unzip">
+      <UniqueIdentifier>{B2F8DDE8-5A19-362C-9096-5AACDD2D889F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DXF">
+      <UniqueIdentifier>{C93C5D3B-2E85-3991-B5F9-7F29E07F14A3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Exporter">
+      <UniqueIdentifier>{1830F8FA-B369-365D-8E73-873C11F4FE5D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FBX">
+      <UniqueIdentifier>{D77B8268-C37A-3AD0-9609-A8ED70F2DB80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FBX_EXPORTER">
+      <UniqueIdentifier>{B78041EB-5745-3C12-97EB-E2817C06AEBC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GLTF">
+      <UniqueIdentifier>{222C7507-083B-3418-B369-C44332B1B159}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GLTF_EXPORTER">
+      <UniqueIdentifier>{D08BD4B0-75D0-3420-A14D-9EE18D10DE55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HMP">
+      <UniqueIdentifier>{7280618E-95DE-31DE-B5FC-2F48B83B8096}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{08850A22-2591-3CFE-96F7-35872E41A047}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IFC">
+      <UniqueIdentifier>{4A5940C6-DA19-3290-902E-0470FDEC3F15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IRR">
+      <UniqueIdentifier>{7BCB833E-4008-3ED6-BB52-E07865EC8E6E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IRRMESH">
+      <UniqueIdentifier>{E24E267B-AF00-3D46-9AB9-DCECB9E5B97E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IrrXML">
+      <UniqueIdentifier>{C61C475A-005E-38F8-8D35-93BFA03E4F36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LWO">
+      <UniqueIdentifier>{75DD3899-C85A-3043-8471-F33A2F4BD1C6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LWS">
+      <UniqueIdentifier>{19CDBC53-318D-38DD-AD78-5FBC961B65CD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logging">
+      <UniqueIdentifier>{C1178B4C-135D-389D-A797-801AD3DCF1D3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MD2">
+      <UniqueIdentifier>{A3B567B7-9190-330F-9765-EC22533A587E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MD3">
+      <UniqueIdentifier>{1FF5726C-BA69-31AA-A490-D3AE6AB90FDA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MD5">
+      <UniqueIdentifier>{F6C60AC9-0B10-3896-8FB3-83588E224270}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MDC">
+      <UniqueIdentifier>{45AD8E6B-64A3-39E8-A638-C1DD4E508BC0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MDL">
+      <UniqueIdentifier>{6D3FC0BA-4EC0-3522-ABCF-84CBD0B03AC7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MMD">
+      <UniqueIdentifier>{F280343A-A85D-37D6-AACF-850581F969C1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MS3D">
+      <UniqueIdentifier>{D173E47E-D2C2-3F84-B818-577949A73ED6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MaterialSystem">
+      <UniqueIdentifier>{08EB359B-3CCD-3A39-A691-0DB356D87289}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NDO">
+      <UniqueIdentifier>{A7D65F46-8D04-34B6-B782-7B2A46395C27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NFF">
+      <UniqueIdentifier>{78DF4694-3C12-3702-A11C-404F491887E1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OBJ">
+      <UniqueIdentifier>{BD87D4E9-6D79-3356-8967-6E77919F4EA9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OBJ_EXPORTER">
+      <UniqueIdentifier>{2E405B21-2BD0-39A9-9A03-7C0D98416A44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OFF">
+      <UniqueIdentifier>{473053B9-4D0D-36BF-A5D1-FB98F9C1B113}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OGRE">
+      <UniqueIdentifier>{FFDD4886-F6FD-3B1B-8411-71A8ABF1AFA5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OPENGEX">
+      <UniqueIdentifier>{86AC8A32-0324-30C6-9958-BE725466A4CD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OPENGEX_EXPORTER">
+      <UniqueIdentifier>{AAE3FD39-5C4F-37E2-8003-BB2DFB33F0C2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PLY">
+      <UniqueIdentifier>{71672973-69A4-3901-A418-FDEDB958CEAD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PLY_EXPORTER">
+      <UniqueIdentifier>{2785F087-906F-34B8-846B-C0733ED316C4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PostProcessing">
+      <UniqueIdentifier>{154B687C-ED0A-363F-95E5-16DF1DB4274A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Q3BSP">
+      <UniqueIdentifier>{221D717F-3278-3A5A-9DAB-A1928EE8E8A0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Q3D">
+      <UniqueIdentifier>{907C9AFF-BC8D-39DB-A50D-353D7A00F9BF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RAW">
+      <UniqueIdentifier>{C2304C5B-D86C-3D2A-8E05-DCFC77FC5303}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SIB">
+      <UniqueIdentifier>{1417A896-BE78-36C3-B0F5-427BB1BA271E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SMD">
+      <UniqueIdentifier>{EB31A549-2C29-394D-8856-68B14D2F67F0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STEP">
+      <UniqueIdentifier>{9F462C8D-6271-3750-97BF-DABDF310C7A5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STEPParser">
+      <UniqueIdentifier>{7C691C5E-B2B9-3F1D-9057-34BF103BF8F9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STEP_EXPORTER">
+      <UniqueIdentifier>{29315406-00DF-343C-BB98-C5CFD01F89A2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STL">
+      <UniqueIdentifier>{21AF7F7E-1F7F-3E6F-A893-B5D09C4A1C05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STL_EXPORTER">
+      <UniqueIdentifier>{05508A61-37EA-396F-8323-0DD39020319E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{2BD1C110-0EFE-3800-A538-12A611391B0C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TERRAGEN">
+      <UniqueIdentifier>{0241D403-DA9B-3A5D-9F4D-10395013DBD4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="X">
+      <UniqueIdentifier>{5074869A-F717-311F-B642-B3571227610D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="X3D">
+      <UniqueIdentifier>{938E2DA9-25FB-3C6E-BFB3-EB2F0165E356}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="X3D_EXPORTER">
+      <UniqueIdentifier>{FA55376F-E29B-3D4D-B284-5C55E1251E96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="XGL">
+      <UniqueIdentifier>{C03538B4-A8E7-35DA-8FCD-39238B20D816}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="X_EXPORTER">
+      <UniqueIdentifier>{4EB5ECE0-B322-386F-9D16-E7C36F62F3B2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ziplib">
+      <UniqueIdentifier>{E64D31A3-B7E7-3529-ABF3-98C10BD735EC}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
