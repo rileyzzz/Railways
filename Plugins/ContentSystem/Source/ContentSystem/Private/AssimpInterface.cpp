@@ -19,12 +19,7 @@ void ProcessNode(const aiScene* scene, aiNode* node, AssimpImportData* ImportDat
         //mesh data
         for (unsigned int t = 0; t < mesh->mNumVertices; t++)
         {
-            //const auto& Vert = &mesh->mVertices[t];
-            auto Vert = mesh->mVertices[t];
-            Vert.x *= 100.0f;
-            Vert.y *= 100.0f;
-            Vert.z *= 100.0f;
-
+            const auto& Vert = &mesh->mVertices[t];
             const auto& Normal = &mesh->mNormals[t];
             const auto& Tangent = &mesh->mTangents[t];
             FVector2D TexCoords(0.0f, 0.0f);
@@ -33,7 +28,7 @@ void ProcessNode(const aiScene* scene, aiNode* node, AssimpImportData* ImportDat
                 const auto AITexCoords = &mesh->mTextureCoords[0][t];
                 TexCoords = FVector2D(AITexCoords->x, AITexCoords->y); // 1-?
             }
-            NewMesh->Vertices.Emplace(FVector(Vert.x, Vert.y, Vert.z), AIVEC3_TO_FVEC(Normal), AIVEC3_TO_FVEC(Tangent), TexCoords);
+            NewMesh->Vertices.Emplace(AIVEC3_TO_FVEC(Vert), AIVEC3_TO_FVEC(Normal), AIVEC3_TO_FVEC(Tangent), TexCoords);
         }
 
         for (unsigned int t = 0; t < mesh->mNumFaces; t++)
@@ -68,7 +63,6 @@ AssimpImportData* UAssimpInterface::ImportFBX()
 		aiProcess_JoinIdenticalVertices |
 		aiProcess_SortByPType |
         aiProcess_FlipUVs |
-        aiProcess_MakeLeftHanded |
         aiProcess_FlipWindingOrder |
 		aiProcess_GenNormals);
 
@@ -84,52 +78,4 @@ AssimpImportData* UAssimpInterface::ImportFBX()
     ProcessNode(scene, scene->mRootNode, MeshData);
 
 	return MeshData;
-}
-
-void UAssimpInterface::BuildComponent(UProceduralSkeletalMeshComponent* Component, AssimpImportData* Data)
-{
-    const int32 NumMeshes = Data->Meshes.Num();
-    for (int i = 0; i < NumMeshes; i++)
-    {
-        const AssimpMesh* Mesh = Data->Meshes[i];
-        TArray<FVector> Positions;
-        TArray<FVector> Normals;
-        TArray<FVector2D> UVs;
-        TArray<FProcSkeletalMeshTangent> Tangents;
-
-        Positions.AddUninitialized(Mesh->Vertices.Num());
-        Normals.AddUninitialized(Mesh->Vertices.Num());
-        UVs.AddUninitialized(Mesh->Vertices.Num());
-        Tangents.AddUninitialized(Mesh->Vertices.Num());
-
-        for (int vert = 0; vert < Mesh->Vertices.Num(); vert++)
-        {
-            const AssimpVert& VertData = Mesh->Vertices[vert];
-            Positions[vert] = VertData.Location;
-            Normals[vert] = VertData.Normal;
-            UVs[vert] = VertData.TexCoords;
-            Tangents[vert] = FProcSkeletalMeshTangent(VertData.Tangent, false);
-        }
-
-        TArray<int32> Triangles;
-        Triangles.AddUninitialized(Mesh->Elements.Num());
-        for (int tri = 0; tri < Mesh->Elements.Num(); tri++)
-        {
-            Triangles[tri] = Mesh->Elements[tri];
-        }
-
-        Component->CreateMeshSection(i, Positions, Triangles, Normals, UVs, Tangents);
-    }
-    
-    //TArray<SkeletalMeshData> newdata;
-    //for (const auto& mesh : Data->Meshes)
-    //{
-    //    SkeletalMeshData skeletalmesh;
-    //    for (const auto& vert : mesh->Vertices)
-    //        skeletalmesh.Vertices.Emplace(vert.Location, vert.Normal, vert.Tangent, vert.TexCoords);
-    //    skeletalmesh.Elements = mesh->Elements;
-    //    newdata.Add(skeletalmesh);
-    //}
-
-    //Component->LoadMeshData(newdata);
 }

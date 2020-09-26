@@ -22,7 +22,6 @@ void AContentTests::BeginPlay()
 	UE_LOG(LogTemp, Warning, TEXT("Beginning Assimp"));
 	Interface = NewObject<UAssimpInterface>();
 	auto Data = Interface->ImportFBX();
-	//Interface->BuildComponent(Skeleton, test);
 
     const int32 NumMeshes = Data->Meshes.Num();
     for (int i = 0; i < NumMeshes; i++)
@@ -43,10 +42,8 @@ void AContentTests::BeginPlay()
         for (int vert = 0; vert < Mesh->Vertices.Num(); vert++)
         {
             const AssimpVert& VertData = Mesh->Vertices[vert];
-            Positions[vert] = VertData.Location;
+            Positions[vert] = VertData.Location * 100.0f;
             Normals[vert] = VertData.Normal;
-            //Normals[vert] = FVector(0.0f, 1.0f, 0.0f);
-            //Normals[vert] = (VertData.Normal * FVector(0.0f, -1.0f, 0.0f)) + VertData.Location;
             UVs[vert] = VertData.TexCoords;
             Colors[vert] = FColor(255, 255, 255);
             Tangents[vert] = FProcMeshTangent(VertData.Tangent, false);
