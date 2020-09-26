@@ -1,47 +1,61 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "ProceduralSkeletalMeshComponent.h"
 
-class FSkeletalIndexBuffer : public FIndexBuffer
+
+//feel really bad about some of this stuff being so close to ProceduralMeshComponent, but come on this tangent stuff is nuts
+
+class FProcSkeletalMeshProxySection
 {
 public:
-	virtual void InitRHI() override
-	{
-		FRHIResourceCreateInfo CreateInfo;
-		IndexBufferRHI = RHICreateIndexBuffer(sizeof(int32), NumIndices * sizeof(int32), BUF_Dynamic, CreateInfo);
-	}
+	/** Material applied to this section */
+	UMaterialInterface* Material;
+	/** Vertex buffer for this section */
+	FStaticMeshVertexBuffers VertexBuffers;
+	/** Index buffer for this section */
+	FDynamicMeshIndexBuffer32 IndexBuffer;
+	/** Vertex factory for this section */
+	FLocalVertexFactory VertexFactory;
+	/** Whether this section is currently visible */
+	bool bSectionVisible;
 
-	int32 NumIndices;
+#if RHI_RAYTRACING
+	FRayTracingGeometry RayTracingGeometry;
+#endif
+
+	FProcSkeletalMeshProxySection(ERHIFeatureLevel::Type InFeatureLevel)
+		: Material(NULL)
+		, VertexFactory(InFeatureLevel, "FProcSkeletalMeshProxySection")
+		, bSectionVisible(true)
+	{}
 };
 
-/** Dynamic data sent to render thread */
-struct FSkeletonDynamicData
+class FProcSkeletalMeshSectionUpdateData
 {
-	/** Array of points */
-	//TArray<FVector> CablePoints;
+public:
+	/** Section to update */
+	int32 TargetSection;
+	/** New vertex information */
+	TArray<FProcSkeletalMeshVertex> NewVertexBuffer;
 };
+
+static void ConvertProcMeshToDynMeshVertex(FDynamicMeshVertex& Vert, const FProcSkeletalMeshVertex& ProcVert)
+{
+	Vert.Position = ProcVert.Position;
+	Vert.TextureCoordinate[0] = ProcVert.UV0;
+	Vert.TangentX = ProcVert.Tangent.TangentX;
+	Vert.TangentZ = ProcVert.Normal;
+	Vert.TangentZ.Vector.W = ProcVert.Tangent.bFlipTangentY ? -127 : 127;
+}
 
 class FProceduralSkeletalMeshSceneProxy final : public FPrimitiveSceneProxy
 {
 private:
-
-	UMaterialInterface* Material;
-	FStaticMeshVertexBuffers VertexBuffers;
-	FSkeletalIndexBuffer IndexBuffer;
-	FLocalVertexFactory VertexFactory; //change this
-
-	FSkeletonDynamicData* DynamicData;
-
+	TArray<FProcSkeletalMeshProxySection*> Sections;
 	FMaterialRelevance MaterialRelevance;
 
-	//int32 NumSegments;
+	friend class UProceduralSkeletalMeshComponent;
 
-	//float CableWidth;
-
-	//int32 NumSides;
-
-	//float TileMaterial;
 public:
 	SIZE_T GetTypeHash() const override
 	{
@@ -49,190 +63,277 @@ public:
 		return reinterpret_cast<size_t>(&UniquePointer);
 	}
 
-	TArray<SkeletalMeshData> LoadedMeshes;
-	void InitBuffersWithSize(uint32 NumVertices, uint32 NumIndices)
-	{
-		VertexBuffers.InitWithDummyData(&VertexFactory, NumVertices);
-		IndexBuffer.NumIndices = NumIndices;
-		BeginInitResource(&IndexBuffer);
-	}
+	//TArray<SkeletalMeshData> LoadedMeshes;
+	//void InitBuffersWithSize(uint32 NumVertices, uint32 NumIndices)
+	//{
+	//	VertexBuffers.InitWithDummyData(&VertexFactory, NumVertices);
+	//	IndexBuffer.NumIndices = NumIndices;
+	//	BeginInitResource(&IndexBuffer);
+	//}
 
 
-	FProceduralSkeletalMeshSceneProxy(UProceduralSkeletalMeshComponent* Component) :
-		FPrimitiveSceneProxy(Component)
-		, Material(NULL)
-		, VertexFactory(GetScene().GetFeatureLevel(), "FProceduralSkeletalMeshSceneProxy")
-		//, DynamicData(NULL)
+	FProceduralSkeletalMeshSceneProxy(UProceduralSkeletalMeshComponent* Component)
+		: FPrimitiveSceneProxy(Component)
 		, MaterialRelevance(Component->GetMaterialRelevance(GetScene().GetFeatureLevel()))
 	{
-		//VertexBuffers.InitWithDummyData(&VertexFactory, LoadedMeshes[0].Vertices.Num());
-
-		//IndexBuffer.NumIndices = GetRequiredIndexCount();
-
-		// Enqueue initialization of render resource
-		//BeginInitResource(&IndexBuffer);
-
-		// Grab material
-		Material = Component->GetMaterial(0);
-		if (Material == NULL)
+		// Copy each section to a proxy
+		const int32 NumSections = Component->ProcSkeletalMeshSections.Num();
+		Sections.AddZeroed(NumSections);
+		for (int SectionIdx = 0; SectionIdx < NumSections; SectionIdx++)
 		{
-			Material = UMaterial::GetDefaultMaterial(MD_Surface);
-		}
-	}
-
-	virtual ~FProceduralSkeletalMeshSceneProxy() //not sure why this is virtual lol
-	{
-		VertexBuffers.PositionVertexBuffer.ReleaseResource();
-		VertexBuffers.StaticMeshVertexBuffer.ReleaseResource();
-		VertexBuffers.ColorVertexBuffer.ReleaseResource();
-		IndexBuffer.ReleaseResource();
-		VertexFactory.ReleaseResource();
-
-		if (DynamicData != NULL)
-		{
-			delete DynamicData;
-		}
-	}
-
-	void BuildSkeletalMesh(TArray<FDynamicMeshVertex>& OutVertices, TArray<int32>& OutIndices)
-	{
-		//const FColor VertexColor(255, 255, 255);
-		//const int32 NumPoints = InPoints.Num();
-		//const int32 SegmentCount = NumPoints - 1;
-
-		for (const auto& mesh : LoadedMeshes)
-		{
-			for (const auto& vert : mesh.Vertices)
+			UE_LOG(LogTemp, Warning, TEXT("creating proxy section"));
+			FProcSkeletalMeshSection& SrcSection = Component->ProcSkeletalMeshSections[SectionIdx];
+			if (SrcSection.ProcIndexBuffer.Num() > 0 && SrcSection.ProcVertexBuffer.Num() > 0)
 			{
-				//FDynamicMeshVertex NewVert;
-				OutVertices.Emplace(vert.Location);
+				FProcSkeletalMeshProxySection* NewSection = new FProcSkeletalMeshProxySection(GetScene().GetFeatureLevel());
+
+				// Copy data from vertex buffer
+				const int32 NumVerts = SrcSection.ProcVertexBuffer.Num();
+
+				// Allocate verts
+				TArray<FDynamicMeshVertex> Vertices;
+				Vertices.SetNumUninitialized(NumVerts);
+				// Copy verts
+				for (int VertIdx = 0; VertIdx < NumVerts; VertIdx++)
+				{
+					const FProcSkeletalMeshVertex& ProcVert = SrcSection.ProcVertexBuffer[VertIdx];
+					FDynamicMeshVertex& Vert = Vertices[VertIdx];
+					ConvertProcMeshToDynMeshVertex(Vert, ProcVert);
+				}
+
+				// Copy index buffer
+				NewSection->IndexBuffer.Indices = SrcSection.ProcIndexBuffer;
+
+				NewSection->VertexBuffers.InitFromDynamicVertex(&NewSection->VertexFactory, Vertices, 4);
+
+				// Enqueue initialization of render resource
+				BeginInitResource(&NewSection->VertexBuffers.PositionVertexBuffer);
+				BeginInitResource(&NewSection->VertexBuffers.StaticMeshVertexBuffer);
+				BeginInitResource(&NewSection->VertexBuffers.ColorVertexBuffer);
+				BeginInitResource(&NewSection->IndexBuffer);
+				BeginInitResource(&NewSection->VertexFactory);
+
+				// Grab material
+				NewSection->Material = Component->GetMaterial(SectionIdx);
+				if (NewSection->Material == NULL)
+				{
+					NewSection->Material = UMaterial::GetDefaultMaterial(MD_Surface);
+				}
+
+				// Copy visibility info
+				NewSection->bSectionVisible = SrcSection.bSectionVisible;
+
+				// Save ref to new section
+				Sections[SectionIdx] = NewSection;
+
+#if RHI_RAYTRACING
+				if (IsRayTracingEnabled())
+				{
+					ENQUEUE_RENDER_COMMAND(InitProceduralMeshRayTracingGeometry)(
+						[this, NewSection/*, VertexBufferRHI, IndexBufferRHI, VertexBufferStride, TrianglesCount, RenderSections*/](FRHICommandListImmediate& RHICmdList)
+						{
+							FRayTracingGeometryInitializer Initializer;
+							Initializer.IndexBuffer = nullptr;
+							Initializer.TotalPrimitiveCount = 0;
+							Initializer.GeometryType = RTGT_Triangles;
+							Initializer.bFastBuild = true;
+							Initializer.bAllowUpdate = false;
+
+							NewSection->RayTracingGeometry.SetInitializer(Initializer);
+							NewSection->RayTracingGeometry.InitResource();
+
+							NewSection->RayTracingGeometry.Initializer.IndexBuffer = NewSection->IndexBuffer.IndexBufferRHI;
+							NewSection->RayTracingGeometry.Initializer.TotalPrimitiveCount = NewSection->IndexBuffer.Indices.Num() / 3;
+
+							FRayTracingGeometrySegment Segment;
+							Segment.VertexBuffer = NewSection->VertexBuffers.PositionVertexBuffer.VertexBufferRHI;
+							Segment.NumPrimitives = NewSection->RayTracingGeometry.Initializer.TotalPrimitiveCount;
+							NewSection->RayTracingGeometry.Initializer.Segments.Add(Segment);
+
+							//#dxr_todo: add support for segments?
+
+							NewSection->RayTracingGeometry.UpdateRHI();
+						});
+				}
+#endif
 			}
-			for (const auto& element : mesh.Elements)
-				OutIndices.Add(element);
 		}
-		//// Build vertices
+	}
 
-		//// We double up the first and last vert of the ring, because the UVs are different
-		//int32 NumRingVerts = NumSides + 1;
+	virtual ~FProceduralSkeletalMeshSceneProxy() //not sure why this is virtual lol, the class is final
+	{
+		for (FProcSkeletalMeshProxySection* Section : Sections)
+		{
+			if (Section != nullptr)
+			{
+				Section->VertexBuffers.PositionVertexBuffer.ReleaseResource();
+				Section->VertexBuffers.StaticMeshVertexBuffer.ReleaseResource();
+				Section->VertexBuffers.ColorVertexBuffer.ReleaseResource();
+				Section->IndexBuffer.ReleaseResource();
+				Section->VertexFactory.ReleaseResource();
 
-		//// For each point along spline..
-		//for (int32 PointIdx = 0; PointIdx < NumPoints; PointIdx++)
-		//{
-		//	const float AlongFrac = (float)PointIdx / (float)SegmentCount; // Distance along cable
+#if RHI_RAYTRACING
+				if (IsRayTracingEnabled())
+				{
+					Section->RayTracingGeometry.ReleaseResource();
+				}
+#endif
 
-		//	// Find direction of cable at this point, by averaging previous and next points
-		//	const int32 PrevIndex = FMath::Max(0, PointIdx - 1);
-		//	const int32 NextIndex = FMath::Min(PointIdx + 1, NumPoints - 1);
-		//	const FVector ForwardDir = (InPoints[NextIndex] - InPoints[PrevIndex]).GetSafeNormal();
-
-		//	// Find quat from up (Z) vector to forward
-		//	const FQuat DeltaQuat = FQuat::FindBetween(FVector(0, 0, -1), ForwardDir);
-
-		//	// Apply quat orth vectors
-		//	const FVector RightDir = DeltaQuat.RotateVector(FVector(0, 1, 0));
-		//	const FVector UpDir = DeltaQuat.RotateVector(FVector(1, 0, 0));
-
-		//	// Generate a ring of verts
-		//	for (int32 VertIdx = 0; VertIdx < NumRingVerts; VertIdx++)
-		//	{
-		//		const float AroundFrac = float(VertIdx) / float(NumSides);
-		//		// Find angle around the ring
-		//		const float RadAngle = 2.f * PI * AroundFrac;
-		//		// Find direction from center of cable to this vertex
-		//		const FVector OutDir = (FMath::Cos(RadAngle) * UpDir) + (FMath::Sin(RadAngle) * RightDir);
-
-		//		FDynamicMeshVertex Vert;
-		//		Vert.Position = InPoints[PointIdx] + (OutDir * 0.5f * CableWidth);
-		//		Vert.TextureCoordinate[0] = FVector2D(AlongFrac * TileMaterial, AroundFrac);
-		//		Vert.Color = VertexColor;
-		//		Vert.SetTangents(ForwardDir, OutDir ^ ForwardDir, OutDir);
-		//		OutVertices.Add(Vert);
-		//	}
-		//}
-
-		//// Build triangles
-		//for (int32 SegIdx = 0; SegIdx < SegmentCount; SegIdx++)
-		//{
-		//	for (int32 SideIdx = 0; SideIdx < NumSides; SideIdx++)
-		//	{
-		//		int32 TL = GetVertIndex(SegIdx, SideIdx);
-		//		int32 BL = GetVertIndex(SegIdx, SideIdx + 1);
-		//		int32 TR = GetVertIndex(SegIdx + 1, SideIdx);
-		//		int32 BR = GetVertIndex(SegIdx + 1, SideIdx + 1);
-
-		//		OutIndices.Add(TL);
-		//		OutIndices.Add(BL);
-		//		OutIndices.Add(TR);
-
-		//		OutIndices.Add(TR);
-		//		OutIndices.Add(BL);
-		//		OutIndices.Add(BR);
-		//	}
-		//}
+				delete Section;
+			}
+		}
 	}
 
 	/** Called on render thread to assign new dynamic data */
-	void SetDynamicData_RenderThread(FSkeletonDynamicData* NewDynamicData)
+	void UpdateSection_RenderThread(FProcSkeletalMeshSectionUpdateData* SectionData)
 	{
 		check(IsInRenderingThread());
 
-		// Free existing data if present
-		if (DynamicData)
+		// Check we have data
+		if (SectionData != nullptr)
 		{
-			delete DynamicData;
-			DynamicData = NULL;
+			// Check it references a valid section
+			if (SectionData->TargetSection < Sections.Num() &&
+				Sections[SectionData->TargetSection] != nullptr)
+			{
+				FProcSkeletalMeshProxySection* Section = Sections[SectionData->TargetSection];
+
+				// Lock vertex buffer
+				const int32 NumVerts = SectionData->NewVertexBuffer.Num();
+
+				// Iterate through vertex data, copying in new info
+				for (int32 i = 0; i < NumVerts; i++)
+				{
+					const FProcSkeletalMeshVertex& ProcVert = SectionData->NewVertexBuffer[i];
+					FDynamicMeshVertex Vertex;
+					ConvertProcMeshToDynMeshVertex(Vertex, ProcVert);
+
+					Section->VertexBuffers.PositionVertexBuffer.VertexPosition(i) = Vertex.Position;
+					Section->VertexBuffers.StaticMeshVertexBuffer.SetVertexTangents(i, Vertex.TangentX.ToFVector(), Vertex.GetTangentY(), Vertex.TangentZ.ToFVector());
+					Section->VertexBuffers.StaticMeshVertexBuffer.SetVertexUV(i, 0, Vertex.TextureCoordinate[0]);
+					Section->VertexBuffers.StaticMeshVertexBuffer.SetVertexUV(i, 1, Vertex.TextureCoordinate[1]);
+					Section->VertexBuffers.StaticMeshVertexBuffer.SetVertexUV(i, 2, Vertex.TextureCoordinate[2]);
+					Section->VertexBuffers.StaticMeshVertexBuffer.SetVertexUV(i, 3, Vertex.TextureCoordinate[3]);
+					Section->VertexBuffers.ColorVertexBuffer.VertexColor(i) = Vertex.Color;
+				}
+
+				{
+					auto& VertexBuffer = Section->VertexBuffers.PositionVertexBuffer;
+					void* VertexBufferData = RHILockVertexBuffer(VertexBuffer.VertexBufferRHI, 0, VertexBuffer.GetNumVertices() * VertexBuffer.GetStride(), RLM_WriteOnly);
+					FMemory::Memcpy(VertexBufferData, VertexBuffer.GetVertexData(), VertexBuffer.GetNumVertices() * VertexBuffer.GetStride());
+					RHIUnlockVertexBuffer(VertexBuffer.VertexBufferRHI);
+				}
+
+				{
+					auto& VertexBuffer = Section->VertexBuffers.ColorVertexBuffer;
+					void* VertexBufferData = RHILockVertexBuffer(VertexBuffer.VertexBufferRHI, 0, VertexBuffer.GetNumVertices() * VertexBuffer.GetStride(), RLM_WriteOnly);
+					FMemory::Memcpy(VertexBufferData, VertexBuffer.GetVertexData(), VertexBuffer.GetNumVertices() * VertexBuffer.GetStride());
+					RHIUnlockVertexBuffer(VertexBuffer.VertexBufferRHI);
+				}
+
+				{
+					auto& VertexBuffer = Section->VertexBuffers.StaticMeshVertexBuffer;
+					void* VertexBufferData = RHILockVertexBuffer(VertexBuffer.TangentsVertexBuffer.VertexBufferRHI, 0, VertexBuffer.GetTangentSize(), RLM_WriteOnly);
+					FMemory::Memcpy(VertexBufferData, VertexBuffer.GetTangentData(), VertexBuffer.GetTangentSize());
+					RHIUnlockVertexBuffer(VertexBuffer.TangentsVertexBuffer.VertexBufferRHI);
+				}
+
+				{
+					auto& VertexBuffer = Section->VertexBuffers.StaticMeshVertexBuffer;
+					void* VertexBufferData = RHILockVertexBuffer(VertexBuffer.TexCoordVertexBuffer.VertexBufferRHI, 0, VertexBuffer.GetTexCoordSize(), RLM_WriteOnly);
+					FMemory::Memcpy(VertexBufferData, VertexBuffer.GetTexCoordData(), VertexBuffer.GetTexCoordSize());
+					RHIUnlockVertexBuffer(VertexBuffer.TexCoordVertexBuffer.VertexBufferRHI);
+				}
+			}
+
+			// Free data sent from game thread
+			delete SectionData;
 		}
-		DynamicData = NewDynamicData;
+	}
 
-		// Build mesh
-		TArray<FDynamicMeshVertex> Vertices;
-		TArray<int32> Indices;
-		BuildSkeletalMesh(Vertices, Indices);
+	virtual void GetDynamicMeshElements(const TArray<const FSceneView*>& Views, const FSceneViewFamily& ViewFamily, uint32 VisibilityMap, FMeshElementCollector& Collector) const override
+	{
+		//SCOPE_CYCLE_COUNTER(STAT_ProcMesh_GetMeshElements);
 
-		//check(Vertices.Num() == GetRequiredVertexCount());
-		//check(Indices.Num() == GetRequiredIndexCount());
 
-		for (int i = 0; i < Vertices.Num(); i++)
+		// Set up wireframe material (if needed)
+		const bool bWireframe = AllowDebugViewmodes() && ViewFamily.EngineShowFlags.Wireframe;
+
+		FColoredMaterialRenderProxy* WireframeMaterialInstance = NULL;
+		if (bWireframe)
 		{
-			const FDynamicMeshVertex& Vertex = Vertices[i];
+			WireframeMaterialInstance = new FColoredMaterialRenderProxy(
+				GEngine->WireframeMaterial ? GEngine->WireframeMaterial->GetRenderProxy() : NULL,
+				FLinearColor(0, 0.5f, 1.f)
+			);
 
-			VertexBuffers.PositionVertexBuffer.VertexPosition(i) = Vertex.Position;
-			VertexBuffers.StaticMeshVertexBuffer.SetVertexTangents(i, Vertex.TangentX.ToFVector(), Vertex.GetTangentY(), Vertex.TangentZ.ToFVector());
-			VertexBuffers.StaticMeshVertexBuffer.SetVertexUV(i, 0, Vertex.TextureCoordinate[0]);
-			VertexBuffers.ColorVertexBuffer.VertexColor(i) = Vertex.Color;
+			Collector.RegisterOneFrameMaterialProxy(WireframeMaterialInstance);
 		}
 
+		// Iterate over sections
+		for (const FProcSkeletalMeshProxySection* Section : Sections)
 		{
-			auto& VertexBuffer = VertexBuffers.PositionVertexBuffer;
-			void* VertexBufferData = RHILockVertexBuffer(VertexBuffer.VertexBufferRHI, 0, VertexBuffer.GetNumVertices() * VertexBuffer.GetStride(), RLM_WriteOnly);
-			FMemory::Memcpy(VertexBufferData, VertexBuffer.GetVertexData(), VertexBuffer.GetNumVertices() * VertexBuffer.GetStride());
-			RHIUnlockVertexBuffer(VertexBuffer.VertexBufferRHI);
-		}
+			if (Section != nullptr && Section->bSectionVisible)
+			{
+				FMaterialRenderProxy* MaterialProxy = bWireframe ? WireframeMaterialInstance : Section->Material->GetRenderProxy();
 
-		{
-			auto& VertexBuffer = VertexBuffers.ColorVertexBuffer;
-			void* VertexBufferData = RHILockVertexBuffer(VertexBuffer.VertexBufferRHI, 0, VertexBuffer.GetNumVertices() * VertexBuffer.GetStride(), RLM_WriteOnly);
-			FMemory::Memcpy(VertexBufferData, VertexBuffer.GetVertexData(), VertexBuffer.GetNumVertices() * VertexBuffer.GetStride());
-			RHIUnlockVertexBuffer(VertexBuffer.VertexBufferRHI);
-		}
+				// For each view..
+				for (int32 ViewIndex = 0; ViewIndex < Views.Num(); ViewIndex++)
+				{
+					if (VisibilityMap & (1 << ViewIndex))
+					{
+						const FSceneView* View = Views[ViewIndex];
+						// Draw the mesh.
+						FMeshBatch& Mesh = Collector.AllocateMesh();
+						FMeshBatchElement& BatchElement = Mesh.Elements[0];
+						BatchElement.IndexBuffer = &Section->IndexBuffer;
+						Mesh.bWireframe = bWireframe;
+						Mesh.VertexFactory = &Section->VertexFactory;
+						Mesh.MaterialRenderProxy = MaterialProxy;
 
-		{
-			auto& VertexBuffer = VertexBuffers.StaticMeshVertexBuffer;
-			void* VertexBufferData = RHILockVertexBuffer(VertexBuffer.TangentsVertexBuffer.VertexBufferRHI, 0, VertexBuffer.GetTangentSize(), RLM_WriteOnly);
-			FMemory::Memcpy(VertexBufferData, VertexBuffer.GetTangentData(), VertexBuffer.GetTangentSize());
-			RHIUnlockVertexBuffer(VertexBuffer.TangentsVertexBuffer.VertexBufferRHI);
-		}
+						bool bHasPrecomputedVolumetricLightmap;
+						FMatrix PreviousLocalToWorld;
+						int32 SingleCaptureIndex;
+						bool bOutputVelocity;
+						GetScene().GetPrimitiveUniformShaderParameters_RenderThread(GetPrimitiveSceneInfo(), bHasPrecomputedVolumetricLightmap, PreviousLocalToWorld, SingleCaptureIndex, bOutputVelocity);
 
-		{
-			auto& VertexBuffer = VertexBuffers.StaticMeshVertexBuffer;
-			void* VertexBufferData = RHILockVertexBuffer(VertexBuffer.TexCoordVertexBuffer.VertexBufferRHI, 0, VertexBuffer.GetTexCoordSize(), RLM_WriteOnly);
-			FMemory::Memcpy(VertexBufferData, VertexBuffer.GetTexCoordData(), VertexBuffer.GetTexCoordSize());
-			RHIUnlockVertexBuffer(VertexBuffer.TexCoordVertexBuffer.VertexBufferRHI);
-		}
+						FDynamicPrimitiveUniformBuffer& DynamicPrimitiveUniformBuffer = Collector.AllocateOneFrameResource<FDynamicPrimitiveUniformBuffer>();
+						DynamicPrimitiveUniformBuffer.Set(GetLocalToWorld(), PreviousLocalToWorld, GetBounds(), GetLocalBounds(), true, bHasPrecomputedVolumetricLightmap, DrawsVelocity(), bOutputVelocity);
+						BatchElement.PrimitiveUniformBufferResource = &DynamicPrimitiveUniformBuffer.UniformBuffer;
 
-		void* IndexBufferData = RHILockIndexBuffer(IndexBuffer.IndexBufferRHI, 0, Indices.Num() * sizeof(int32), RLM_WriteOnly);
-		FMemory::Memcpy(IndexBufferData, &Indices[0], Indices.Num() * sizeof(int32));
-		RHIUnlockIndexBuffer(IndexBuffer.IndexBufferRHI);
+						BatchElement.FirstIndex = 0;
+						BatchElement.NumPrimitives = Section->IndexBuffer.Indices.Num() / 3;
+						BatchElement.MinVertexIndex = 0;
+						BatchElement.MaxVertexIndex = Section->VertexBuffers.PositionVertexBuffer.GetNumVertices() - 1;
+						Mesh.ReverseCulling = IsLocalToWorldDeterminantNegative();
+						Mesh.Type = PT_TriangleList;
+						Mesh.DepthPriorityGroup = SDPG_World;
+						Mesh.bCanApplyViewModeOverrides = false;
+						Collector.AddMesh(ViewIndex, Mesh);
+					}
+				}
+			}
+		}
+	}
+
+	virtual FPrimitiveViewRelevance GetViewRelevance(const FSceneView* View) const
+	{
+		FPrimitiveViewRelevance Result;
+		Result.bDrawRelevance = IsShown(View);
+		Result.bShadowRelevance = IsShadowCast(View);
+		Result.bDynamicRelevance = true;
+		Result.bRenderInMainPass = ShouldRenderInMainPass();
+		Result.bUsesLightingChannels = GetLightingChannelMask() != GetDefaultLightingChannelMask();
+		Result.bRenderCustomDepth = ShouldRenderCustomDepth();
+		Result.bTranslucentSelfShadow = bCastVolumetricTranslucentShadow;
+		MaterialRelevance.SetPrimitiveViewRelevance(Result);
+		Result.bVelocityRelevance = IsMovable() && Result.bOpaque && Result.bRenderInMainPass;
+		return Result;
+	}
+
+	virtual bool CanBeOccluded() const override
+	{
+		return !MaterialRelevance.bDisableDepthTest;
 	}
 
 	virtual uint32 GetMemoryFootprint(void) const override { return(sizeof(*this) + GetAllocatedSize()); }
@@ -240,14 +341,29 @@ public:
 	uint32 GetAllocatedSize(void) const { return(FPrimitiveSceneProxy::GetAllocatedSize()); }
 };
 
-void UProceduralSkeletalMeshComponent::LoadMeshData(TArray<SkeletalMeshData>& data)
+//======================================================================================================================================================================
+//COMPONENT STUFF
+//======================================================================================================================================================================
+
+UProceduralSkeletalMeshComponent::UProceduralSkeletalMeshComponent(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
-	FProceduralSkeletalMeshSceneProxy* SkeletalMeshSceneProxy = (FProceduralSkeletalMeshSceneProxy*)SceneProxy;
-	SkeletalMeshSceneProxy->InitBuffersWithSize(data[0].Vertices.Num(), data[0].Elements.Num());
-	for (const auto& mesh : data)
-	{
-		SkeletalMeshSceneProxy->LoadedMeshes.Add(mesh);
-	}
+	//bUseComplexAsSimpleCollision = true;
+}
+
+void UProceduralSkeletalMeshComponent::UpdateLocalBounds()
+{
+	FBox LocalBox(ForceInit);
+
+	for (const FProcSkeletalMeshSection& Section : ProcSkeletalMeshSections)
+		LocalBox += Section.SectionLocalBox;
+
+	LocalBounds = LocalBox.IsValid ? FBoxSphereBounds(LocalBox) : FBoxSphereBounds(FVector(0, 0, 0), FVector(0, 0, 0), 0);
+
+	// Update global bounds
+	UpdateBounds();
+	// Need to send to render thread
+	MarkRenderTransformDirty();
 }
 
 void UProceduralSkeletalMeshComponent::OnRegister()
@@ -263,48 +379,21 @@ void UProceduralSkeletalMeshComponent::TickComponent(float DeltaTime, enum ELeve
 
 }
 
-void UProceduralSkeletalMeshComponent::SendRenderDynamicData_Concurrent()
-{
-	if (SceneProxy)
-	{
-		// Allocate cable dynamic data
-		FSkeletonDynamicData* DynamicData = new FSkeletonDynamicData;
-
-		// Transform current positions from particles into component-space array
-		//const FTransform& ComponentTransform = GetComponentTransform();
-		//int32 NumPoints = NumSegments + 1;
-		//DynamicData->CablePoints.AddUninitialized(NumPoints);
-		//for (int32 PointIdx = 0; PointIdx < NumPoints; PointIdx++)
-		//{
-		//	DynamicData->CablePoints[PointIdx] = ComponentTransform.InverseTransformPosition(Particles[PointIdx].Position);
-		//}
-
-		// Enqueue command to send to render thread
-		FProceduralSkeletalMeshSceneProxy* SkeletalMeshSceneProxy = (FProceduralSkeletalMeshSceneProxy*)SceneProxy;
-		//ENQUEUE_RENDER_COMMAND(FSendCableDynamicData)(
-		//	[SkeletalMeshSceneProxy, DynamicData](FRHICommandListImmediate& RHICmdList)
-		//	{
-		//		CableSceneProxy->SetDynamicData_RenderThread(DynamicData);
-		//	});
-
-		ENQUEUE_RENDER_COMMAND(FSendSkeletalDynamicData)(
-			[SkeletalMeshSceneProxy, DynamicData](FRHICommandListImmediate& RHICmdList)
-			{
-				SkeletalMeshSceneProxy->SetDynamicData_RenderThread(DynamicData);
-			});
-	}
-}
-
-void UProceduralSkeletalMeshComponent::CreateRenderState_Concurrent(FRegisterComponentContext* Context)
-{
-	Super::CreateRenderState_Concurrent(Context);
-
-	SendRenderDynamicData_Concurrent();
-}
+//void UProceduralSkeletalMeshComponent::CreateRenderState_Concurrent(FRegisterComponentContext* Context)
+//{
+//	Super::CreateRenderState_Concurrent(Context);
+//
+//	//SendRenderDynamicData_Concurrent();
+//}
 
 FBoxSphereBounds UProceduralSkeletalMeshComponent::CalcBounds(const FTransform& LocalToWorld) const
 {
-	return FBoxSphereBounds();
+	FBoxSphereBounds Ret(LocalBounds.TransformBy(LocalToWorld));
+
+	Ret.BoxExtent *= BoundsScale;
+	Ret.SphereRadius *= BoundsScale;
+
+	return Ret;
 }
 
 FPrimitiveSceneProxy* UProceduralSkeletalMeshComponent::CreateSceneProxy()
@@ -312,7 +401,150 @@ FPrimitiveSceneProxy* UProceduralSkeletalMeshComponent::CreateSceneProxy()
 	return new FProceduralSkeletalMeshSceneProxy(this);
 }
 
+void UProceduralSkeletalMeshComponent::PostLoad()
+{
+	Super::PostLoad();
+
+	//if (ProcMeshBodySetup && IsTemplate())
+	//{
+	//	ProcMeshBodySetup->SetFlags(RF_Public);
+	//}
+}
+
 int32 UProceduralSkeletalMeshComponent::GetNumMaterials() const
 {
-	return 1; //change this
+	return ProcSkeletalMeshSections.Num();
+}
+
+void UProceduralSkeletalMeshComponent::CreateMeshSection(int32 SectionIndex, const TArray<FVector>& Vertices, const TArray<int32>& Triangles, const TArray<FVector>& Normals, const TArray<FVector2D>& UV, const TArray<FProcSkeletalMeshTangent>& Tangents)
+{
+	UE_LOG(LogTemp, Warning, TEXT("creating mesh section"));
+	// Ensure sections array is long enough
+	if (SectionIndex >= ProcSkeletalMeshSections.Num())
+	{
+		ProcSkeletalMeshSections.SetNum(SectionIndex + 1, false);
+	}
+
+	// Reset this section (in case it already existed)
+	FProcSkeletalMeshSection& NewSection = ProcSkeletalMeshSections[SectionIndex];
+	NewSection.Reset();
+
+	// Copy data to vertex buffer
+	const int32 NumVerts = Vertices.Num();
+	NewSection.ProcVertexBuffer.Reset();
+	NewSection.ProcVertexBuffer.AddUninitialized(NumVerts);
+	for (int32 VertIdx = 0; VertIdx < NumVerts; VertIdx++)
+	{
+		FProcSkeletalMeshVertex& Vertex = NewSection.ProcVertexBuffer[VertIdx];
+
+		Vertex.Position = Vertices[VertIdx];
+		Vertex.Normal = (Normals.Num() == NumVerts) ? Normals[VertIdx] : FVector(0.f, 0.f, 1.f);
+		Vertex.UV0 = (UV.Num() == NumVerts) ? UV[VertIdx] : FVector2D(0.f, 0.f);
+		Vertex.Tangent = (Tangents.Num() == NumVerts) ? Tangents[VertIdx] : FProcSkeletalMeshTangent();
+
+		// Update bounding box
+		NewSection.SectionLocalBox += Vertex.Position;
+	}
+
+	// Copy index buffer (clamping to vertex range)
+	int32 NumTriIndices = Triangles.Num();
+	NumTriIndices = (NumTriIndices / 3) * 3; // Ensure we have exact number of triangles (array is multiple of 3 long)
+
+	NewSection.ProcIndexBuffer.Reset();
+	NewSection.ProcIndexBuffer.AddUninitialized(NumTriIndices);
+	for (int32 IndexIdx = 0; IndexIdx < NumTriIndices; IndexIdx++)
+	{
+		NewSection.ProcIndexBuffer[IndexIdx] = FMath::Min(Triangles[IndexIdx], NumVerts - 1);
+	}
+
+	//NewSection.bEnableCollision = bCreateCollision;
+
+	UpdateLocalBounds(); // Update overall bounds
+	//UpdateCollision(); // Mark collision as dirty
+	MarkRenderStateDirty(); // New section requires recreating scene proxy
+}
+
+void UProceduralSkeletalMeshComponent::UpdateMeshSection(int32 SectionIndex, const TArray<FVector>& Vertices, const TArray<FVector>& Normals, const TArray<FVector2D>& UV, const TArray<FProcSkeletalMeshTangent>& Tangents)
+{
+	if (SectionIndex < ProcSkeletalMeshSections.Num())
+	{
+		FProcSkeletalMeshSection& Section = ProcSkeletalMeshSections[SectionIndex];
+		const int32 NumVerts = Vertices.Num();
+		const int32 PreviousNumVerts = Section.ProcVertexBuffer.Num();
+
+		// Update bounds, if we are getting new position data
+		if (NumVerts == PreviousNumVerts)
+		{
+			Section.SectionLocalBox = FBox(Vertices);
+
+			// Iterate through vertex data, copying in new info
+			for (int32 VertIdx = 0; VertIdx < NumVerts; VertIdx++)
+			{
+				FProcSkeletalMeshVertex& ModifyVert = Section.ProcVertexBuffer[VertIdx];
+
+				// Position data
+				if (Vertices.Num() == NumVerts)
+				{
+					ModifyVert.Position = Vertices[VertIdx];
+				}
+
+				// Normal data
+				if (Normals.Num() == NumVerts)
+				{
+					ModifyVert.Normal = Normals[VertIdx];
+				}
+
+				// Tangent data
+				if (Tangents.Num() == NumVerts)
+				{
+					ModifyVert.Tangent = Tangents[VertIdx];
+				}
+
+				// UV data
+				if (UV.Num() == NumVerts)
+				{
+					ModifyVert.UV0 = UV[VertIdx];
+				}
+			}
+
+			// If we have collision enabled on this section, update that too
+			//if (Section.bEnableCollision)
+			//{
+			//	TArray<FVector> CollisionPositions;
+
+			//	// We have one collision mesh for all sections, so need to build array of _all_ positions
+			//	for (const auto& CollisionSection : ProcSkeletalMeshSections)
+			//	{
+			//		// If section has collision, copy it
+			//		if (CollisionSection.bEnableCollision)
+			//		{
+			//			for (int32 VertIdx = 0; VertIdx < CollisionSection.ProcVertexBuffer.Num(); VertIdx++)
+			//			{
+			//				CollisionPositions.Add(CollisionSection.ProcVertexBuffer[VertIdx].Position);
+			//			}
+			//		}
+			//	}
+
+			//	// Pass new positions to trimesh
+			//	BodyInstance.UpdateTriMeshVertices(CollisionPositions);
+			//}
+
+			// If we have a valid proxy and it is not pending recreation
+			if (SceneProxy && !IsRenderStateDirty())
+			{
+				// Create data to update section
+				FProcSkeletalMeshSectionUpdateData* SectionData = new FProcSkeletalMeshSectionUpdateData;
+				SectionData->TargetSection = SectionIndex;
+				SectionData->NewVertexBuffer = Section.ProcVertexBuffer;
+
+				// Enqueue command to send to render thread
+				FProceduralSkeletalMeshSceneProxy* ProcSkeletalMeshSceneProxy = (FProceduralSkeletalMeshSceneProxy*)SceneProxy;
+				ENQUEUE_RENDER_COMMAND(FProcSkeletalMeshSectionUpdate)
+					([ProcSkeletalMeshSceneProxy, SectionData](FRHICommandListImmediate& RHICmdList) { ProcSkeletalMeshSceneProxy->UpdateSection_RenderThread(SectionData); });
+			}
+
+			UpdateLocalBounds();		 // Update overall bounds
+			MarkRenderTransformDirty();  // Need to send new bounds to render thread
+		}
+	}
 }

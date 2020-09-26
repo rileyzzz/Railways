@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "ProceduralMeshComponent.h"
 #include "AssimpInterface.h"
 #include "ContentTests.generated.h"
 
@@ -14,6 +15,7 @@ class RAILWAYS_API AContentTests : public AActor
 	
 private:
 	UAssimpInterface* Interface;
+	UProceduralMeshComponent* Statictest;
 	UProceduralSkeletalMeshComponent* Skeleton;
 public:	
 	// Sets default values for this actor's properties

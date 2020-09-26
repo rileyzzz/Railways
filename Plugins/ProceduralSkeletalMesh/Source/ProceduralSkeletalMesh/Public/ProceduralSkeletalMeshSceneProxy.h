@@ -6,6 +6,3 @@
 #include "PrimitiveSceneProxy.h"
 #include "ProceduralSkeletalMeshComponent.h"
 
-/**
- * 
- */
