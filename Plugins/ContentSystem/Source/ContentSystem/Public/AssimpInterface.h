@@ -17,11 +17,34 @@ struct CONTENTSYSTEM_API AssimpVert
 	AssimpVert(FVector InLocation, FVector InNormal, FVector InTangent, FVector2D InTexCoords) : Location(InLocation), Normal(InNormal), Tangent(InTangent), TexCoords(InTexCoords) { }
 };
 
+enum class CONTENTSYSTEM_API TextureType
+{
+	Diffuse,
+	Normal,
+	Parameter
+};
+
+struct CONTENTSYSTEM_API AssimpTexture
+{
+	TextureType Type;
+	FString Path;
+	AssimpTexture(TextureType InType, FString InPath) : Type(InType), Path(InPath)
+	{
+
+	}
+};
+
+struct CONTENTSYSTEM_API AssimpMaterial
+{
+	TArray<AssimpTexture> Textures;
+};
+
 struct CONTENTSYSTEM_API AssimpMesh
 {
 	FString Name;
 	TArray<AssimpVert> Vertices;
 	TArray<uint32> Elements;
+	AssimpMaterial Material;
 };
 
 struct CONTENTSYSTEM_API AssimpImportData

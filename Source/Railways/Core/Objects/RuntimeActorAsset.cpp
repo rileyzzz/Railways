@@ -2,6 +2,10 @@
 
 
 #include "RuntimeActorAsset.h"
+#include "RenderUtils.h"
+#include "ImageUtils.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "../Helpers/stb_image.h"
 
 // Sets default values
 ARuntimeActorAsset::ARuntimeActorAsset()
@@ -35,6 +39,8 @@ void ARuntimeActorAsset::InitMesh()
         {
             const AssimpVert& VertData = Mesh->Vertices[vert];
             Positions[vert] = VertData.Location * 100.0f;
+            //Positions[vert] = VertData.Location * 10.0f;
+            //Positions[vert] = VertData.Location;
             Normals[vert] = VertData.Normal;
             UVs[vert] = VertData.TexCoords;
             Colors[vert] = FColor(255, 255, 255);
@@ -47,6 +53,71 @@ void ARuntimeActorAsset::InitMesh()
         {
             Triangles[tri] = Mesh->Elements[tri];
         }
+
+        //create material
+        UMaterialInstanceDynamic* DynMaterial = UMaterialInstanceDynamic::Create(PBRMaterial, this);
+        //DynMaterial->SetTextureParameterValue();
+        //create textures
+        for (const auto& Texture : Mesh->Material.Textures)
+        {
+
+            int width, height, nrComponents;
+            unsigned char* data = stbi_load(TCHAR_TO_UTF8(*Texture.Path), &width, &height, &nrComponents, 4);
+            if (data)
+            {
+                FName TextureName = MakeUniqueObjectName(this, UTexture2D::StaticClass());
+                UTexture2D* NewTexture = NewObject<UTexture2D>(this, TextureName, RF_Transient);
+
+                EPixelFormat format = PF_R8G8B8A8;
+                NewTexture->PlatformData = new FTexturePlatformData();
+                NewTexture->PlatformData->SizeX = width;
+                NewTexture->PlatformData->SizeY = height;
+                NewTexture->PlatformData->PixelFormat = format;
+                if (Texture.Type == TextureType::Normal || Texture.Type == TextureType::Parameter)
+                {
+                    NewTexture->SRGB = false;
+                }
+
+                //mipmaps
+                int32 NumBlocksX = width;
+                int32 NumBlocksY = height;
+                FTexture2DMipMap* Mip = new(NewTexture->PlatformData->Mips) FTexture2DMipMap();
+                Mip->SizeX = width;
+                Mip->SizeY = height;
+                Mip->BulkData.Lock(LOCK_READ_WRITE);
+                void* TextureData = Mip->BulkData.Realloc(NumBlocksX * NumBlocksY * 4); //GPixelFormats[format].BlockBytes
+                FMemory::Memcpy(TextureData, data, width * height * 4);
+                Mip->BulkData.Unlock();
+
+                NewTexture->UpdateResource();
+
+                //FImageUtils::CreateTexture2D(width, height, );
+
+                stbi_image_free(data);
+
+                UE_LOG(LogTemp, Warning, TEXT("Setting texture parameter"));
+                FName TextureTarget;
+                switch (Texture.Type)
+                {
+                default:
+                case TextureType::Diffuse:
+                    TextureTarget = FName(TEXT("BaseColor"));
+                    break;
+                case TextureType::Normal:
+                    TextureTarget = FName(TEXT("Normal"));
+                    break;
+                case TextureType::Parameter:
+                    TextureTarget = FName(TEXT("Parameter"));
+                    break;
+                }
+
+                DynMaterial->SetTextureParameterValue(TextureTarget, NewTexture);
+            }
+        }
+        
+
+
+        DynamicMesh->SetMaterial(i, DynMaterial);
 
         DynamicMesh->CreateMeshSection(i, Positions, Triangles, Normals, UVs, Colors, Tangents, false);
     }

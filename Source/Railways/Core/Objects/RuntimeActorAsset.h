@@ -20,6 +20,9 @@ public:
 	// Sets default values for this actor's properties
 	ARuntimeActorAsset();
 
+	UPROPERTY(EditAnywhere)
+	UMaterialInterface* PBRMaterial;
+
 	UProceduralMeshComponent* DynamicMesh;
 	void InitMesh();
 protected:

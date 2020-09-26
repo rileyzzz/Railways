@@ -8,7 +8,8 @@
 
 #define AIVEC3_TO_FVEC(vector) FVector(vector->x, vector->y, vector->z)
 
-void ProcessNode(const aiScene* scene, aiNode* node, AssimpImportData* ImportData)
+
+void ProcessNode(const FString& FilePath, const aiScene* scene, aiNode* node, AssimpImportData* ImportData)
 {
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
@@ -38,6 +39,38 @@ void ProcessNode(const aiScene* scene, aiNode* node, AssimpImportData* ImportDat
                 NewMesh->Elements.Add(face->mIndices[j]);
         }
 
+        aiMaterial* Material = scene->mMaterials[mesh->mMaterialIndex];
+
+        //int texIndex = 0;
+        //aiReturn texFound = AI_SUCCESS;
+
+        //TMap Textures<FString>
+        /*aiString path;
+        while (texFound == AI_SUCCESS)
+        {
+            texFound = Material->GetTexture(aiTextureType_DIFFUSE, texIndex, &path);
+            texIndex++;
+        }*/
+
+        UE_LOG(LogTemp, Log, TEXT("loading %u textures"), Material->GetTextureCount(aiTextureType_DIFFUSE));
+        aiString path;
+        if (Material->GetTexture(aiTextureType_DIFFUSE, 0, &path) == AI_SUCCESS)
+        {
+            FString TexPath = FilePath + TEXT("/") + FPaths::GetPathLeaf(UTF8_TO_TCHAR(path.C_Str()));
+            NewMesh->Material.Textures.Emplace(TextureType::Diffuse, TexPath);
+            UE_LOG(LogTemp, Log, TEXT("Loaded diffuse texture %s"), *TexPath);
+        }
+        if (Material->GetTexture(aiTextureType_NORMALS, 0, &path) == AI_SUCCESS)
+        {
+            FString TexPath = FilePath + TEXT("/") + FPaths::GetPathLeaf(UTF8_TO_TCHAR(path.C_Str()));
+            NewMesh->Material.Textures.Emplace(TextureType::Normal, TexPath);
+        }
+        if (Material->GetTexture(aiTextureType_SHININESS, 0, &path) == AI_SUCCESS)
+        {
+            FString TexPath = FilePath + TEXT("/") + FPaths::GetPathLeaf(UTF8_TO_TCHAR(path.C_Str()));
+            NewMesh->Material.Textures.Emplace(TextureType::Parameter, TexPath);
+        }
+
         //material data
         //ApplyMaterial(NewMesh, scene->mMaterials[mesh->mMaterialIndex]);
 
@@ -47,14 +80,15 @@ void ProcessNode(const aiScene* scene, aiNode* node, AssimpImportData* ImportDat
     }
 
     for (unsigned int i = 0; i < node->mNumChildren; i++)
-        ProcessNode(scene, node->mChildren[i], ImportData);
+        ProcessNode(FilePath, scene, node->mChildren[i], ImportData);
 }
 
 AssimpImportData* UAssimpInterface::ImportFBX()
 {
     Assimp::Importer importer;
 
-	auto FileDir = FPaths::ProjectPluginsDir() + "ContentSystem/Content/Samples/render2.fbx";
+	const FString FileDir = FPaths::ProjectPluginsDir() + "ContentSystem/Content/Samples/pb15/pb15_lod0.fbx";
+    const FString FilePath = FPaths::GetPath(FileDir);
 	UE_LOG(LogTemp, Display, TEXT("Importing FBX file %s"), *FileDir);
 
 	const aiScene* scene = importer.ReadFile(TCHAR_TO_UTF8(*FileDir),
@@ -63,6 +97,8 @@ AssimpImportData* UAssimpInterface::ImportFBX()
 		aiProcess_JoinIdenticalVertices |
 		aiProcess_SortByPType |
         aiProcess_FlipUVs |
+        aiProcess_PreTransformVertices |
+        //aiProcess_MakeLeftHanded |
         aiProcess_FlipWindingOrder |
 		aiProcess_GenNormals);
 
@@ -75,7 +111,7 @@ AssimpImportData* UAssimpInterface::ImportFBX()
 	UE_LOG(LogTemp, Display, TEXT("Import sucessful."));
 
     AssimpImportData* MeshData = new AssimpImportData();
-    ProcessNode(scene, scene->mRootNode, MeshData);
+    ProcessNode(FilePath, scene, scene->mRootNode, MeshData);
 
 	return MeshData;
 }
