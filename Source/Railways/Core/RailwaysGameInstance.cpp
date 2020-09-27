@@ -6,11 +6,15 @@
 void URailwaysGameInstance::Init()
 {
 	Super::Init();
-	UE_LOG(LogTemp, Warning, TEXT("Init"));
+	//Interface = GetContentSystem();
+	Interface = UContentSystemInterface::GetInterface();
+	AssimpInterface = NewObject<UAssimpInterface>();
 }
 
 void URailwaysGameInstance::Shutdown()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Shutdown"));
+	//UE_LOG(LogTemp, Warning, TEXT("Shutdown instance"));
+	UContentSystemInterface::ShutdownInterface();
+	Interface = nullptr;
 	Super::Shutdown();
 }

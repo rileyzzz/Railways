@@ -8,7 +8,6 @@
 
 #define AIVEC3_TO_FVEC(vector) FVector(vector->x, vector->y, vector->z)
 
-
 void ProcessNode(const FString& FilePath, const aiScene* scene, aiNode* node, AssimpImportData* ImportData)
 {
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
@@ -29,7 +28,10 @@ void ProcessNode(const FString& FilePath, const aiScene* scene, aiNode* node, As
                 const auto AITexCoords = &mesh->mTextureCoords[0][t];
                 TexCoords = FVector2D(AITexCoords->x, AITexCoords->y); // 1-?
             }
-            NewMesh->Vertices.Emplace(AIVEC3_TO_FVEC(Vert), AIVEC3_TO_FVEC(Normal), AIVEC3_TO_FVEC(Tangent), TexCoords);
+            const FVector scalefactor(1.0f, -1.0f, -1.0f);
+            //const FVector scalefactor(1.0f, 1.0f, 1.0f);
+            NewMesh->Vertices.Emplace(AIVEC3_TO_FVEC(Vert) * scalefactor, AIVEC3_TO_FVEC(Normal) * scalefactor, AIVEC3_TO_FVEC(Tangent) * scalefactor, TexCoords);
+            //NewMesh->Vertices.Emplace(FVector(Vert->x, Vert->y, Vert->z * -1.0f), AIVEC3_TO_FVEC(Normal), AIVEC3_TO_FVEC(Tangent), TexCoords);
         }
 
         for (unsigned int t = 0; t < mesh->mNumFaces; t++)
@@ -87,7 +89,7 @@ AssimpImportData* UAssimpInterface::ImportFBX()
 {
     Assimp::Importer importer;
 
-	const FString FileDir = FPaths::ProjectPluginsDir() + "ContentSystem/Content/Samples/pb15/pb15_lod0.fbx";
+	const FString FileDir = FPaths::ProjectPluginsDir() + "ContentSystem/Content/Samples/pb15/main.fbx";
     const FString FilePath = FPaths::GetPath(FileDir);
 	UE_LOG(LogTemp, Display, TEXT("Importing FBX file %s"), *FileDir);
 
@@ -96,12 +98,14 @@ AssimpImportData* UAssimpInterface::ImportFBX()
 		aiProcess_Triangulate |
 		aiProcess_JoinIdenticalVertices |
 		aiProcess_SortByPType |
-        aiProcess_FlipUVs |
         aiProcess_PreTransformVertices |
-        //aiProcess_MakeLeftHanded |
-        aiProcess_FlipWindingOrder |
+        aiProcess_MakeLeftHanded |
+        aiProcess_FlipUVs |
+        //aiProcess_ConvertToLeftHanded |
 		aiProcess_GenNormals);
-
+    //aiProcess_MakeLeftHanded |
+    //aiProcess_FlipWindingOrder |
+    //aiProcess_FlipUVs |
 	if (!scene)
 	{
 		UE_LOG(LogTemp, Error, TEXT("File import Failed! %s"), UTF8_TO_TCHAR(importer.GetErrorString()));
