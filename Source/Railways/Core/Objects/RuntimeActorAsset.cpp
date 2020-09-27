@@ -79,7 +79,6 @@ void ARuntimeActorAsset::InitMesh()
                     {
                         NewTexture->SRGB = false;
                     }
-                    NewTexture->LossyCompressionAmount = TLCA_Highest;
                     //mipmaps
                     int32 NumBlocksX = width;
                     int32 NumBlocksY = height;

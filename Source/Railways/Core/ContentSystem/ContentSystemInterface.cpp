@@ -28,10 +28,15 @@ UContentSystemInterface::UContentSystemInterface()
 	UE_LOG(LogTemp, Log, TEXT("Initializing Railways content system."));
 	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 	ContentDir = FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("RailwaysContent"));
-	if (!PlatformFile.DirectoryExists(*ContentDir))
-		PlatformFile.CreateDirectory(*ContentDir);
+	if (!PlatformFile.DirectoryExists(*ContentDir)) PlatformFile.CreateDirectory(*ContentDir);
 
-	UE_LOG(LogTemp, Warning, TEXT("CONTENT DIR: %s"), *ContentDir);
+	EditDir = FPaths::Combine(ContentDir, TEXT("Editing"));
+	ActiveDir = FPaths::Combine(ContentDir, TEXT("Active"));
+	if (!PlatformFile.DirectoryExists(*EditDir)) PlatformFile.CreateDirectory(*EditDir);
+	if (!PlatformFile.DirectoryExists(*ActiveDir)) PlatformFile.CreateDirectory(*ActiveDir);
+
+
+	UE_LOG(LogTemp, Warning, TEXT("CONTENT DIR: %s"), *EditDir);
 }
 
 UContentSystemInterface::~UContentSystemInterface()

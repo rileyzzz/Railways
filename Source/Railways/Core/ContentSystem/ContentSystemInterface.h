@@ -25,6 +25,13 @@ public:
 	static void ShutdownInterface();
 private:
 	FString ContentDir;
+
+	//subdirs
+	FString EditDir;
+	FString ActiveDir;
+
+	//type directories
+	
 public:
 	UContentSystemInterface();
 	~UContentSystemInterface();
