@@ -29,7 +29,7 @@ AWorldEditorPawn::AWorldEditorPawn()
 	EditCursor->SetupAttachment(RootComponent);
 	EditCursor->SetRelativeRotation(FRotator(-90.0f, 0.0f, 90.0f));
 	EditCursor->DecalSize = FVector(512.0f, 800.0f, 800.0f);
-	EditCursor->SetVisibility(true);
+	EditCursor->SetVisibility(false);
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraAttachmentArm"));
 	SpringArm->SetupAttachment(RootComponent);
@@ -107,6 +107,21 @@ void AWorldEditorPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
+	const float ZoomFactor = 1.0f + (SpringArm->TargetArmLength / 4000.0f);
+	//UE_LOG(LogTemp, Log, TEXT("zoom factor %f"), ZoomFactor);
+	FVector Forward = Camera->GetForwardVector() * ForwardVelocity;
+	FVector Right = Camera->GetRightVector() * RightVelocity;
+
+	FVector Velocity = Forward + Right;
+	Velocity.Normalize();
+	Velocity *= (DeltaTime * 1000.0f * ZoomFactor);
+
+	
+
+	FVector NewLocation = GetActorLocation() + Velocity;
+	UpdatePositionToGround(NewLocation);
+	SetActorLocation(NewLocation);
+
 	//UE_LOG(LogTemp, Warning, TEXT("tick"));
 	//if (!Velocity.IsZero())
 	//{
@@ -138,9 +153,10 @@ void AWorldEditorPawn::Tick(float DeltaTime)
 				if (CurrentWorld)
 				{
 					auto SortedTiles = CurrentWorld->GetSortedTilesToPoint(Target.ImpactPoint);
-					const int TileCount = (SortedTiles.Num() < 4) ? SortedTiles.Num() : 4;
+					const int TileCount = FMath::Min(SortedTiles.Num(), 4);
 					for (int i = 0; i < TileCount; i++)
 						SortedTiles[i]->TerrainInfluence(Target.ImpactPoint, EditMode == 0 ? 1.0f : -1.0f, 200);
+
 
 					/*for (auto& tile : CurrentWorld->Tiles)
 					{
@@ -221,31 +237,42 @@ void AWorldEditorPawn::UpdatePositionToGround(FVector& Position)
 void AWorldEditorPawn::InputFlyForward(float AxisValue)
 {
 	//Velocity += Camera->GetForwardVector() * AxisValue * 1.0f;
-	FVector Forward = Camera->GetForwardVector() * AxisValue;
-	Forward.Z = 0;
-	Forward.Normalize();
-	Forward *= 10.0f;
-	FVector NewLocation = GetActorLocation() + Forward;
-	UpdatePositionToGround(NewLocation);
-	SetActorLocation(NewLocation);
+
+	//FVector Forward = Camera->GetForwardVector() * AxisValue;
+	//Forward.Z = 0;
+	//Forward.Normalize();
+	//Forward *= 10.0f;
+	ForwardVelocity = AxisValue;
+
+	//FVector NewLocation = GetActorLocation() + Forward;
+	//UpdatePositionToGround(NewLocation);
+	//SetActorLocation(NewLocation);
+	//Velocity += Forward;
+	//Velocity.Normalize();
+	//Velocity *= 10.0f;
 
 	//Velocity.X = AxisValue * 800.0f;
 	//FVector translation(AxisValue, 0.0f, 0.0f);
 	//AddActorWorldTransform(FTransform(translation), false);
+
 }
 
 void AWorldEditorPawn::InputFlyRight(float AxisValue)
 {
 	//Velocity += Camera->GetRightVector() * AxisValue * 1.0f;
 
-	FVector Right = Camera->GetRightVector() * AxisValue;
-	Right.Z = 0;
-	Right.Normalize();
-	Right *= 10.0f;
-	FVector NewLocation = GetActorLocation() + Right;
-	UpdatePositionToGround(NewLocation);
-	SetActorLocation(NewLocation);
+	//FVector Right = Camera->GetRightVector() * AxisValue;
+	//Right.Z = 0;
+	//Right.Normalize();
+	//Right *= 10.0f;
+	RightVelocity = AxisValue;
 
+	//FVector NewLocation = GetActorLocation() + Right;
+	//UpdatePositionToGround(NewLocation);
+	//SetActorLocation(NewLocation);
+	//Velocity += Right;
+	//Velocity.Normalize();
+	//Velocity *= 10.0f;
 	//FVector translation(0.0f, AxisValue, 0.0f);
 	//AddActorWorldTransform(FTransform(translation), false);
 }
@@ -280,7 +307,7 @@ void AWorldEditorPawn::InputCameraZoom(float AxisValue)
 	float Target = SpringArm->TargetArmLength;
 	Target /= (AxisValue / 4.0f) + 1.0f;
 	//Target /= AxisValue * 40.0f;
-	if (Target > 10.0f && Target <= 8000.0f)
+	if (Target > 10.0f && Target <= 16000.0f)
 		SpringArm->TargetArmLength = Target;
 }
 
@@ -484,7 +511,7 @@ bool AWorldEditorPawn::GetMouseHit(FHitResult& OutHit, ECollisionChannel channel
 	//UE_LOG(LogTemp, Warning, TEXT("tracing line"));
 	FVector Position, Direction;
 	Controller->DeprojectMousePositionToWorld(Position, Direction);
-	FVector End = Position + Direction * 10000.0f;
+	FVector End = Position + Direction * 40000.0f;
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredComponents(Ignore);
 	return GetWorld()->LineTraceSingleByChannel(OutHit, Position, End, channel, CollisionParams);

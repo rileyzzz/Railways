@@ -60,7 +60,7 @@ void UWorldTileDynamic::Build(UMaterialInterface* Material, int X, int Y)
 void UWorldTileDynamic::TerrainInfluence(FVector Pos, float Direction, int Radius)
 {
     int LocalRadius = Radius / 10.0f;
-    FTransform transform = GetComponentToWorld();
+    FTransform transform = GetComponentTransform();
     FVector InflPos = transform.InverseTransformPosition(Pos) / WORLD_SCALE;
     InflPos.Z = 0.0f;
     FVector Corner = InflPos - FVector(LocalRadius, LocalRadius, 0.0);

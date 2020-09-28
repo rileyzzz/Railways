@@ -20,6 +20,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+private:
+	void TestForTile(int TileX, int TileY);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -27,7 +30,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	UMaterialInterface* Material;
 
-	TArray<UWorldTileDynamic*> Tiles;
+	//TArray<UWorldTileDynamic*> Tiles;
+	TMap<TPair<int, int>, UWorldTileDynamic*> Tiles;
 
 	TArray<UWorldTileDynamic*> GetSortedTilesToPoint(FVector point);
 	//URuntimeMeshComponent* Tile;

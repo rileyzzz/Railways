@@ -21,6 +21,21 @@ public:
 	// Sets default values for this pawn's properties
 	AWorldEditorPawn();
 	virtual void PostInitializeComponents() override;
+
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* MainMesh;
+
+	UPROPERTY(EditAnywhere)
+	UMaterialInterface* DecalMaterial;
+
+	UPROPERTY(EditAnywhere)
+	UMaterialInterface* PaintMaterial;
+
+	UDecalComponent* Cursor;
+	UDecalComponent* EditCursor;
+
+	USpringArmComponent* SpringArm;
+	UCameraComponent* Camera;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -30,6 +45,8 @@ private:
 	bool b_leftMouse = false;
 	AWorldEditPlayerController* Controller;
 
+	float ForwardVelocity = 0.0f;
+	float RightVelocity = 0.0f;
 	void UpdatePositionToGround(FVector& Position);
 	void InputFlyForward(float AxisValue);
 	void InputFlyRight(float AxisValue);
@@ -71,22 +88,9 @@ public:
 	UFUNCTION(Category = "WorldPawn|Events", BlueprintCallable)
 	void SetTargetHeight(float height);
 
+	//FVector Velocity;
+	
 
-	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* MainMesh;
-
-	UPROPERTY(EditAnywhere)
-	UMaterialInterface* DecalMaterial;
-
-	UPROPERTY(EditAnywhere)
-	UMaterialInterface* PaintMaterial;
-
-	UDecalComponent* Cursor;
-	UDecalComponent* EditCursor;
-
-	USpringArmComponent* SpringArm;
-	UCameraComponent* Camera;
-	FVector Velocity;
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

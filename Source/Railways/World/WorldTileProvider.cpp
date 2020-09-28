@@ -75,10 +75,25 @@ void UWorldTileProvider::Initialize()
 
 FBoxSphereBounds UWorldTileProvider::GetBounds()
 {
-	FVector Ext(WORLD_SIZE * WORLD_SCALE, WORLD_SIZE * WORLD_SCALE, 10000.0f);
+	float MinHeight = 0.0f;
+	float MaxHeight = 0.0f;
+
+	for (unsigned int x = 0; x < WORLD_SIZE; x++)
+	{
+		for (unsigned int y = 0; y < WORLD_SIZE; y++)
+		{
+			MinHeight = FMath::Min(MinHeight, f_heightData[x][y]);
+			MaxHeight = FMath::Max(MaxHeight, f_heightData[x][y]);
+		}
+	}
+	constexpr float BoundsSize = WORLD_SIZE * WORLD_SCALE;
+	FVector Start(0.0f, 0.0f, MinHeight);
+	FVector End(BoundsSize, BoundsSize, MaxHeight);
 	//FBox Box = FBox(-Ext / 2, Ext / 2);
-	FBox Box = FBox(FVector(0.0f, 0.0f, -10000.0f), Ext);
-	return FBoxSphereBounds(Box);
+	//FBox Box = FBox(FVector(0.0f, 0.0f, -10000.0f), Ext);
+	//FBox Box(Start, End);
+	//return FBoxSphereBounds(Box);
+	return FBoxSphereBounds(FBox(Start, End));
 }
 
 float UWorldTileProvider::GetHeight(int x, int y)
