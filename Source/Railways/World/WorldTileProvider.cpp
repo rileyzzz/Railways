@@ -69,7 +69,7 @@ void UWorldTileProvider::Initialize()
 		//float alpha = (float)LOD / (float)MAXLOD;
 
 		FRuntimeMeshLODProperties LODProperties;
-		LODProperties.ScreenSize = FMath::Pow(0.75, LOD);
+		LODProperties.ScreenSize = FMath::Pow(0.5, LOD);
 		LODs.Add(LODProperties);
 	}
 	ConfigureLODs(LODs);
@@ -124,7 +124,6 @@ float UWorldTileProvider::GetHeight(int x, int y)
 
 bool UWorldTileProvider::GetSectionMeshForLOD(int32 LODIndex, int32 SectionId, FRuntimeMeshRenderableMeshData& MeshData)
 {
-	UE_LOG(LogTemp, Warning, TEXT("GETTING LOD %i"), LODIndex);
 	//check(LODIndex == 0 && SectionId == 0);
 
 	const unsigned int Simplify = (LODIndex * 1 + 1);
