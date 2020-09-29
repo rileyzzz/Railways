@@ -40,6 +40,8 @@ void UWorldTileProvider::InvalidateMeshData()
 	MarkCollisionDirty();
 }
 
+#define MAXLOD 5
+
 void UWorldTileProvider::Initialize()
 {
 	f_heightData = new float* [WORLD_SIZE];
@@ -56,9 +58,21 @@ void UWorldTileProvider::Initialize()
 
 	UE_LOG(LogTemp, Warning, TEXT("TILE INIT"));
 
-	FRuntimeMeshLODProperties LODProperties;
+	/*FRuntimeMeshLODProperties LODProperties;
 	LODProperties.ScreenSize = 0.0f;
-	ConfigureLODs({ LODProperties });
+	ConfigureLODs({ LODProperties });*/
+
+	TArray<FRuntimeMeshLODProperties> LODs;
+
+	for (int LOD = 0; LOD < MAXLOD; LOD++)
+	{
+		//float alpha = (float)LOD / (float)MAXLOD;
+
+		FRuntimeMeshLODProperties LODProperties;
+		LODProperties.ScreenSize = FMath::Pow(0.75, LOD);
+		LODs.Add(LODProperties);
+	}
+	ConfigureLODs(LODs);
 
 	SetupMaterialSlot(0, FName("Material"), GetTileMaterial());
 
@@ -68,15 +82,18 @@ void UWorldTileProvider::Initialize()
 	Properties.MaterialSlot = 0;
 	Properties.bWants32BitIndices = true;
 	Properties.UpdateFrequency = ERuntimeMeshUpdateFrequency::Frequent;
-	CreateSection(0, 0, Properties);
-
+	//CreateSection(0, 0, Properties);
+	for (int LOD = 0; LOD < MAXLOD; LOD++)
+		CreateSection(LOD, 0, Properties);
+	//MarkAllLODsDirty();
 	MarkCollisionDirty();
 }
 
 FBoxSphereBounds UWorldTileProvider::GetBounds()
 {
-	float MinHeight = 0.0f;
-	float MaxHeight = 0.0f;
+	//causes artifacts on a blank tile if 0
+	float MinHeight = -0.1f;
+	float MaxHeight = 0.1f;
 
 	for (unsigned int x = 0; x < WORLD_SIZE; x++)
 	{
@@ -107,29 +124,78 @@ float UWorldTileProvider::GetHeight(int x, int y)
 
 bool UWorldTileProvider::GetSectionMeshForLOD(int32 LODIndex, int32 SectionId, FRuntimeMeshRenderableMeshData& MeshData)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("GETTING LOD SECTION"));
-	check(LODIndex == 0 && SectionId == 0);
-	int dx = 1; //change of x between two points
-	int dy = 1; //change of y between two points
+	UE_LOG(LogTemp, Warning, TEXT("GETTING LOD %i"), LODIndex);
+	//check(LODIndex == 0 && SectionId == 0);
+
+	const unsigned int Simplify = (LODIndex * 1 + 1);
+
+	//int dx = 1; //change of x between two points
+	//int dy = 1; //change of y between two points
 	
-	for (unsigned int y = 0; y < WORLD_SIZE; y++)
+	//for (unsigned int y = 0; y < WORLD_SIZE; y++)
+	//{
+	//	float yalpha = (float)y / (float)(WORLD_SIZE - 1);
+	//	//float ypos = FMath::Lerp(-WORLD_SIZE / 2, WORLD_SIZE / 2, yalpha);
+	//	for (unsigned int x = 0; x < WORLD_SIZE; x++)
+	//	{
+	//		float xalpha = (float)x / (float)(WORLD_SIZE - 1);
+	//		//float xpos = FMath::Lerp(-WORLD_SIZE / 2, WORLD_SIZE / 2, xalpha);
+
+	//		//float height = GetHeight(x, y);
+
+	//		FVector Position((float)x * WORLD_SCALE, (float)y * WORLD_SCALE, GetHeight(x, y));
+	//		//UE_LOG(LogTemp, Warning, TEXT("created vert at %f %f %f"), Position.X, Position.Y, Position.Z);
+	//		float dfdx = (GetHeight(x + dx, y) - GetHeight(x - dx, y)) / (2 * (float)dx); //derivative of f over x
+	//		float dfdy = (GetHeight(x, y + dy) - GetHeight(x, y - dy)) / (2 * (float)dy); //derivative of f over y
+
+	//		//float dfdx = 0.0f; //derivative of f over x
+	//		//float dfdy = 0.0f; //derivative of f over y
+
+	//		FVector Normal(-dfdx, -dfdy, 1);
+	//		Normal.Normalize();
+	//		FVector Tangent(1, 0, dfdx);
+	//		Tangent.Normalize();
+
+	//		FVector2D UV(xalpha, yalpha);
+
+	//		MeshData.Positions.Add(Position);
+	//		MeshData.Tangents.Add(Normal, Tangent);
+	//		MeshData.TexCoords.Add(UV);
+	//		MeshData.Colors.Add(FColor::White);
+
+	//		if (x != WORLD_SIZE - 1 && y != WORLD_SIZE - 1)
+	//		{
+	//			int32 AIndex = x + y * WORLD_SIZE;
+	//			int32 BIndex = AIndex + 1;
+	//			int32 CIndex = AIndex + WORLD_SIZE;
+	//			int32 DIndex = CIndex + 1;
+	//			MeshData.Triangles.AddTriangle(AIndex, CIndex, BIndex);
+	//			MeshData.Triangles.AddTriangle(BIndex, CIndex, DIndex);
+	//		}
+	//	}
+	//}
+
+	int dx = Simplify; //change of x between two points
+	int dy = Simplify; //change of y between two points
+
+	const unsigned int SimplifySize = WORLD_SIZE / Simplify;
+	for (unsigned int y = 0; y < SimplifySize; y++)
 	{
-		float yalpha = (float)y / (float)(WORLD_SIZE - 1);
-		//float ypos = FMath::Lerp(-WORLD_SIZE / 2, WORLD_SIZE / 2, yalpha);
-		for (unsigned int x = 0; x < WORLD_SIZE; x++)
+		float yalpha = (float)y / (float)(SimplifySize - 1);
+
+		for (unsigned int x = 0; x < SimplifySize; x++)
 		{
-			float xalpha = (float)x / (float)(WORLD_SIZE - 1);
-			//float xpos = FMath::Lerp(-WORLD_SIZE / 2, WORLD_SIZE / 2, xalpha);
+			float xalpha = (float)x / (float)(SimplifySize - 1);
 
-			//float height = GetHeight(x, y);
+			/*int PointX = x * Simplify;
+			int PointY = y * Simplify;*/
+			float PointX = x * ((float)(WORLD_SIZE - 1) / (float)(SimplifySize - 1));
+			float PointY = y * ((float)(WORLD_SIZE - 1) / (float)(SimplifySize - 1));
+			FVector Position(PointX * WORLD_SCALE, PointY * WORLD_SCALE, GetHeight(PointX, PointY));
 
-			FVector Position((float)x * WORLD_SCALE, (float)y * WORLD_SCALE, GetHeight(x, y));
-			//UE_LOG(LogTemp, Warning, TEXT("created vert at %f %f %f"), Position.X, Position.Y, Position.Z);
-			float dfdx = (GetHeight(x + dx, y) - GetHeight(x - dx, y)) / (2 * (float)dx); //derivative of f over x
-			float dfdy = (GetHeight(x, y + dy) - GetHeight(x, y - dy)) / (2 * (float)dy); //derivative of f over y
+			float dfdx = (GetHeight(PointX + dx, PointY) - GetHeight(PointX - dx, PointY)) / (2 * (float)dx); //derivative of f over x
+			float dfdy = (GetHeight(PointX, PointY + dy) - GetHeight(PointX, PointY - dy)) / (2 * (float)dy); //derivative of f over y
 
-			//float dfdx = 0.0f; //derivative of f over x
-			//float dfdy = 0.0f; //derivative of f over y
 
 			FVector Normal(-dfdx, -dfdy, 1);
 			Normal.Normalize();
@@ -143,17 +209,19 @@ bool UWorldTileProvider::GetSectionMeshForLOD(int32 LODIndex, int32 SectionId, F
 			MeshData.TexCoords.Add(UV);
 			MeshData.Colors.Add(FColor::White);
 
-			if (x != WORLD_SIZE - 1 && y != WORLD_SIZE - 1)
+			if (x != SimplifySize - 1 && y != SimplifySize - 1)
 			{
-				int32 AIndex = x + y * WORLD_SIZE;
+				int32 AIndex = x + y * SimplifySize;
 				int32 BIndex = AIndex + 1;
-				int32 CIndex = AIndex + WORLD_SIZE;
+				int32 CIndex = AIndex + SimplifySize;
 				int32 DIndex = CIndex + 1;
 				MeshData.Triangles.AddTriangle(AIndex, CIndex, BIndex);
 				MeshData.Triangles.AddTriangle(BIndex, CIndex, DIndex);
 			}
 		}
 	}
+
+
 	return true;
 }
 
