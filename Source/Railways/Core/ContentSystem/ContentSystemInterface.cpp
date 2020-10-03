@@ -19,6 +19,7 @@ void UContentSystemInterface::ShutdownInterface()
 {
 	FScopeLock ScopeLock(&mutex);
 
+	UE_LOG(LogTemp, Log, TEXT("Content system shutdown requested?"));
 	//should be automatically cleaned up when the reference is gone
 	instance = nullptr;
 }

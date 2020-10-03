@@ -17,16 +17,31 @@ void UWorldTileProvider::SetTileMaterial(UMaterialInterface* InMaterial)
 
 void UWorldTileProvider::SetHeightData(int x, int y, float height)
 {
-	f_heightData[x][y] = height;
+	FScopeLock Lock(&PropertySyncRoot);
+	//f_heightData[x][y] = height;
+	heightData[x + y * WORLD_SIZE] = height;
 }
 
 void UWorldTileProvider::AddHeight(int x, int y, float height)
 {
-	f_heightData[x][y] += height;
+	FScopeLock Lock(&PropertySyncRoot);
+	//f_heightData[x][y] += height;
+	heightData[x + y * WORLD_SIZE] += height;
+}
+
+float UWorldTileProvider::GetHeight(int x, int y)
+{
+	if (x >= WORLD_SIZE) x = WORLD_SIZE - 1;
+	if (y >= WORLD_SIZE) y = WORLD_SIZE - 1;
+	if (x < 0) x = 0;
+	if (y < 0) y = 0;
+	//return f_heightData[x][y];
+	return heightData[x + y * WORLD_SIZE];
 }
 
 bool UWorldTileProvider::WithinBounds(int x, int y)
 {
+	FScopeLock Lock(&PropertySyncRoot);
 	if (x >= WORLD_SIZE) return false;
 	if (y >= WORLD_SIZE) return false;
 	if (x < 0) return false;
@@ -36,27 +51,47 @@ bool UWorldTileProvider::WithinBounds(int x, int y)
 
 void UWorldTileProvider::InvalidateMeshData()
 {
+	FScopeLock Lock(&PropertySyncRoot);
 	MarkAllLODsDirty();
 	MarkCollisionDirty();
+}
+
+UWorldTileProvider::UWorldTileProvider()/* : URuntimeMeshProvider()*/
+{
+	heightData = (float*)FMemory::Malloc(WORLD_SIZE * WORLD_SIZE * sizeof(float));
+	for (unsigned int x = 0; x < WORLD_SIZE; x++)
+	{
+		for (unsigned int y = 0; y < WORLD_SIZE; y++)
+		{
+			//heightData[x][y] = 0.0f;
+			SetHeightData(x, y, 0.0f);
+		}
+	}
+}
+
+UWorldTileProvider::~UWorldTileProvider()
+{
+	FMemory::Free(heightData);
 }
 
 #define MAXLOD 5
 
 void UWorldTileProvider::Initialize()
 {
-	f_heightData = new float* [WORLD_SIZE];
-	for (unsigned int i = 0; i < WORLD_SIZE; i++)
-		f_heightData[i] = new float[WORLD_SIZE];
+	//f_heightData = new float* [WORLD_SIZE];
+	//for (unsigned int i = 0; i < WORLD_SIZE; i++)
+	//	f_heightData[i] = new float[WORLD_SIZE];
 
-	for (unsigned int x = 0; x < WORLD_SIZE; x++)
-	{
-		for (unsigned int y = 0; y < WORLD_SIZE; y++)
-		{
-			f_heightData[x][y] = 0.0f;
-		}
-	}
+	//for (unsigned int x = 0; x < WORLD_SIZE; x++)
+	//{
+	//	for (unsigned int y = 0; y < WORLD_SIZE; y++)
+	//	{
+	//		f_heightData[x][y] = 0.0f;
+	//	}
+	//}
 
-	UE_LOG(LogTemp, Warning, TEXT("TILE INIT"));
+	//UE_LOG(LogTemp, Warning, TEXT("TILE INIT"));
+
 
 	/*FRuntimeMeshLODProperties LODProperties;
 	LODProperties.ScreenSize = 0.0f;
@@ -99,8 +134,9 @@ FBoxSphereBounds UWorldTileProvider::GetBounds()
 	{
 		for (unsigned int y = 0; y < WORLD_SIZE; y++)
 		{
-			MinHeight = FMath::Min(MinHeight, f_heightData[x][y]);
-			MaxHeight = FMath::Max(MaxHeight, f_heightData[x][y]);
+			float Height = GetHeight(x, y);
+			MinHeight = FMath::Min(MinHeight, Height);
+			MaxHeight = FMath::Max(MaxHeight, Height);
 		}
 	}
 	constexpr float BoundsSize = WORLD_SIZE * WORLD_SCALE;
@@ -113,19 +149,10 @@ FBoxSphereBounds UWorldTileProvider::GetBounds()
 	return FBoxSphereBounds(FBox(Start, End));
 }
 
-float UWorldTileProvider::GetHeight(int x, int y)
-{
-	if (x >= WORLD_SIZE) x = WORLD_SIZE - 1;
-	if (y >= WORLD_SIZE) y = WORLD_SIZE - 1;
-	if (x < 0) x = 0;
-	if (y < 0) y = 0;
-	return f_heightData[x][y];
-}
-
 bool UWorldTileProvider::GetSectionMeshForLOD(int32 LODIndex, int32 SectionId, FRuntimeMeshRenderableMeshData& MeshData)
 {
 	//check(LODIndex == 0 && SectionId == 0);
-
+	FScopeLock Lock(&PropertySyncRoot);
 	const unsigned int Simplify = (LODIndex * 1 + 1);
 
 	//int dx = 1; //change of x between two points
@@ -226,6 +253,7 @@ bool UWorldTileProvider::GetSectionMeshForLOD(int32 LODIndex, int32 SectionId, F
 
 FRuntimeMeshCollisionSettings UWorldTileProvider::GetCollisionSettings()
 {
+	FScopeLock Lock(&PropertySyncRoot);
 	FRuntimeMeshCollisionSettings Settings;
 	//Settings.bUseAsyncCooking = false;
 	Settings.bUseAsyncCooking = true;
@@ -239,10 +267,12 @@ FRuntimeMeshCollisionSettings UWorldTileProvider::GetCollisionSettings()
 bool UWorldTileProvider::HasCollisionMesh()
 {
 	return true;
+	//return false;
 }
 
 bool UWorldTileProvider::GetCollisionMesh(FRuntimeMeshCollisionData& CollisionData)
 {
+	FScopeLock Lock(&PropertySyncRoot);
 	constexpr int COLLISION_RESOLUTION = 4;
 	constexpr int COLLISION_SIZE = WORLD_SIZE / COLLISION_RESOLUTION + 1;
 

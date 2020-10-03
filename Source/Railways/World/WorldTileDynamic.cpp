@@ -9,52 +9,13 @@ void UWorldTileDynamic::Build(UMaterialInterface* Material, int X, int Y)
 {
     SetRelativeLocation(FVector((float)X * (WORLD_SIZE - 1) * WORLD_SCALE, (float)Y * (WORLD_SIZE - 1) * WORLD_SCALE, 0.0f));
 
-    Provider = NewObject<UWorldTileProvider>(this, TEXT("RuntimeMeshProvider"));
-    //URuntimeMeshProviderPlane* Provider = NewObject<URuntimeMeshProviderPlane>(this, TEXT("RuntimeMeshProvider-Box"));
-    
-    
+    Provider = NewObject<UWorldTileProvider>(this, NAME_None);
+
     if (Provider)
     {
-        UE_LOG(LogTemp, Warning, TEXT("creating tile"));
-        // The static provider should initialize before we use it
-        //Initialize(Provider);
-        //Provider->SetPlaneRadius(FVector(100, 100, 100));
-        //Provider->SetPlaneMaterial(Material);
         Provider->SetTileMaterial(Material);
         Initialize(Provider);
-
-        //for (unsigned int i = 0; i < WORLD_SIZE; i++)
-        //    for (unsigned int j = 0; j < WORLD_SIZE; j++)
-        //        Provider->SetHeightData(i, j, (float)FMath::Sin(i / 10.0f) * 100.0f);
-
-
-        //GetRuntimeMesh()->Initialize(Provider);
-        //Provider->SetupMaterialSlot(0, TEXT("TriMat"), Material);
-
-
-        // This creates 3 positions for a triangle
-        //TArray<FVector> Positions{ FVector(0, -50, 0), FVector(0, 0, 100), FVector(0, 50, 0) };
-
-        //// This creates 3 vertex colors
-        //TArray<FColor> Colors{ FColor::Blue, FColor::Red, FColor::Green };
-
-        //// This indexes our simple triangle
-        //TArray<int32> Triangles = { 0, 1, 2 };
-
-        //TArray<FVector> EmptyNormals;
-        //TArray<FVector2D> EmptyTexCoords;
-        //TArray<FRuntimeMeshTangent> EmptyTangents;
-        //Provider->CreateSectionFromComponents(0, 0, 0, Positions, Triangles, EmptyNormals, EmptyTexCoords, Colors, EmptyTangents, ERuntimeMeshUpdateFrequency::Frequent, true);
     }
-
-    //UTestProvider* BoxProvider = NewObject<UTestProvider>(this, TEXT("RuntimeMeshProvider-Box"));
-    //if (BoxProvider)
-    //{
-    //    //BoxProvider->SetBoxRadius(FVector(100, 100, 100));
-    //    BoxProvider->SetBoxMaterial(Material);
-
-    //    Initialize(BoxProvider);
-    //}
 }
 
 void UWorldTileDynamic::TerrainInfluence(FVector Pos, float Direction, int Radius)

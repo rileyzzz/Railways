@@ -22,8 +22,8 @@ private:
 
 	UMaterialInterface* Material;
 
-	float** f_heightData;
-	
+	//float** f_heightData;
+	float* heightData;
 public:
 
 	UMaterialInterface* GetTileMaterial() const;
@@ -33,7 +33,8 @@ public:
 	float GetHeight(int x, int y);
 	bool WithinBounds(int x, int y);
 	void InvalidateMeshData();
-	//UWorldTileProvider();
+	UWorldTileProvider();
+	~UWorldTileProvider();
 
 protected:
 	void Initialize() override;

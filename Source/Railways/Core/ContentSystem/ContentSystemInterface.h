@@ -23,6 +23,8 @@ class RAILWAYS_API UContentSystemInterface : public UObject
 public:
 	static UContentSystemInterface* GetInterface();
 	static void ShutdownInterface();
+
+	void DebugLog();
 private:
 	FString ContentDir;
 

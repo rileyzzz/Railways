@@ -109,11 +109,18 @@ void AWorldEditorPawn::Tick(float DeltaTime)
 	
 	const float ZoomFactor = 1.0f + (SpringArm->TargetArmLength / 4000.0f);
 	//UE_LOG(LogTemp, Log, TEXT("zoom factor %f"), ZoomFactor);
-	FVector Forward = Camera->GetForwardVector() * ForwardVelocity;
-	FVector Right = Camera->GetRightVector() * RightVelocity;
+	FVector Forward = Camera->GetForwardVector();
+	FVector Right = Camera->GetRightVector();
+	Forward.Z = 0.0f;
+	Right.Z = 0.0f;
+	Forward.Normalize();
+	Right.Normalize();
+
+	Forward *= ForwardVelocity;
+	Right *= RightVelocity;
 
 	FVector Velocity = Forward + Right;
-	Velocity.Normalize();
+	//Velocity.Normalize();
 	Velocity *= (DeltaTime * 1000.0f * ZoomFactor);
 
 	

@@ -72,23 +72,7 @@ void AHeightWorld::Tick(float DeltaTime)
 TArray<UWorldTileDynamic*> AHeightWorld::GetSortedTilesToPoint(FVector point)
 {
 	TArray<UWorldTileDynamic*> Out;
-	//TSortedMap<float, UWorldTileDynamic*> Distances;
-	////Distances.Reserve(Tiles.Num());
 	constexpr float HalfWorldSize = ((float)(WORLD_SIZE - 1) * WORLD_SCALE) / 2.0f;
-	//for (auto& entry : Tiles)
-	//{
-	//	auto& tile = entry.Value;
-	//	FTransform TilePos = tile->GetComponentTransform();
-	//	TilePos.TransformPosition(FVector(HalfWorldSize, HalfWorldSize, 0.0f));
-	//	TilePos.InverseTransformPosition(point);
-	//	FVector RelativeLocation = TilePos.GetLocation();
-	//	//Distances[RelativeLocation.Size()] = tile;
-
-	//	//Distances.Add(TPairInitializer<float, UWorldTileDynamic*>(RelativeLocation.Size(), tile));
-	//	Distances.Add(RelativeLocation.Size(), tile);
-	//}
-	//for (auto& dist : Distances)
-	//	Out.Add(dist.Value);
 
 	TSortedMap<float, UWorldTileDynamic*> Distances;
 	for (auto& TileEntry : Tiles)
