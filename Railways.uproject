@@ -37,6 +37,10 @@
 		{
 			"Name": "ProceduralSkeletalMesh",
 			"Enabled": true
+		},
+		{
+			"Name": "OnlineSubsystemSteam",
+			"Enabled": true
 		}
 	]
 }

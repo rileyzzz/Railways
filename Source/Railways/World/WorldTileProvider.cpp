@@ -74,7 +74,8 @@ UWorldTileProvider::~UWorldTileProvider()
 	FMemory::Free(heightData);
 }
 
-#define MAXLOD 5
+//#define MAXLOD 5
+#define MAXLOD 1
 
 void UWorldTileProvider::Initialize()
 {
@@ -111,15 +112,17 @@ void UWorldTileProvider::Initialize()
 
 	SetupMaterialSlot(0, FName("Material"), GetTileMaterial());
 
-	FRuntimeMeshSectionProperties Properties;
-	Properties.bCastsShadow = true;
-	Properties.bIsVisible = true;
-	Properties.MaterialSlot = 0;
-	Properties.bWants32BitIndices = true;
-	Properties.UpdateFrequency = ERuntimeMeshUpdateFrequency::Frequent;
-	//CreateSection(0, 0, Properties);
 	for (int LOD = 0; LOD < MAXLOD; LOD++)
+	{
+		FRuntimeMeshSectionProperties Properties;
+		Properties.bCastsShadow = true;
+		Properties.bIsVisible = true;
+		Properties.MaterialSlot = 0;
+		Properties.bWants32BitIndices = true;
+		Properties.UpdateFrequency = ERuntimeMeshUpdateFrequency::Frequent;
 		CreateSection(LOD, 0, Properties);
+	}
+	//CreateSection(0, 0, Properties);
 	//MarkAllLODsDirty();
 	MarkCollisionDirty();
 }
@@ -237,10 +240,10 @@ bool UWorldTileProvider::GetSectionMeshForLOD(int32 LODIndex, int32 SectionId, F
 
 			if (x != SimplifySize - 1 && y != SimplifySize - 1)
 			{
-				int32 AIndex = x + y * SimplifySize;
-				int32 BIndex = AIndex + 1;
-				int32 CIndex = AIndex + SimplifySize;
-				int32 DIndex = CIndex + 1;
+				uint32 AIndex = x + y * SimplifySize;
+				uint32 BIndex = AIndex + 1;
+				uint32 CIndex = AIndex + SimplifySize;
+				uint32 DIndex = CIndex + 1;
 				MeshData.Triangles.AddTriangle(AIndex, CIndex, BIndex);
 				MeshData.Triangles.AddTriangle(BIndex, CIndex, DIndex);
 			}

@@ -7,6 +7,10 @@
 #include "AssimpInterface.h"
 //#include "ContentSystemInterface.h"
 #include "ContentSystem/ContentSystemInterface.h"
+#include "OnlineSubsystem.h"
+#include "OnlineSessionSettings.h"
+#include "Interfaces/OnlineSessionInterface.h"
+#include "OnlineSubsystemSteam.h"
 #include "RailwaysGameInstance.generated.h"
 
 /**
@@ -18,9 +22,18 @@ class RAILWAYS_API URailwaysGameInstance : public UGameInstance
 	GENERATED_BODY()
 private:
 	UContentSystemInterface* Interface;
+	IOnlineSessionPtr SessionInterface;
 public:
 	UAssimpInterface* AssimpInterface;
 
 	virtual void Init() override;
 	virtual void Shutdown() override;
+
+	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
+	void OnDestroySessionComplete(FName SessionName, bool bWasSuccessful);
+	void OnFindSessionsComplete(bool bWasSuccessful);
+	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
+
+	UFUNCTION(BlueprintCallable, Category = "Multiplayer")
+	void BeginSession(FString ServerName);
 };
