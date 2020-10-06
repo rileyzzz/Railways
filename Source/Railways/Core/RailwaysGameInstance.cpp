@@ -2,6 +2,7 @@
 
 
 #include "RailwaysGameInstance.h"
+#include "Kismet/GameplayStatics.h"
 
 void URailwaysGameInstance::Init()
 {
@@ -34,11 +35,12 @@ void URailwaysGameInstance::OnCreateSessionComplete(FName SessionName, bool bWas
 {
 	if(bWasSuccessful)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Session %s created successfully."), *SessionName.ToString());
+		UE_LOG(LogTemp, Log, TEXT("Session created successfully."));
+		UGameplayStatics::OpenLevel(GetWorld(), TEXT("CustomWorld"), true, TEXT("?listen"));
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Session not created successfully!"));
+		UE_LOG(LogTemp, Warning, TEXT("Session creation failed!"));
 	}
 }
 
@@ -46,7 +48,7 @@ void URailwaysGameInstance::OnDestroySessionComplete(FName SessionName, bool bWa
 {
 	if (bWasSuccessful)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Session %s destroyed."), *SessionName.ToString());
+		UE_LOG(LogTemp, Log, TEXT("Session destroyed."));
 	}
 	else
 	{
@@ -56,23 +58,55 @@ void URailwaysGameInstance::OnDestroySessionComplete(FName SessionName, bool bWa
 
 void URailwaysGameInstance::OnFindSessionsComplete(bool bWasSuccessful)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Session find complete."));
+	if (bWasSuccessful && SessionSearch.IsValid())
+	{
+		if (SessionSearch->SearchResults.Num())
+		{
+			TArray<FRailwaysServerData> ServerData;
+			for (const FOnlineSessionSearchResult& SearchResult : SessionSearch->SearchResults)
+			{
+				
 
+				FRailwaysServerData Data;
+				Data.Name = SearchResult.Session.OwningUserName;
+				FString MapName;
+				if (SearchResult.Session.SessionSettings.Get(SETTING_MAPNAME, MapName))
+				{
+					Data.Name = MapName;
+				}
+				Data.MaxPlayers = SearchResult.Session.SessionSettings.NumPublicConnections;
+				Data.CurrentPlayers = Data.MaxPlayers - SearchResult.Session.NumOpenPublicConnections;
+				Data.HostUsername = SearchResult.Session.OwningUserName;
+				UE_LOG(LogTemp, Warning, TEXT("found session %s"), *Data.Name);
+				ServerData.Add(Data);
+			}
+			UE_LOG(LogTemp, Warning, TEXT("found %i sessions"), SessionSearch->SearchResults.Num());
+			ActiveServerList->PopulateList(ServerData);
+		}
+	}
 }
 
 void URailwaysGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
 {
-	switch (Result)
-	{
-	case EOnJoinSessionCompleteResult::Type::Success:
-		UE_LOG(LogTemp, Log, TEXT("Joined session %s."), *SessionName.ToString());
-		break;
-	case EOnJoinSessionCompleteResult::Type::AlreadyInSession:
-		UE_LOG(LogTemp, Warning, TEXT("Already in session %s!"), *SessionName.ToString());
-		break;
-	default:
-	case EOnJoinSessionCompleteResult::UnknownError:
-		UE_LOG(LogTemp, Warning, TEXT("Unknown session join error"));
-	}
+	UE_LOG(LogTemp, Log, TEXT("Joining session."));
+	FString URL;
+	if (!SessionInterface->GetResolvedConnectString(SessionName, URL))
+		return;
+	APlayerController* Controller = GetFirstLocalPlayerController();
+	Controller->ClientTravel(URL, ETravelType::TRAVEL_Absolute);
+	//switch (Result)
+	//{
+	//case EOnJoinSessionCompleteResult::Type::Success:
+	//	UE_LOG(LogTemp, Log, TEXT("Joined session %s."), *SessionName.ToString());
+	//	break;
+	//case EOnJoinSessionCompleteResult::Type::AlreadyInSession:
+	//	UE_LOG(LogTemp, Warning, TEXT("Already in session %s!"), *SessionName.ToString());
+	//	break;
+	//default:
+	//case EOnJoinSessionCompleteResult::UnknownError:
+	//	UE_LOG(LogTemp, Warning, TEXT("Unknown session join error"));
+	//}
 }
 
 void URailwaysGameInstance::BeginSession(FString ServerName)
@@ -87,17 +121,35 @@ void URailwaysGameInstance::BeginSession(FString ServerName)
 		Settings.bUsesPresence = true;
 		//Settings.Set(SERVER_NAME_SETTINGS_KEY, ServerName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
-		if (SessionInterface->CreateSession(0, *ServerName, Settings)) //TEXT("Railways Session")
-		{
-			UE_LOG(LogTemp, Log, TEXT("Creating session..."));
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Failed to create session!"));
-		}
+		SessionInterface->CreateSession(0, *ServerName, Settings); //TEXT("Railways Session")
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Failed to find online subsystem!"));
+	}
+}
+
+void URailwaysGameInstance::QueryServerList(UServerList* ServerList)
+{
+	ActiveServerList = ServerList;
+	SessionSearch = MakeShareable(new FOnlineSessionSearch());
+	if (SessionSearch.IsValid())
+	{
+		SessionSearch->MaxSearchResults = 100000;
+		SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
+		SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
+
+
+		//TArray<FRailwaysServerData> ServerData;
+		//for (int i = 0; i < 5; i++)
+		//{
+		//	FRailwaysServerData Data;
+		//	Data.Name = TEXT("Test server");
+		//	Data.MaxPlayers = 8;
+		//	Data.CurrentPlayers = 1;
+		//	Data.HostUsername = TEXT("hosttest");
+		//	ServerData.Add(Data);
+		//}
+		//ActiveServerList->PopulateList(ServerData);
 	}
 }

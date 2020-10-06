@@ -15,10 +15,10 @@ public class Railways : ModuleRules
 		PublicDependencyModuleNames.Add("ProceduralMeshComponent");
 
 		PublicDependencyModuleNames.Add("OnlineSubsystem");
+		PublicDependencyModuleNames.Add("OnlineSubsystemUtils");
 		PublicDependencyModuleNames.Add("OnlineSubsystemSteam");
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
-		
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

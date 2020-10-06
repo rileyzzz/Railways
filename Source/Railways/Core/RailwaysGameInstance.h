@@ -11,11 +11,9 @@
 #include "OnlineSessionSettings.h"
 #include "Interfaces/OnlineSessionInterface.h"
 #include "OnlineSubsystemSteam.h"
+#include "UI/ServerList.h"
 #include "RailwaysGameInstance.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class RAILWAYS_API URailwaysGameInstance : public UGameInstance
 {
@@ -23,6 +21,8 @@ class RAILWAYS_API URailwaysGameInstance : public UGameInstance
 private:
 	UContentSystemInterface* Interface;
 	IOnlineSessionPtr SessionInterface;
+	TSharedPtr<FOnlineSessionSearch> SessionSearch;
+	UServerList* ActiveServerList;
 public:
 	UAssimpInterface* AssimpInterface;
 
@@ -36,4 +36,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Multiplayer")
 	void BeginSession(FString ServerName);
+
+	//UFUNCTION(BlueprintCallable, Category = "Multiplayer")
+	void QueryServerList(UServerList* ServerList);
 };
