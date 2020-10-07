@@ -14,7 +14,7 @@ void AWorldEditPlayerController::BeginPlay()
 	bShowMouseCursor = true;
 }
 
-AWorldEditPlayerController::AWorldEditPlayerController()
+AWorldEditPlayerController::AWorldEditPlayerController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-
+	bReplicates = true;
 }

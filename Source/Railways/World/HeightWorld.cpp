@@ -9,6 +9,8 @@ AHeightWorld::AHeightWorld()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	
+
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 
 	//Tiles.Add(CreateDefaultSubobject<UWorldTileDynamic>(TEXT("Tile")));
@@ -20,20 +22,24 @@ AHeightWorld::AHeightWorld()
 	//Tiles[2]->SetupAttachment(RootComponent);
 	//Tiles[3]->SetupAttachment(RootComponent);
 	
-    
+	bReplicates = true;
 }
 
 // Called when the game starts or when spawned
 void AHeightWorld::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//APlayerController* Controller = GetWorld()->GetFirstPlayerController();
+	//if(Controller) SetOwner(Controller);
+
 	//Tiles[0]->Build(Material, 0, 0);
 	//Tiles[1]->Build(Material, 0, 1);
 	//Tiles[2]->Build(Material, 1, 0);
 	//Tiles[3]->Build(Material, 1, 1);
 }
 
-void AHeightWorld::TestForTile(int TileX, int TileY)
+void AHeightWorld::TestForTile_Implementation(int TileX, int TileY)
 {
 	TPair<int, int> TilePos(TileX, TileY);
 	if (!Tiles.Find(TilePos))
@@ -41,6 +47,7 @@ void AHeightWorld::TestForTile(int TileX, int TileY)
 		UWorldTileDynamic* NewTile = NewObject<UWorldTileDynamic>(this, NAME_None);
 		NewTile->RegisterComponent();
 		NewTile->AttachToComponent(RootComponent, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
+		NewTile->SetIsReplicated(true);
 		NewTile->Build(Material, TileX, TileY);
 		Tiles.Add(TilePos, NewTile);
 		UE_LOG(LogTemp, Log, TEXT("Created tile at %i %i"), TileX, TileY);
@@ -51,21 +58,48 @@ void AHeightWorld::TestForTile(int TileX, int TileY)
 void AHeightWorld::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	APawn* LocalPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
-	if (LocalPawn)
+	//APlayerController* Controller = GetWorld()->GetFirstPlayerController();
+	//if (Controller)
+	//{
+	//	APawn* LocalPawn = Controller->GetPawn();
+	//	if (LocalPawn)
+	//	{
+	//		FVector PlayerPos = LocalPawn->GetActorLocation() / ((float)WORLD_SIZE * WORLD_SCALE);
+	//		int TileX = FMath::FloorToInt(PlayerPos.X);
+	//		int TileY = FMath::FloorToInt(PlayerPos.Y);
+	//		constexpr int BuildRadius = 4;
+	//		for (int BuildX = TileX - BuildRadius; BuildX < TileX + BuildRadius; BuildX++)
+	//		{
+	//			for (int BuildY = TileY - BuildRadius; BuildY < TileY + BuildRadius; BuildY++)
+	//			{
+	//				TestForTile(BuildX, BuildY);
+	//			}
+	//		}
+
+	//	}
+	//}
+	if (HasAuthority())
 	{
-		FVector PlayerPos = LocalPawn->GetActorLocation() / ((float)WORLD_SIZE * WORLD_SCALE);
-		int TileX = FMath::FloorToInt(PlayerPos.X);
-		int TileY = FMath::FloorToInt(PlayerPos.Y);
-		constexpr int BuildRadius = 4;
-		for (int BuildX = TileX - BuildRadius; BuildX < TileX + BuildRadius; BuildX++)
+		for (auto it = GetWorld()->GetPlayerControllerIterator(); it; ++it)
 		{
-			for (int BuildY = TileY - BuildRadius; BuildY < TileY + BuildRadius; BuildY++)
+			APlayerController* Controller = it->Get();
+			APawn* LocalPawn = Controller->GetPawn();
+			if (LocalPawn)
 			{
-				TestForTile(BuildX, BuildY);
+				FVector PlayerPos = LocalPawn->GetActorLocation() / ((float)WORLD_SIZE * WORLD_SCALE);
+				int TileX = FMath::FloorToInt(PlayerPos.X);
+				int TileY = FMath::FloorToInt(PlayerPos.Y);
+				constexpr int BuildRadius = 4;
+				for (int BuildX = TileX - BuildRadius; BuildX < TileX + BuildRadius; BuildX++)
+				{
+					for (int BuildY = TileY - BuildRadius; BuildY < TileY + BuildRadius; BuildY++)
+					{
+						TestForTile(BuildX, BuildY);
+					}
+				}
+
 			}
 		}
-		
 	}
 }
 

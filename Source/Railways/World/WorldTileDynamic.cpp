@@ -2,8 +2,33 @@
 
 
 #include "WorldTileDynamic.h"
+#include "DrawDebugHelpers.h"
 //#include "Providers/RuntimeMeshProviderBox.h"
 //#include "TestProvider.h"
+
+void UWorldTileDynamic::SetHeightData(int x, int y, float height)
+{
+    FScopeLock Lock(&PropertySyncRoot);
+    //f_heightData[x][y] = height;
+    heightData[x + y * WORLD_SIZE] = height;
+}
+
+void UWorldTileDynamic::AddHeight(int x, int y, float height)
+{
+    FScopeLock Lock(&PropertySyncRoot);
+    //f_heightData[x][y] += height;
+    heightData[x + y * WORLD_SIZE] += height;
+}
+
+float UWorldTileDynamic::GetHeight(int x, int y)
+{
+    if (x >= WORLD_SIZE) x = WORLD_SIZE - 1;
+    if (y >= WORLD_SIZE) y = WORLD_SIZE - 1;
+    if (x < 0) x = 0;
+    if (y < 0) y = 0;
+    //return f_heightData[x][y];
+    return heightData[x + y * WORLD_SIZE];
+}
 
 void UWorldTileDynamic::Build(UMaterialInterface* Material, int X, int Y)
 {
@@ -11,15 +36,19 @@ void UWorldTileDynamic::Build(UMaterialInterface* Material, int X, int Y)
 
     Provider = NewObject<UWorldTileProvider>(this, NAME_None);
 
+    FVector Location = GetComponentTransform().GetLocation();
+    DrawDebugLine(GetWorld(), Location, Location + FVector(0.0f, 0.0f, 200.0f), FColor::Green, true);
     if (Provider)
     {
         Provider->SetTileMaterial(Material);
+        Provider->SetTileParent(this);
         Initialize(Provider);
     }
 }
 
-void UWorldTileDynamic::TerrainInfluence(FVector Pos, float Direction, int Radius)
+void UWorldTileDynamic::TerrainInfluence_Implementation(FVector Pos, float Direction, int Radius)
 {
+    UE_LOG(LogTemp, Warning, TEXT("Influencing terrain!!!!!!"));
     int LocalRadius = Radius / 10.0f;
     FTransform transform = GetComponentTransform();
     FVector InflPos = transform.InverseTransformPosition(Pos) / WORLD_SCALE;
@@ -40,16 +69,17 @@ void UWorldTileDynamic::TerrainInfluence(FVector Pos, float Direction, int Radiu
             if (dist > 0.0f && Provider->WithinBounds(xpos, ypos))
             {
                 float Interpolated = (FMath::Sin(dist * PI - (PI / 2.0f)) + 1.0f) / 2.0f;
-                Provider->AddHeight(xpos, ypos, Interpolated * 10.0f * Direction); //dont change height  for world scale
+                AddHeight(xpos, ypos, Interpolated * 10.0f * Direction); //dont change height  for world scale
             }
         }
     }
     //UE_LOG(LogTemp, Warning, TEXT("influence at %f %f %f"), InflPos.X, InflPos.Y, InflPos.Z);
 
-    Provider->InvalidateMeshData();
+    //Provider->InvalidateMeshData();
+    RefreshClientTile(heightData);
 }
 
-void UWorldTileDynamic::TerrainApproach(FVector Pos, float Height, float Strength, int Radius)
+void UWorldTileDynamic::TerrainApproach_Implementation(FVector Pos, float Height, float Strength, int Radius)
 {
     int LocalRadius = Radius / 10.0f;
     FTransform transform = GetComponentToWorld();
@@ -70,16 +100,43 @@ void UWorldTileDynamic::TerrainApproach(FVector Pos, float Height, float Strengt
             //UE_LOG(LogTemp, Warning, TEXT("checking bounds for %i %i"), xpos, ypos);
             if (dist > 0.0f && Provider->WithinBounds(xpos, ypos))
             {
-                float StartHeight = Provider->GetHeight(xpos, ypos);
+                float StartHeight = GetHeight(xpos, ypos);
 
                 float Influence = (FMath::Sin(dist * PI - (PI / 2.0f)) + 1.0f) / 2.0f;
                 //Interpolated *= Height;
                 //Provider->AddHeight(xpos, ypos, (Interpolated * WORLD_SCALE * Strength) - StartHeight);
-                Provider->SetHeightData(xpos, ypos, FMath::Lerp(StartHeight, Height, Influence * Strength));
+                SetHeightData(xpos, ypos, FMath::Lerp(StartHeight, Height, Influence * Strength));
             }
         }
     }
     //UE_LOG(LogTemp, Warning, TEXT("influence at %f %f %f"), InflPos.X, InflPos.Y, InflPos.Z);
 
+    //Provider->InvalidateMeshData();
+    RefreshClientTile(heightData);
+}
+
+void UWorldTileDynamic::RefreshClientTile_Implementation(const TArray<float>& inHeightData)
+{
+    heightData = inHeightData;
     Provider->InvalidateMeshData();
+}
+
+UWorldTileDynamic::UWorldTileDynamic()
+{
+    //heightData = (float*)FMemory::Malloc(WORLD_SIZE * WORLD_SIZE * sizeof(float));
+    //i really don't like using a TArray because it's not necessary but it wont replicate otherwise
+    heightData.Reserve(WORLD_SIZE * WORLD_SIZE);
+    for (unsigned int x = 0; x < WORLD_SIZE; x++)
+    {
+        for (unsigned int y = 0; y < WORLD_SIZE; y++)
+        {
+            heightData.Add(0.0f);
+            //SetHeightData(x, y, 0.0f);
+        }
+    }
+}
+
+UWorldTileDynamic::~UWorldTileDynamic()
+{
+    //FMemory::Free(heightData);
 }

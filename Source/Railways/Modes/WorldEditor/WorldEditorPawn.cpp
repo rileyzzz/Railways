@@ -11,8 +11,7 @@ AWorldEditorPawn::AWorldEditorPawn()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	UE_LOG(LogTemp, Warning, TEXT("actor constructor"));
-
+	
 	// Set this pawn to be controlled by the lowest-numbered player
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 
@@ -41,6 +40,12 @@ AWorldEditorPawn::AWorldEditorPawn()
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
+
+	MovementComponent = CreateDefaultSubobject<UTerrainMovementComponent>(TEXT("MovementComponent"));
+	MovementComponent->UpdatedComponent = RootComponent;
+
+	bReplicates = true;
+	//bReplicateMovement = true;
 	//Camera->SetRelativeLocation(FVector(-250.0f, 0.0f, 250.0f));
 	//Camera->SetRelativeRotation(FRotator(-45.0f, 0.0f, 0.0f));
 }
@@ -99,8 +104,15 @@ void AWorldEditorPawn::PostInitializeComponents()
 void AWorldEditorPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	Controller = dynamic_cast<AWorldEditPlayerController*>(GetController());
+	Controller = Cast<AWorldEditPlayerController>(GetController());
 }
+
+//void AWorldEditorPawn::ServerMovementUpdate_Implementation(FVector Velocity)
+//{
+//	FVector NewLocation = GetActorLocation() + Velocity;
+//	UpdatePositionToGround(NewLocation);
+//	SetActorLocation(NewLocation);
+//}
 
 // Called every frame
 void AWorldEditorPawn::Tick(float DeltaTime)
@@ -109,104 +121,72 @@ void AWorldEditorPawn::Tick(float DeltaTime)
 	
 	const float ZoomFactor = 1.0f + (SpringArm->TargetArmLength / 4000.0f);
 	//UE_LOG(LogTemp, Log, TEXT("zoom factor %f"), ZoomFactor);
-	FVector Forward = Camera->GetForwardVector();
-	FVector Right = Camera->GetRightVector();
-	Forward.Z = 0.0f;
-	Right.Z = 0.0f;
-	Forward.Normalize();
-	Right.Normalize();
+	//FVector Forward = Camera->GetForwardVector();
+	//FVector Right = Camera->GetRightVector();
+	//Forward.Z = 0.0f;
+	//Right.Z = 0.0f;
+	//Forward.Normalize();
+	//Right.Normalize();
 
-	Forward *= ForwardVelocity;
-	Right *= RightVelocity;
+	//Forward *= ForwardVelocity;
+	//Right *= RightVelocity;
 
-	FVector Velocity = Forward + Right;
-	//Velocity.Normalize();
-	Velocity *= (DeltaTime * 1000.0f * ZoomFactor);
+	//FVector Velocity = Forward + Right;
+	////Velocity.Normalize();
+	//Velocity *= (DeltaTime * 1000.0f * ZoomFactor);
 
+	////ServerMovementUpdate(Velocity);
+	//FVector NewLocation = GetActorLocation() + Velocity;
+	//UpdatePositionToGround(NewLocation);
+	//SetActorLocation(NewLocation);
 	
 
-	FVector NewLocation = GetActorLocation() + Velocity;
-	UpdatePositionToGround(NewLocation);
-	SetActorLocation(NewLocation);
-
-	//UE_LOG(LogTemp, Warning, TEXT("tick"));
-	//if (!Velocity.IsZero())
-	//{
-	//	FVector NewLocation = GetActorLocation() + (Velocity * DeltaTime);
-	//	SetActorLocation(NewLocation);
-	//}
-	/*if (CurrentEditingTile)
+	//if (GEngine->GetNetMode(GetWorld()) == NM_Client || NM_Standalone)
+	if (Controller)
 	{
-		switch (EditMode)
+		FHitResult Target;
+		if (GetMouseHit(Target))
 		{
-		case 0:
-		{
-			CurrentEditingTile->TerrainInfluence(LastHit, 1.0, 800);
-			break;
-		}
-		default:
-		case -1:
-			break;
-		}
-	}*/
-	FHitResult Target;
-	if (GetMouseHit(Target))
-	{
-		if (EditCategory == 0)
-		{
-			AHeightWorld* CurrentWorld = dynamic_cast<AHeightWorld*>(Target.Actor.Get());
-			if (b_leftMouse && (EditMode == 0 || EditMode == 1))
+			if (EditCategory == 0)
 			{
-				if (CurrentWorld)
+				AHeightWorld* CurrentWorld = Cast<AHeightWorld>(Target.Actor.Get());
+				if (b_leftMouse && (EditMode == 0 || EditMode == 1))
 				{
-					auto SortedTiles = CurrentWorld->GetSortedTilesToPoint(Target.ImpactPoint);
-					const int TileCount = FMath::Min(SortedTiles.Num(), 4);
-					for (int i = 0; i < TileCount; i++)
-						SortedTiles[i]->TerrainInfluence(Target.ImpactPoint, EditMode == 0 ? 1.0f : -1.0f, 200);
-
-
-					/*for (auto& tile : CurrentWorld->Tiles)
+					if (CurrentWorld)
 					{
-						tile->TerrainInfluence(Target.ImpactPoint, EditMode == 0 ? 1.0f : -1.0f, 800);
-					}*/
+						auto SortedTiles = CurrentWorld->GetSortedTilesToPoint(Target.ImpactPoint);
+						const int TileCount = FMath::Min(SortedTiles.Num(), 4);
+						for (int i = 0; i < TileCount; i++)
+							SortedTiles[i]->TerrainInfluence(Target.ImpactPoint, EditMode == 0 ? 1.0f : -1.0f, 200);
+					}
 				}
-				/*UWorldTileDynamic* CurrentEditingTile = dynamic_cast<UWorldTileDynamic*>(Target.Component.Get());
-
-				if (CurrentEditingTile)
+				else if (b_leftMouse && (EditMode == 2))
 				{
-					CurrentEditingTile->TerrainInfluence(Target.ImpactPoint, EditMode == 0 ? 1.0f : -1.0f, 800);
-					DrawDebugLine(GetWorld(), Target.TraceStart, Target.ImpactPoint, FColor::Green, false);
-					DrawDebugLine(GetWorld(), Target.ImpactPoint, Target.ImpactPoint + Target.ImpactNormal * 100.0f, FColor::Blue, false);
-				}*/
-				
+					if (CurrentWorld)
+					{
+						auto SortedTiles = CurrentWorld->GetSortedTilesToPoint(Target.ImpactPoint);
+						const int TileCount = (SortedTiles.Num() < 4) ? SortedTiles.Num() : 4;
+						for (int i = 0; i < TileCount; i++)
+							SortedTiles[i]->TerrainApproach(Target.ImpactPoint, TargetHeight, 0.4f, 200);
+					}
+				}
 			}
-			else if (b_leftMouse && (EditMode == 2))
+			else if (EditCategory == 1)
 			{
-				if (CurrentWorld)
+				if (b_leftMouse)
 				{
-					auto SortedTiles = CurrentWorld->GetSortedTilesToPoint(Target.ImpactPoint);
-					const int TileCount = (SortedTiles.Num() < 4) ? SortedTiles.Num() : 4;
-					for (int i = 0; i < TileCount; i++)
-						SortedTiles[i]->TerrainApproach(Target.ImpactPoint, TargetHeight, 0.4f, 200);
+					if (EditSplinePoint)
+					{
+						EditSplinePoint->SetWorldLocation(Target.ImpactPoint);
+						EditSplinePoint->ParentSection->RefreshSection();
+					}
 				}
 			}
-		}
-		else if (EditCategory == 1)
-		{
-			if (b_leftMouse)
-			{
-				if (EditSplinePoint)
-				{
-					EditSplinePoint->SetWorldLocation(Target.ImpactPoint);
-					EditSplinePoint->ParentSection->RefreshSection();
-				}
-			}
-		}
 
-		//FTransform transform = GetTransform();
-		if(EditCursor) EditCursor->SetWorldLocation(Target.ImpactPoint);
+			//FTransform transform = GetTransform();
+			if (EditCursor) EditCursor->SetWorldLocation(Target.ImpactPoint);
+		}
 	}
-	
 }
 
 // Called to bind functionality to input
@@ -214,8 +194,8 @@ void AWorldEditorPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	InputComponent->BindAxis("Fly Forward", this, &AWorldEditorPawn::InputFlyForward);
-	InputComponent->BindAxis("Fly Right", this, &AWorldEditorPawn::InputFlyRight);
+	InputComponent->BindAxis("Fly Forward", this, &AWorldEditorPawn::InputMoveForward);
+	InputComponent->BindAxis("Fly Right", this, &AWorldEditorPawn::InputMoveRight);
 
 	InputComponent->BindAxis("Rotate Camera X", this, &AWorldEditorPawn::InputCameraX);
 	InputComponent->BindAxis("Rotate Camera Y", this, &AWorldEditorPawn::InputCameraY);
@@ -241,57 +221,59 @@ void AWorldEditorPawn::UpdatePositionToGround(FVector& Position)
 	}
 }
 
-void AWorldEditorPawn::InputFlyForward(float AxisValue)
+void AWorldEditorPawn::InputMoveForward(float AxisValue)
 {
-	//Velocity += Camera->GetForwardVector() * AxisValue * 1.0f;
-
-	//FVector Forward = Camera->GetForwardVector() * AxisValue;
-	//Forward.Z = 0;
-	//Forward.Normalize();
-	//Forward *= 10.0f;
-	ForwardVelocity = AxisValue;
-
-	//FVector NewLocation = GetActorLocation() + Forward;
-	//UpdatePositionToGround(NewLocation);
-	//SetActorLocation(NewLocation);
-	//Velocity += Forward;
-	//Velocity.Normalize();
-	//Velocity *= 10.0f;
-
-	//Velocity.X = AxisValue * 800.0f;
-	//FVector translation(AxisValue, 0.0f, 0.0f);
-	//AddActorWorldTransform(FTransform(translation), false);
-
+	if (AxisValue != 0)
+	{
+		ServerMoveForward(AxisValue);
+		ServerMoveForward_Implementation(AxisValue);
+	}
+		
 }
 
-void AWorldEditorPawn::InputFlyRight(float AxisValue)
+void AWorldEditorPawn::InputMoveRight(float AxisValue)
 {
-	//Velocity += Camera->GetRightVector() * AxisValue * 1.0f;
+	if (AxisValue != 0)
+	{
+		ServerMoveRight(AxisValue);
+		ServerMoveRight_Implementation(AxisValue);
+	}
+}
 
-	//FVector Right = Camera->GetRightVector() * AxisValue;
-	//Right.Z = 0;
-	//Right.Normalize();
-	//Right *= 10.0f;
-	RightVelocity = AxisValue;
+void AWorldEditorPawn::ServerMoveForward_Implementation(float AxisValue)
+{
+	if (MovementComponent && (MovementComponent->UpdatedComponent == RootComponent))
+	{
+		const float ZoomFactor = 1.0f + (SpringArm->TargetArmLength / 4000.0f);
+		FVector Forward = Camera->GetForwardVector();
+		Forward.Z = 0.0f;
+		Forward.Normalize();
 
-	//FVector NewLocation = GetActorLocation() + Right;
-	//UpdatePositionToGround(NewLocation);
-	//SetActorLocation(NewLocation);
-	//Velocity += Right;
-	//Velocity.Normalize();
-	//Velocity *= 10.0f;
-	//FVector translation(0.0f, AxisValue, 0.0f);
-	//AddActorWorldTransform(FTransform(translation), false);
+		Forward *= AxisValue * ZoomFactor;
+		MovementComponent->AddInputVector(Forward);
+	}
+}
+
+void AWorldEditorPawn::ServerMoveRight_Implementation(float AxisValue)
+{
+	if (MovementComponent && (MovementComponent->UpdatedComponent == RootComponent))
+	{
+		const float ZoomFactor = 1.0f + (SpringArm->TargetArmLength / 4000.0f);
+		FVector Right = Camera->GetRightVector();
+		Right.Z = 0.0f;
+		Right.Normalize();
+
+		Right *= AxisValue * ZoomFactor;
+		MovementComponent->AddInputVector(Right);
+	}
 }
 
 void AWorldEditorPawn::InputCameraX(float AxisValue)
 {
 	if (b_draggingMouse)
 	{
-		FRotator CurrentRotation = SpringArm->GetRelativeRotation();
-		CurrentRotation.Yaw += AxisValue * 2.0f;
-		CurrentRotation.Roll = 0.0f;
-		SpringArm->SetRelativeRotation(CurrentRotation);
+		ServerCameraX(AxisValue);
+		ServerCameraX_Implementation(AxisValue);
 	}
 }
 
@@ -299,14 +281,28 @@ void AWorldEditorPawn::InputCameraY(float AxisValue)
 {
 	if (b_draggingMouse)
 	{
-		FRotator CurrentRotation = SpringArm->GetRelativeRotation();
-		CurrentRotation.Pitch += AxisValue * 2.0f;
-		CurrentRotation.Roll = 0.0f;
-		
-		//UE_LOG(LogTemp, Warning, TEXT("Pitch %f"), CurrentRotation.Pitch);
-		if(CurrentRotation.Pitch < -1.0f && CurrentRotation.Pitch > -89.0f)
-			SpringArm->SetRelativeRotation(CurrentRotation);
+		ServerCameraY(AxisValue);
+		ServerCameraY_Implementation(AxisValue);
 	}
+}
+
+void AWorldEditorPawn::ServerCameraX_Implementation(float AxisValue)
+{
+	FRotator CurrentRotation = SpringArm->GetRelativeRotation();
+	CurrentRotation.Yaw += AxisValue * 2.0f;
+	CurrentRotation.Roll = 0.0f;
+	SpringArm->SetRelativeRotation(CurrentRotation);
+}
+
+void AWorldEditorPawn::ServerCameraY_Implementation(float AxisValue)
+{
+	FRotator CurrentRotation = SpringArm->GetRelativeRotation();
+	CurrentRotation.Pitch += AxisValue * 2.0f;
+	CurrentRotation.Roll = 0.0f;
+
+	//UE_LOG(LogTemp, Warning, TEXT("Pitch %f"), CurrentRotation.Pitch);
+	if (CurrentRotation.Pitch < -1.0f && CurrentRotation.Pitch > -89.0f)
+		SpringArm->SetRelativeRotation(CurrentRotation);
 }
 
 void AWorldEditorPawn::InputCameraZoom(float AxisValue)

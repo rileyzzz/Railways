@@ -1,5 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "WorldTileDynamic.h"
 #include "WorldTileProvider.h"
 
 UMaterialInterface* UWorldTileProvider::GetTileMaterial() const
@@ -15,33 +16,13 @@ void UWorldTileProvider::SetTileMaterial(UMaterialInterface* InMaterial)
 	SetupMaterialSlot(0, FName("Material"), Material);
 }
 
-void UWorldTileProvider::SetHeightData(int x, int y, float height)
+void UWorldTileProvider::SetTileParent(UWorldTileDynamic* InParent)
 {
-	FScopeLock Lock(&PropertySyncRoot);
-	//f_heightData[x][y] = height;
-	heightData[x + y * WORLD_SIZE] = height;
-}
-
-void UWorldTileProvider::AddHeight(int x, int y, float height)
-{
-	FScopeLock Lock(&PropertySyncRoot);
-	//f_heightData[x][y] += height;
-	heightData[x + y * WORLD_SIZE] += height;
-}
-
-float UWorldTileProvider::GetHeight(int x, int y)
-{
-	if (x >= WORLD_SIZE) x = WORLD_SIZE - 1;
-	if (y >= WORLD_SIZE) y = WORLD_SIZE - 1;
-	if (x < 0) x = 0;
-	if (y < 0) y = 0;
-	//return f_heightData[x][y];
-	return heightData[x + y * WORLD_SIZE];
+	Tile = InParent;
 }
 
 bool UWorldTileProvider::WithinBounds(int x, int y)
 {
-	FScopeLock Lock(&PropertySyncRoot);
 	if (x >= WORLD_SIZE) return false;
 	if (y >= WORLD_SIZE) return false;
 	if (x < 0) return false;
@@ -49,30 +30,22 @@ bool UWorldTileProvider::WithinBounds(int x, int y)
 	return true;
 }
 
-void UWorldTileProvider::InvalidateMeshData()
+void UWorldTileProvider::InvalidateMeshData_Implementation()
 {
 	FScopeLock Lock(&PropertySyncRoot);
 	MarkAllLODsDirty();
 	MarkCollisionDirty();
 }
 
-UWorldTileProvider::UWorldTileProvider()/* : URuntimeMeshProvider()*/
-{
-	heightData = (float*)FMemory::Malloc(WORLD_SIZE * WORLD_SIZE * sizeof(float));
-	for (unsigned int x = 0; x < WORLD_SIZE; x++)
-	{
-		for (unsigned int y = 0; y < WORLD_SIZE; y++)
-		{
-			//heightData[x][y] = 0.0f;
-			SetHeightData(x, y, 0.0f);
-		}
-	}
-}
-
-UWorldTileProvider::~UWorldTileProvider()
-{
-	FMemory::Free(heightData);
-}
+//UWorldTileProvider::UWorldTileProvider()/* : URuntimeMeshProvider()*/
+//{
+//
+//}
+//
+//UWorldTileProvider::~UWorldTileProvider()
+//{
+//	
+//}
 
 //#define MAXLOD 5
 #define MAXLOD 1
@@ -137,7 +110,7 @@ FBoxSphereBounds UWorldTileProvider::GetBounds()
 	{
 		for (unsigned int y = 0; y < WORLD_SIZE; y++)
 		{
-			float Height = GetHeight(x, y);
+			float Height = Tile->GetHeight(x, y);
 			MinHeight = FMath::Min(MinHeight, Height);
 			MaxHeight = FMath::Max(MaxHeight, Height);
 		}
@@ -220,10 +193,10 @@ bool UWorldTileProvider::GetSectionMeshForLOD(int32 LODIndex, int32 SectionId, F
 			int PointY = y * Simplify;*/
 			float PointX = x * ((float)(WORLD_SIZE - 1) / (float)(SimplifySize - 1));
 			float PointY = y * ((float)(WORLD_SIZE - 1) / (float)(SimplifySize - 1));
-			FVector Position(PointX * WORLD_SCALE, PointY * WORLD_SCALE, GetHeight(PointX, PointY));
+			FVector Position(PointX * WORLD_SCALE, PointY * WORLD_SCALE, Tile->GetHeight(PointX, PointY));
 
-			float dfdx = (GetHeight(PointX + dx, PointY) - GetHeight(PointX - dx, PointY)) / (2 * (float)dx); //derivative of f over x
-			float dfdy = (GetHeight(PointX, PointY + dy) - GetHeight(PointX, PointY - dy)) / (2 * (float)dy); //derivative of f over y
+			float dfdx = (Tile->GetHeight(PointX + dx, PointY) - Tile->GetHeight(PointX - dx, PointY)) / (2 * (float)dx); //derivative of f over x
+			float dfdy = (Tile->GetHeight(PointX, PointY + dy) - Tile->GetHeight(PointX, PointY - dy)) / (2 * (float)dy); //derivative of f over y
 
 
 			FVector Normal(-dfdx, -dfdy, 1);
@@ -290,7 +263,7 @@ bool UWorldTileProvider::GetCollisionMesh(FRuntimeMeshCollisionData& CollisionDa
 	{
 		for (unsigned int x = 0; x < COLLISION_SIZE; x++)
 		{
-			float height = GetHeight(x * COLLISION_RESOLUTION, y * COLLISION_RESOLUTION);
+			float height = Tile->GetHeight(x * COLLISION_RESOLUTION, y * COLLISION_RESOLUTION);
 
 			FVector Position((float)x * (float)WORLD_SCALE * (float)COLLISION_RESOLUTION, (float)y * (float)WORLD_SCALE * (float)COLLISION_RESOLUTION, height);
 

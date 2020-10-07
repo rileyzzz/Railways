@@ -14,7 +14,8 @@ class RAILWAYS_API AWorldEditPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
-	AWorldEditPlayerController();
+public:
+	AWorldEditPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
 	// Called when the game starts or when spawned

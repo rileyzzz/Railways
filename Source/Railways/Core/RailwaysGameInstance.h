@@ -38,5 +38,8 @@ public:
 	void BeginSession(FString ServerName);
 
 	//UFUNCTION(BlueprintCallable, Category = "Multiplayer")
+	void JoinSession(uint32 Index = 0);
+
+	//UFUNCTION(BlueprintCallable, Category = "Multiplayer")
 	void QueryServerList(UServerList* ServerList);
 };

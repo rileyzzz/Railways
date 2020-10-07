@@ -21,7 +21,9 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	UFUNCTION(Server, Reliable)
 	void TestForTile(int TileX, int TileY);
+	void TestForTile_Implementation(int TileX, int TileY);
 
 public:	
 	// Called every frame
@@ -31,6 +33,7 @@ public:
 	UMaterialInterface* Material;
 
 	//TArray<UWorldTileDynamic*> Tiles;
+	//UPROPERTY(Replicated)
 	TMap<TPair<int, int>, UWorldTileDynamic*> Tiles;
 
 	TArray<UWorldTileDynamic*> GetSortedTilesToPoint(FVector point);

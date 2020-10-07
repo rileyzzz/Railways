@@ -4,12 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "WorldEditPlayerController.h"
 #include "../../World/HeightWorld.h"
 #include "../../World/WorldTileDynamic.h"
 #include "../../Core/Objects/DynamicSplineSection.h"
+#include "../TerrainMovementComponent.h"
 #include "WorldEditorPawn.generated.h"
 
 UCLASS()
@@ -22,8 +24,8 @@ public:
 	AWorldEditorPawn();
 	virtual void PostInitializeComponents() override;
 
-	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* MainMesh;
+	//UPROPERTY(EditAnywhere)
+	//UStaticMeshComponent* MainMesh;
 
 	UPROPERTY(EditAnywhere)
 	UMaterialInterface* DecalMaterial;
@@ -31,7 +33,10 @@ public:
 	UPROPERTY(EditAnywhere)
 	UMaterialInterface* PaintMaterial;
 
+	UPROPERTY(BlueprintReadWrite)
 	UDecalComponent* Cursor;
+
+	UPROPERTY(BlueprintReadWrite)
 	UDecalComponent* EditCursor;
 
 	USpringArmComponent* SpringArm;
@@ -45,14 +50,35 @@ private:
 	bool b_leftMouse = false;
 	AWorldEditPlayerController* Controller;
 
-	float ForwardVelocity = 0.0f;
-	float RightVelocity = 0.0f;
+	//float ForwardVelocity = 0.0f;
+	//float RightVelocity = 0.0f;
+	UTerrainMovementComponent* MovementComponent;
+
 	void UpdatePositionToGround(FVector& Position);
-	void InputFlyForward(float AxisValue);
-	void InputFlyRight(float AxisValue);
+	void InputMoveForward(float AxisValue);
+	void InputMoveRight(float AxisValue);
+
+	UFUNCTION(Server, Reliable)
+	void ServerMoveForward(float AxisValue);
+	void ServerMoveForward_Implementation(float AxisValue);
+
+	UFUNCTION(Server, Reliable)
+	void ServerMoveRight(float AxisValue);
+	void ServerMoveRight_Implementation(float AxisValue);
+
+
 
 	void InputCameraX(float AxisValue);
 	void InputCameraY(float AxisValue);
+
+	UFUNCTION(Server, Reliable)
+	void ServerCameraX(float AxisValue);
+	void ServerCameraX_Implementation(float AxisValue);
+
+	UFUNCTION(Server, Reliable)
+	void ServerCameraY(float AxisValue);
+	void ServerCameraY_Implementation(float AxisValue);
+
 	void InputCameraZoom(float AxisValue);
 
 	void StartDrag();
@@ -71,9 +97,13 @@ private:
 
 	//FVector LastHit;
 	bool GetMouseHit(FHitResult& OutHit, ECollisionChannel channel = ECC_Visibility, const TArray<UPrimitiveComponent*>& Ignore = TArray<UPrimitiveComponent*>());
+
 	void StartMouse();
 	void EndMouse();
-public:	
+public:
+	//UFUNCTION(Server, Unreliable)
+	//void ServerMovementUpdate(FVector Velocity);
+	//void ServerMovementUpdate_Implementation(FVector Velocity);
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

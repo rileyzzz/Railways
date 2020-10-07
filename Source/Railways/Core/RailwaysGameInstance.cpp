@@ -64,21 +64,24 @@ void URailwaysGameInstance::OnFindSessionsComplete(bool bWasSuccessful)
 		if (SessionSearch->SearchResults.Num())
 		{
 			TArray<FRailwaysServerData> ServerData;
+			uint32 Index = 0;
 			for (const FOnlineSessionSearchResult& SearchResult : SessionSearch->SearchResults)
 			{
-				
-
 				FRailwaysServerData Data;
 				Data.Name = SearchResult.Session.OwningUserName;
 				FString MapName;
 				if (SearchResult.Session.SessionSettings.Get(SETTING_MAPNAME, MapName))
-				{
 					Data.Name = MapName;
-				}
+
 				Data.MaxPlayers = SearchResult.Session.SessionSettings.NumPublicConnections;
 				Data.CurrentPlayers = Data.MaxPlayers - SearchResult.Session.NumOpenPublicConnections;
 				Data.HostUsername = SearchResult.Session.OwningUserName;
+				Data.Index = Index++;
 				UE_LOG(LogTemp, Warning, TEXT("found session %s"), *Data.Name);
+				for (const auto& data : SearchResult.Session.SessionSettings.Settings)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Session setting %s = %s"), *data.Key.ToString(), *data.Value.ToString());
+				}
 				ServerData.Add(Data);
 			}
 			UE_LOG(LogTemp, Warning, TEXT("found %i sessions"), SessionSearch->SearchResults.Num());
@@ -116,16 +119,25 @@ void URailwaysGameInstance::BeginSession(FString ServerName)
 	{
 		FOnlineSessionSettings Settings;
 		Settings.bIsLANMatch = false;
-		Settings.NumPublicConnections = 2;
+		Settings.NumPublicConnections = 10;
 		Settings.bShouldAdvertise = true;
 		Settings.bUsesPresence = true;
 		//Settings.Set(SERVER_NAME_SETTINGS_KEY, ServerName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
-		SessionInterface->CreateSession(0, *ServerName, Settings); //TEXT("Railways Session")
+		SessionInterface->CreateSession(0, TEXT("Railways Session"), Settings); //TEXT("Railways Session")
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Failed to find online subsystem!"));
+	}
+}
+
+void URailwaysGameInstance::JoinSession(uint32 Index)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Attempting to join session %u"), Index);
+	if (Index < (uint32)SessionSearch->SearchResults.Num())
+	{
+		SessionInterface->JoinSession(0, TEXT("Railways Session"), SessionSearch->SearchResults[Index]);
 	}
 }
 

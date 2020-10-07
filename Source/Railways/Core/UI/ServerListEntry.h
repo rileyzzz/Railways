@@ -23,6 +23,8 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "ServerData")
 	FString HostUsername;
+
+	uint32 Index;
 };
 
 UCLASS()
@@ -42,4 +44,7 @@ public:
 
 	//UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = "true"))
 	//FRailwaysServerData ServerData;
+
+	UFUNCTION(BlueprintCallable, Category = "Multiplayer")
+	void JoinSession_Internal(const FRailwaysServerData& Session);
 };
