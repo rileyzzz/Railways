@@ -62,32 +62,29 @@ void URailwaysGameInstance::OnFindSessionsComplete(bool bWasSuccessful)
 	UE_LOG(LogTemp, Warning, TEXT("Session find complete."));
 	if (bWasSuccessful && SessionSearch.IsValid())
 	{
-		if (SessionSearch->SearchResults.Num())
+		TArray<FRailwaysServerData> ServerData;
+		uint32 Index = 0;
+		for (const FOnlineSessionSearchResult& SearchResult : SessionSearch->SearchResults)
 		{
-			TArray<FRailwaysServerData> ServerData;
-			uint32 Index = 0;
-			for (const FOnlineSessionSearchResult& SearchResult : SessionSearch->SearchResults)
-			{
-				FRailwaysServerData Data;
-				Data.Name = SearchResult.Session.OwningUserName;
-				FString MapName;
-				if (SearchResult.Session.SessionSettings.Get(SETTING_MAPNAME, MapName))
-					Data.Name = MapName;
+			FRailwaysServerData Data;
+			Data.Name = SearchResult.Session.OwningUserName;
+			FString MapName;
+			if (SearchResult.Session.SessionSettings.Get(SETTING_MAPNAME, MapName))
+				Data.Name = MapName;
 
-				Data.MaxPlayers = SearchResult.Session.SessionSettings.NumPublicConnections;
-				Data.CurrentPlayers = Data.MaxPlayers - SearchResult.Session.NumOpenPublicConnections;
-				Data.HostUsername = SearchResult.Session.OwningUserName;
-				Data.Index = Index++;
-				UE_LOG(LogTemp, Warning, TEXT("found session %s"), *Data.Name);
-				for (const auto& data : SearchResult.Session.SessionSettings.Settings)
-				{
-					UE_LOG(LogTemp, Warning, TEXT("Session setting %s = %s"), *data.Key.ToString(), *data.Value.ToString());
-				}
-				ServerData.Add(Data);
+			Data.MaxPlayers = SearchResult.Session.SessionSettings.NumPublicConnections;
+			Data.CurrentPlayers = Data.MaxPlayers - SearchResult.Session.NumOpenPublicConnections;
+			Data.HostUsername = SearchResult.Session.OwningUserName;
+			Data.Index = Index++;
+			UE_LOG(LogTemp, Warning, TEXT("found session %s"), *Data.Name);
+			for (const auto& data : SearchResult.Session.SessionSettings.Settings)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Session setting %s = %s"), *data.Key.ToString(), *data.Value.ToString());
 			}
-			UE_LOG(LogTemp, Warning, TEXT("found %i sessions"), SessionSearch->SearchResults.Num());
-			ActiveServerList->PopulateList(ServerData);
+			ServerData.Add(Data);
 		}
+		UE_LOG(LogTemp, Warning, TEXT("found %i sessions"), SessionSearch->SearchResults.Num());
+		ActiveServerList->PopulateList(ServerData);
 	}
 }
 
@@ -99,18 +96,6 @@ void URailwaysGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSess
 		return;
 	APlayerController* Controller = GetFirstLocalPlayerController();
 	Controller->ClientTravel(URL, ETravelType::TRAVEL_Absolute);
-	//switch (Result)
-	//{
-	//case EOnJoinSessionCompleteResult::Type::Success:
-	//	UE_LOG(LogTemp, Log, TEXT("Joined session %s."), *SessionName.ToString());
-	//	break;
-	//case EOnJoinSessionCompleteResult::Type::AlreadyInSession:
-	//	UE_LOG(LogTemp, Warning, TEXT("Already in session %s!"), *SessionName.ToString());
-	//	break;
-	//default:
-	//case EOnJoinSessionCompleteResult::UnknownError:
-	//	UE_LOG(LogTemp, Warning, TEXT("Unknown session join error"));
-	//}
 }
 
 void URailwaysGameInstance::BeginSession(FString ServerName)
@@ -179,32 +164,48 @@ CSteamID SteamIDStringToCSteamID(FString s)
 	return CSteamID(i64);
 }
 
-UTexture2D* URailwaysGameInstance::getPlayerSteamAvatar(FString SteamID)
+FSteamID URailwaysGameInstance::getSteamID()
+{
+	if (SteamAPI_IsSteamRunning())
+	{
+		ISteamUser* User = SteamUser();
+		if (User)
+			return FSteamID(User->GetSteamID().ConvertToUint64());
+	}
+	return FSteamID();
+}
+
+UTexture2D* URailwaysGameInstance::getPlayerSteamAvatar(FSteamID SteamID, UTexture2D* Default)
 {
 	if (SteamAPI_IsSteamRunning()) //SteamAPI_Init()
 	{
-		uint32 Width, Height;
-		int Image = SteamFriends()->GetMediumFriendAvatar(SteamIDStringToCSteamID(SteamID));
-		SteamUtils()->GetImageSize(Image, &Width, &Height);
-		if (Width > 0 && Height > 0)
+		ISteamFriends* Friends = SteamFriends();
+		if (Friends)
 		{
-			const size_t BufferSize = Width * Height * 4 * sizeof(uint8);
-			uint8* ImageData = (uint8*)FMemory::Malloc(BufferSize);
-			SteamUtils()->GetImageRGBA(Image, ImageData, BufferSize);
-			UTexture2D* Avatar = UTexture2D::CreateTransient(Width, Height, PF_R8G8B8A8);
+			UE_LOG(LogTemp, Warning, TEXT("Player ID %i"), SteamID.ID);
+			uint32 Width, Height;
+			int Image = Friends->GetMediumFriendAvatar(CSteamID(SteamID.ID));
+			SteamUtils()->GetImageSize(Image, &Width, &Height);
+			if (Width > 0 && Height > 0)
+			{
+				const size_t BufferSize = Width * Height * 4 * sizeof(uint8);
+				uint8* ImageData = (uint8*)FMemory::Malloc(BufferSize);
+				SteamUtils()->GetImageRGBA(Image, ImageData, BufferSize);
+				UTexture2D* Avatar = UTexture2D::CreateTransient(Width, Height, PF_R8G8B8A8);
 
-			uint8* MipData = (uint8*)Avatar->PlatformData->Mips[0].BulkData.Lock(LOCK_READ_WRITE);
-			FMemory::Memcpy(MipData, ImageData, BufferSize);
-			Avatar->PlatformData->Mips[0].BulkData.Unlock();
+				uint8* MipData = (uint8*)Avatar->PlatformData->Mips[0].BulkData.Lock(LOCK_READ_WRITE);
+				FMemory::Memcpy(MipData, ImageData, BufferSize);
+				Avatar->PlatformData->Mips[0].BulkData.Unlock();
 
-			Avatar->PlatformData->SetNumSlices(1);
-			Avatar->NeverStream = true;
+				Avatar->PlatformData->SetNumSlices(1);
+				Avatar->NeverStream = true;
 
-			Avatar->UpdateResource();
-			FMemory::Free(ImageData);
+				Avatar->UpdateResource();
+				FMemory::Free(ImageData);
 
-			return Avatar;
+				return Avatar;
+			}
 		}
 	}
-	return nullptr;
+	return Default;
 }

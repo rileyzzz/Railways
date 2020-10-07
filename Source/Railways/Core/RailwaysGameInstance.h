@@ -12,7 +12,18 @@
 #include "Interfaces/OnlineSessionInterface.h"
 #include "OnlineSubsystemSteam.h"
 #include "UI/ServerList.h"
+#include "GameFramework/PlayerState.h"
 #include "RailwaysGameInstance.generated.h"
+
+USTRUCT(BlueprintType)
+struct FSteamID
+{
+	GENERATED_BODY()
+public:
+	uint64 ID;
+	FSteamID() : ID(0) { }
+	FSteamID(uint64 InID) : ID(InID) { }
+};
 
 UCLASS()
 class RAILWAYS_API URailwaysGameInstance : public UGameInstance
@@ -43,6 +54,10 @@ public:
 	//UFUNCTION(BlueprintCallable, Category = "Multiplayer")
 	void QueryServerList(UServerList* ServerList);
 
+
 	UFUNCTION(BlueprintCallable, Category = "Multiplayer")
-	UTexture2D* getPlayerSteamAvatar(FString SteamID);
+	FSteamID getSteamID();
+
+	UFUNCTION(BlueprintCallable, Category = "Multiplayer")
+	UTexture2D* getPlayerSteamAvatar(FSteamID SteamID, UTexture2D* Default);
 };
