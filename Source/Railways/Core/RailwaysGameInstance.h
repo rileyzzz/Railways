@@ -42,4 +42,7 @@ public:
 
 	//UFUNCTION(BlueprintCallable, Category = "Multiplayer")
 	void QueryServerList(UServerList* ServerList);
+
+	UFUNCTION(BlueprintCallable, Category = "Multiplayer")
+	UTexture2D* getPlayerSteamAvatar(FString SteamID);
 };

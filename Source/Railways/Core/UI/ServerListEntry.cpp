@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "ServerListEntry.h"
 #include "../RailwaysGameInstance.h"
 #include "Kismet/GameplayStatics.h"
-#include "ServerListEntry.h"
 
 void UServerListEntry::JoinSession_Internal(const FRailwaysServerData& Session)
 {

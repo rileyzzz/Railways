@@ -3,6 +3,7 @@
 
 #include "RailwaysGameInstance.h"
 #include "Kismet/GameplayStatics.h"
+#include "Steamworks/Steamv147/sdk/public/steam/steam_api.h"
 
 void URailwaysGameInstance::Init()
 {
@@ -164,4 +165,46 @@ void URailwaysGameInstance::QueryServerList(UServerList* ServerList)
 		//}
 		//ActiveServerList->PopulateList(ServerData);
 	}
+}
+
+CSteamID SteamIDStringToCSteamID(FString s)
+{
+	uint64 i64 = 0;
+	int convCount = sscanf_s(TCHAR_TO_ANSI(*s), "%llu", &i64);
+	if (convCount == 0)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Invalid SteamID string %s"), *s);
+		return CSteamID((uint64)0);
+	}
+	return CSteamID(i64);
+}
+
+UTexture2D* URailwaysGameInstance::getPlayerSteamAvatar(FString SteamID)
+{
+	if (SteamAPI_IsSteamRunning()) //SteamAPI_Init()
+	{
+		uint32 Width, Height;
+		int Image = SteamFriends()->GetMediumFriendAvatar(SteamIDStringToCSteamID(SteamID));
+		SteamUtils()->GetImageSize(Image, &Width, &Height);
+		if (Width > 0 && Height > 0)
+		{
+			const size_t BufferSize = Width * Height * 4 * sizeof(uint8);
+			uint8* ImageData = (uint8*)FMemory::Malloc(BufferSize);
+			SteamUtils()->GetImageRGBA(Image, ImageData, BufferSize);
+			UTexture2D* Avatar = UTexture2D::CreateTransient(Width, Height, PF_R8G8B8A8);
+
+			uint8* MipData = (uint8*)Avatar->PlatformData->Mips[0].BulkData.Lock(LOCK_READ_WRITE);
+			FMemory::Memcpy(MipData, ImageData, BufferSize);
+			Avatar->PlatformData->Mips[0].BulkData.Unlock();
+
+			Avatar->PlatformData->SetNumSlices(1);
+			Avatar->NeverStream = true;
+
+			Avatar->UpdateResource();
+			FMemory::Free(ImageData);
+
+			return Avatar;
+		}
+	}
+	return nullptr;
 }
