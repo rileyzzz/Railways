@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/TextRenderComponent.h"
 #include "WorldEditPlayerController.h"
 #include "../../World/HeightWorld.h"
 #include "../../World/WorldTileDynamic.h"
@@ -39,8 +40,15 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	UDecalComponent* EditCursor;
 
+	UPROPERTY(EditAnywhere)
 	USpringArmComponent* SpringArm;
+
+	UPROPERTY(EditAnywhere)
 	UCameraComponent* Camera;
+
+	UPROPERTY(EditAnywhere)
+	UTextRenderComponent* Username;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -48,10 +56,13 @@ protected:
 private:
 	bool b_draggingMouse = false;
 	bool b_leftMouse = false;
+
+	//THIS IS CLIENT ONLY
 	AWorldEditPlayerController* Controller;
 
 	//float ForwardVelocity = 0.0f;
 	//float RightVelocity = 0.0f;
+	UPROPERTY(EditAnywhere)
 	UTerrainMovementComponent* MovementComponent;
 
 	void UpdatePositionToGround(FVector& Position);
@@ -66,7 +77,9 @@ private:
 	void ServerMoveRight(float AxisValue);
 	void ServerMoveRight_Implementation(float AxisValue);
 
-
+	UFUNCTION(Server, Reliable)
+	void SetNameText(const FString& Name);
+	void SetNameText_Implementation(const FString& Name);
 
 	void InputCameraX(float AxisValue);
 	void InputCameraY(float AxisValue);

@@ -6,21 +6,21 @@
 //#include "Providers/RuntimeMeshProviderBox.h"
 //#include "TestProvider.h"
 
-void UWorldTileDynamic::SetHeightData(int x, int y, float height)
+void AWorldTileDynamic::SetHeightData(int x, int y, float height)
 {
     FScopeLock Lock(&PropertySyncRoot);
     //f_heightData[x][y] = height;
     heightData[x + y * WORLD_SIZE] = height;
 }
 
-void UWorldTileDynamic::AddHeight(int x, int y, float height)
+void AWorldTileDynamic::AddHeight(int x, int y, float height)
 {
     FScopeLock Lock(&PropertySyncRoot);
     //f_heightData[x][y] += height;
     heightData[x + y * WORLD_SIZE] += height;
 }
 
-float UWorldTileDynamic::GetHeight(int x, int y)
+float AWorldTileDynamic::GetHeight(int x, int y)
 {
     if (x >= WORLD_SIZE) x = WORLD_SIZE - 1;
     if (y >= WORLD_SIZE) y = WORLD_SIZE - 1;
@@ -30,27 +30,31 @@ float UWorldTileDynamic::GetHeight(int x, int y)
     return heightData[x + y * WORLD_SIZE];
 }
 
-void UWorldTileDynamic::Build(UMaterialInterface* Material, int X, int Y)
+void AWorldTileDynamic::Build_Implementation(int X, int Y)
 {
-    SetRelativeLocation(FVector((float)X * (WORLD_SIZE - 1) * WORLD_SCALE, (float)Y * (WORLD_SIZE - 1) * WORLD_SCALE, 0.0f));
+    UE_LOG(LogTemp, Warning, TEXT("building client tile at %i %i"), X, Y);
+    TileX = X;
+    TileY = Y;
+    SetMobility(EComponentMobility::Type::Movable);
+    SetActorLocation(FVector((float)X * (WORLD_SIZE - 1) * WORLD_SCALE, (float)Y * (WORLD_SIZE - 1) * WORLD_SCALE, 0.0f));
 
-    Provider = NewObject<UWorldTileProvider>(this, NAME_None);
+    //Provider = NewObject<UWorldTileProvider>(this, NAME_None);
 
-    FVector Location = GetComponentTransform().GetLocation();
+    FVector Location = GetActorLocation();
     DrawDebugLine(GetWorld(), Location, Location + FVector(0.0f, 0.0f, 200.0f), FColor::Green, true);
+
     if (Provider)
     {
-        Provider->SetTileMaterial(Material);
+        //Provider->SetTileMaterial(Material);
         Provider->SetTileParent(this);
-        Initialize(Provider);
+        GetRuntimeMeshComponent()->Initialize(Provider);
     }
 }
 
-void UWorldTileDynamic::TerrainInfluence_Implementation(FVector Pos, float Direction, int Radius)
+void AWorldTileDynamic::TerrainInfluence(FVector Pos, float Direction, int Radius)
 {
-    UE_LOG(LogTemp, Warning, TEXT("Influencing terrain!!!!!!"));
     int LocalRadius = Radius / 10.0f;
-    FTransform transform = GetComponentTransform();
+    FTransform transform = GetActorTransform();
     FVector InflPos = transform.InverseTransformPosition(Pos) / WORLD_SCALE;
     InflPos.Z = 0.0f;
     FVector Corner = InflPos - FVector(LocalRadius, LocalRadius, 0.0);
@@ -76,13 +80,13 @@ void UWorldTileDynamic::TerrainInfluence_Implementation(FVector Pos, float Direc
     //UE_LOG(LogTemp, Warning, TEXT("influence at %f %f %f"), InflPos.X, InflPos.Y, InflPos.Z);
 
     //Provider->InvalidateMeshData();
-    RefreshClientTile(heightData);
+    OnRep_heightData();
 }
 
-void UWorldTileDynamic::TerrainApproach_Implementation(FVector Pos, float Height, float Strength, int Radius)
+void AWorldTileDynamic::TerrainApproach(FVector Pos, float Height, float Strength, int Radius)
 {
     int LocalRadius = Radius / 10.0f;
-    FTransform transform = GetComponentToWorld();
+    FTransform transform = GetActorTransform();
     FVector InflPos = transform.InverseTransformPosition(Pos) / WORLD_SCALE;
     InflPos.Z = 0.0f;
     FVector Corner = InflPos - FVector(LocalRadius, LocalRadius, 0.0);
@@ -112,17 +116,18 @@ void UWorldTileDynamic::TerrainApproach_Implementation(FVector Pos, float Height
     //UE_LOG(LogTemp, Warning, TEXT("influence at %f %f %f"), InflPos.X, InflPos.Y, InflPos.Z);
 
     //Provider->InvalidateMeshData();
-    RefreshClientTile(heightData);
+    OnRep_heightData();
 }
 
-void UWorldTileDynamic::RefreshClientTile_Implementation(const TArray<float>& inHeightData)
+void AWorldTileDynamic::OnRep_heightData()
 {
-    heightData = inHeightData;
     Provider->InvalidateMeshData();
 }
 
-UWorldTileDynamic::UWorldTileDynamic()
+AWorldTileDynamic::AWorldTileDynamic()
 {
+    UE_LOG(LogTemp, Warning, TEXT("constructing client tile"));
+    if (HasAuthority()) SetReplicates(true);
     //heightData = (float*)FMemory::Malloc(WORLD_SIZE * WORLD_SIZE * sizeof(float));
     //i really don't like using a TArray because it's not necessary but it wont replicate otherwise
     heightData.Reserve(WORLD_SIZE * WORLD_SIZE);
@@ -131,12 +136,18 @@ UWorldTileDynamic::UWorldTileDynamic()
         for (unsigned int y = 0; y < WORLD_SIZE; y++)
         {
             heightData.Add(0.0f);
+            //heightData.Add((float)FMath::Rand() / (float) RAND_MAX * 10.0f);
             //SetHeightData(x, y, 0.0f);
         }
     }
+    Provider = CreateDefaultSubobject<UWorldTileProvider>(TEXT("Provider"));
+    
+    //FVector Location = GetComponentTransform().GetLocation();
+    //FVector Location = GetComponentTransform().GetLocation();
+    //DrawDebugLine(GetWorld(), Location, Location + FVector(0.0f, 0.0f, 400.0f), FColor::Green, true);
 }
 
-UWorldTileDynamic::~UWorldTileDynamic()
+AWorldTileDynamic::~AWorldTileDynamic()
 {
     //FMemory::Free(heightData);
 }

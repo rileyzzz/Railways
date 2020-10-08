@@ -21,21 +21,33 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	UFUNCTION(Server, Reliable)
-	void TestForTile(int TileX, int TileY);
-	void TestForTile_Implementation(int TileX, int TileY);
+	
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	//UFUNCTION(Server, Reliable)
+	void TestForTile(int TileX, int TileY);
+	//void TestForTile_Implementation(int TileX, int TileY);
+
 	UPROPERTY(EditAnywhere)
 	UMaterialInterface* Material;
 
-	//TArray<UWorldTileDynamic*> Tiles;
-	//UPROPERTY(Replicated)
-	TMap<TPair<int, int>, UWorldTileDynamic*> Tiles;
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* TestMesh;
 
-	TArray<UWorldTileDynamic*> GetSortedTilesToPoint(FVector point);
+
+	TMap<TPair<int, int>, AWorldTileDynamic*> Tiles;
+	//UPROPERTY(Replicated)
+	//TArray<AWorldTileDynamic*> Tiles;
+	//AWorldTileDynamic* FindTile(int X, int Y);
+
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+	{
+		//DOREPLIFETIME(AHeightWorld, Tiles);
+	}
+
+	TArray<AWorldTileDynamic*> GetSortedTilesToPoint(FVector point);
 	//URuntimeMeshComponent* Tile;
 };

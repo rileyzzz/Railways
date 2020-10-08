@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RuntimeMeshComponent.h"
+#include "RuntimeMeshActor.h"
 #include "WorldTileProvider.h"
 #include "Net/UnrealNetwork.h"
 #include "WorldTileDynamic.generated.h"
@@ -12,7 +12,7 @@
  * 
  */
 UCLASS()
-class RAILWAYS_API UWorldTileDynamic : public URuntimeMeshComponent
+class RAILWAYS_API AWorldTileDynamic : public ARuntimeMeshActor
 {
 	GENERATED_BODY()
 private:
@@ -25,7 +25,7 @@ private:
 	//UPROPERTY(Replicated)
 	//float heightData[WORLD_SIZE * WORLD_SIZE];
 
-	//UPROPERTY(Replicated)
+	UPROPERTY(Replicated, Transient, ReplicatedUsing = OnRep_heightData)
 	TArray<float> heightData;
 public:
 
@@ -40,25 +40,31 @@ public:
 	float GetHeight(int x, int y);
 
 	//should happen on all clients
-	void Build(UMaterialInterface* Material, int X, int Y);
-
-	UFUNCTION(Server, Reliable)
-	void TerrainInfluence(FVector Pos, float Direction, int Radius);
-	void TerrainInfluence_Implementation(FVector Pos, float Direction, int Radius);
-
-	UFUNCTION(Server, Reliable)
-	void TerrainApproach(FVector Pos, float Height, float Strength, int Radius);
-	void TerrainApproach_Implementation(FVector Pos, float Height, float Strength, int Radius);
-
 	UFUNCTION(NetMulticast, Reliable)
-	void RefreshClientTile(const TArray<float>& inHeightData);
-	void RefreshClientTile_Implementation(const TArray<float>& inHeightData);
+	void Build(int X, int Y);
+	void Build_Implementation(int X, int Y);
+
+	//will modify replicated height data
+	//UFUNCTION(Server, Reliable)
+	void TerrainInfluence(FVector Pos, float Direction, int Radius);
+	//void TerrainInfluence_Implementation(FVector Pos, float Direction, int Radius);
+
+	//UFUNCTION(Server, Reliable)
+	void TerrainApproach(FVector Pos, float Height, float Strength, int Radius);
+	//void TerrainApproach_Implementation(FVector Pos, float Height, float Strength, int Radius);
+
+	int TileX;
+	int TileY;
+	//UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION()
+	void OnRep_heightData();
+	//void RefreshClientTile_Implementation();
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 	{
-		//DOREPLIFETIME(UWorldTileDynamic, heightData);
+		DOREPLIFETIME(AWorldTileDynamic, heightData);
 	}
 
-	UWorldTileDynamic();
-	~UWorldTileDynamic();
+	AWorldTileDynamic();
+	~AWorldTileDynamic();
 };

@@ -12,7 +12,7 @@ AHeightWorld::AHeightWorld()
 	
 
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
-
+	RootComponent->SetMobility(EComponentMobility::Type::Static);
 	//Tiles.Add(CreateDefaultSubobject<UWorldTileDynamic>(TEXT("Tile")));
 	//Tiles.Add(CreateDefaultSubobject<UWorldTileDynamic>(TEXT("Tile2")));
 	//Tiles.Add(CreateDefaultSubobject<UWorldTileDynamic>(TEXT("Tile3")));
@@ -21,8 +21,8 @@ AHeightWorld::AHeightWorld()
 	//Tiles[1]->SetupAttachment(RootComponent);
 	//Tiles[2]->SetupAttachment(RootComponent);
 	//Tiles[3]->SetupAttachment(RootComponent);
-	
-	bReplicates = true;
+
+	if(HasAuthority()) SetReplicates(true);
 }
 
 // Called when the game starts or when spawned
@@ -39,18 +39,36 @@ void AHeightWorld::BeginPlay()
 	//Tiles[3]->Build(Material, 1, 1);
 }
 
-void AHeightWorld::TestForTile_Implementation(int TileX, int TileY)
+void AHeightWorld::TestForTile(int TileX, int TileY)
 {
 	TPair<int, int> TilePos(TileX, TileY);
-	if (!Tiles.Find(TilePos))
+	if (!Tiles.Find(TilePos))//Tiles.Find(TilePos)
 	{
-		UWorldTileDynamic* NewTile = NewObject<UWorldTileDynamic>(this, NAME_None);
-		NewTile->RegisterComponent();
-		NewTile->AttachToComponent(RootComponent, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
-		NewTile->SetIsReplicated(true);
-		NewTile->Build(Material, TileX, TileY);
+		//AWorldTileDynamic* NewTile = NewObject<AWorldTileDynamic>(this, NAME_None);
+		//NewTile->RegisterComponent();
+		//NewTile->AttachToComponent(RootComponent, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
+		//NewTile->SetNetAddressable();
+		//NewTile->SetIsReplicated(true);
+		//NewTile->Build(Material, TileX, TileY);
+		FActorSpawnParameters SpawnParams;
+		//SpawnParams.Name = NAME_None;
+		AWorldTileDynamic* NewTile = GetWorld()->SpawnActor<AWorldTileDynamic>(AWorldTileDynamic::StaticClass(), SpawnParams);
+		NewTile->SetReplicates(true);
+		NewTile->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+		NewTile->bNetLoadOnClient = true;
+		NewTile->Build(TileX, TileY); //Material
+
 		Tiles.Add(TilePos, NewTile);
+		//Tiles.Add(NewTile);
 		UE_LOG(LogTemp, Log, TEXT("Created tile at %i %i"), TileX, TileY);
+		if (HasAuthority())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("SERVER EXEC"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("CLIENT EXEC"));
+		}
 	}
 }
 
@@ -78,41 +96,53 @@ void AHeightWorld::Tick(float DeltaTime)
 
 	//	}
 	//}
-	if (HasAuthority())
-	{
-		for (auto it = GetWorld()->GetPlayerControllerIterator(); it; ++it)
-		{
-			APlayerController* Controller = it->Get();
-			APawn* LocalPawn = Controller->GetPawn();
-			if (LocalPawn)
-			{
-				FVector PlayerPos = LocalPawn->GetActorLocation() / ((float)WORLD_SIZE * WORLD_SCALE);
-				int TileX = FMath::FloorToInt(PlayerPos.X);
-				int TileY = FMath::FloorToInt(PlayerPos.Y);
-				constexpr int BuildRadius = 4;
-				for (int BuildX = TileX - BuildRadius; BuildX < TileX + BuildRadius; BuildX++)
-				{
-					for (int BuildY = TileY - BuildRadius; BuildY < TileY + BuildRadius; BuildY++)
-					{
-						TestForTile(BuildX, BuildY);
-					}
-				}
 
-			}
-		}
-	}
+	//need to execute tile creation on server
+	//if (HasAuthority())
+	//{
+	//	for (auto it = GetWorld()->GetPlayerControllerIterator(); it; ++it)
+	//	{
+	//		APlayerController* Controller = it->Get();
+	//		APawn* LocalPawn = Controller->GetPawn();
+	//		if (LocalPawn)
+	//		{
+	//			FVector PlayerPos = LocalPawn->GetActorLocation() / ((float)WORLD_SIZE * WORLD_SCALE);
+	//			int TileX = FMath::FloorToInt(PlayerPos.X);
+	//			int TileY = FMath::FloorToInt(PlayerPos.Y);
+	//			constexpr int BuildRadius = 4;
+	//			for (int BuildX = TileX - BuildRadius; BuildX < TileX + BuildRadius; BuildX++)
+	//			{
+	//				for (int BuildY = TileY - BuildRadius; BuildY < TileY + BuildRadius; BuildY++)
+	//				{
+	//					TestForTile(BuildX, BuildY);
+	//				}
+	//			}
+
+	//		}
+	//	}
+	//}
 }
 
-TArray<UWorldTileDynamic*> AHeightWorld::GetSortedTilesToPoint(FVector point)
+//AWorldTileDynamic* AHeightWorld::FindTile(int X, int Y)
+//{
+//	for (const auto& Tile : Tiles)
+//	{
+//		if (Tile->TileX == X && Tile->TileY == Y)
+//			return Tile;
+//	}
+//	return nullptr;
+//}
+
+TArray<AWorldTileDynamic*> AHeightWorld::GetSortedTilesToPoint(FVector point)
 {
-	TArray<UWorldTileDynamic*> Out;
+	TArray<AWorldTileDynamic*> Out;
 	constexpr float HalfWorldSize = ((float)(WORLD_SIZE - 1) * WORLD_SCALE) / 2.0f;
 
-	TSortedMap<float, UWorldTileDynamic*> Distances;
-	for (auto& TileEntry : Tiles)
+	TSortedMap<float, AWorldTileDynamic*> Distances;
+	for (auto& TileEntry : Tiles) //TileEntry
 	{
 		auto& Tile = TileEntry.Value;
-		FVector TileLocation = Tile->GetComponentTransform().GetLocation() + FVector(HalfWorldSize, HalfWorldSize, 0.0f);
+		FVector TileLocation = Tile->GetActorTransform().GetLocation() + FVector(HalfWorldSize, HalfWorldSize, 0.0f);
 		float Distance = FVector::Dist(TileLocation, point);
 		Distances.Add(Distance, Tile);
 	}

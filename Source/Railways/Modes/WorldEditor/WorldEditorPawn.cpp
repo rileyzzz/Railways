@@ -4,6 +4,7 @@
 #include "Components/InputComponent.h"
 #include "Components/DecalComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "GameFramework/PlayerState.h"
 #include "DrawDebugHelpers.h"
 
 // Sets default values
@@ -41,11 +42,19 @@ AWorldEditorPawn::AWorldEditorPawn()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
 
+	Username = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Username"));
+	Username->SetupAttachment(Cursor);
+
+	
+	//Username->SetText(TEXT("test"));
+	Username->SetRelativeScale3D(FVector(2.0f, 2.0f, 2.0f));
+
 	MovementComponent = CreateDefaultSubobject<UTerrainMovementComponent>(TEXT("MovementComponent"));
 	MovementComponent->UpdatedComponent = RootComponent;
 
-	bReplicates = true;
+	//bReplicates = true;
 	//bReplicateMovement = true;
+	if (HasAuthority()) SetReplicates(true);
 	//Camera->SetRelativeLocation(FVector(-250.0f, 0.0f, 250.0f));
 	//Camera->SetRelativeRotation(FRotator(-45.0f, 0.0f, 0.0f));
 }
@@ -105,14 +114,24 @@ void AWorldEditorPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	Controller = Cast<AWorldEditPlayerController>(GetController());
+
+	if (!HasAuthority())
+	{
+		APlayerState* State = GetPlayerState();
+		if (State)
+		{
+			FString Name = State->GetPlayerName();
+			UE_LOG(LogTemp, Warning, TEXT("Setting name %s on server"), *Name);
+			SetNameText(Name);
+		}
+	}
 }
 
-//void AWorldEditorPawn::ServerMovementUpdate_Implementation(FVector Velocity)
-//{
-//	FVector NewLocation = GetActorLocation() + Velocity;
-//	UpdatePositionToGround(NewLocation);
-//	SetActorLocation(NewLocation);
-//}
+void AWorldEditorPawn::SetNameText_Implementation(const FString& Name)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Received name %s on client"), *Name);
+	Username->SetText(Name);
+}
 
 // Called every frame
 void AWorldEditorPawn::Tick(float DeltaTime)
@@ -149,25 +168,51 @@ void AWorldEditorPawn::Tick(float DeltaTime)
 		{
 			if (EditCategory == 0)
 			{
-				AHeightWorld* CurrentWorld = Cast<AHeightWorld>(Target.Actor.Get());
-				if (b_leftMouse && (EditMode == 0 || EditMode == 1))
+				//AHeightWorld* CurrentWorld = Cast<AHeightWorld>(Target.Actor.Get());
+				//if (b_leftMouse && (EditMode == 0 || EditMode == 1))
+				//{
+				//	if (CurrentWorld)
+				//	{
+				//		auto SortedTiles = CurrentWorld->GetSortedTilesToPoint(Target.ImpactPoint);
+				//		const int TileCount = FMath::Min(SortedTiles.Num(), 4);
+				//		for (int i = 0; i < TileCount; i++)
+				//			SortedTiles[i]->TerrainInfluence(Target.ImpactPoint, EditMode == 0 ? 1.0f : -1.0f, 200);
+				//	}
+				//}
+				//else if (b_leftMouse && (EditMode == 2))
+				//{
+				//	if (CurrentWorld)
+				//	{
+				//		auto SortedTiles = CurrentWorld->GetSortedTilesToPoint(Target.ImpactPoint);
+				//		const int TileCount = (SortedTiles.Num() < 4) ? SortedTiles.Num() : 4;
+				//		for (int i = 0; i < TileCount; i++)
+				//			SortedTiles[i]->TerrainApproach(Target.ImpactPoint, TargetHeight, 0.4f, 200);
+				//	}
+				//}
+				AActor* Actor = Target.Actor.Get();
+
+				if (Actor)
 				{
-					if (CurrentWorld)
+					AHeightWorld* CurrentWorld = Cast<AHeightWorld>(Actor->GetAttachParentActor());
+					if (b_leftMouse && (EditMode == 0 || EditMode == 1))
 					{
-						auto SortedTiles = CurrentWorld->GetSortedTilesToPoint(Target.ImpactPoint);
-						const int TileCount = FMath::Min(SortedTiles.Num(), 4);
-						for (int i = 0; i < TileCount; i++)
-							SortedTiles[i]->TerrainInfluence(Target.ImpactPoint, EditMode == 0 ? 1.0f : -1.0f, 200);
+						if (CurrentWorld)
+						{
+							auto SortedTiles = CurrentWorld->GetSortedTilesToPoint(Target.ImpactPoint);
+							const int TileCount = FMath::Min(SortedTiles.Num(), 4);
+							for (int i = 0; i < TileCount; i++)
+								SortedTiles[i]->TerrainInfluence(Target.ImpactPoint, EditMode == 0 ? 1.0f : -1.0f, 200);
+						}
 					}
-				}
-				else if (b_leftMouse && (EditMode == 2))
-				{
-					if (CurrentWorld)
+					else if (b_leftMouse && (EditMode == 2))
 					{
-						auto SortedTiles = CurrentWorld->GetSortedTilesToPoint(Target.ImpactPoint);
-						const int TileCount = (SortedTiles.Num() < 4) ? SortedTiles.Num() : 4;
-						for (int i = 0; i < TileCount; i++)
-							SortedTiles[i]->TerrainApproach(Target.ImpactPoint, TargetHeight, 0.4f, 200);
+						if (CurrentWorld)
+						{
+							auto SortedTiles = CurrentWorld->GetSortedTilesToPoint(Target.ImpactPoint);
+							const int TileCount = (SortedTiles.Num() < 4) ? SortedTiles.Num() : 4;
+							for (int i = 0; i < TileCount; i++)
+								SortedTiles[i]->TerrainApproach(Target.ImpactPoint, TargetHeight, 0.4f, 200);
+						}
 					}
 				}
 			}

@@ -11,7 +11,7 @@
  * 
  */
 
-class UWorldTileDynamic;
+class AWorldTileDynamic;
 
 UCLASS(HideCategories = Object, BlueprintType)
 class RAILWAYS_API UWorldTileProvider : public URuntimeMeshProvider
@@ -21,14 +21,14 @@ class RAILWAYS_API UWorldTileProvider : public URuntimeMeshProvider
 private:
 	mutable FCriticalSection PropertySyncRoot;
 	UMaterialInterface* Material;
-	UWorldTileDynamic* Tile;
+	AWorldTileDynamic* Tile;
 	//float** f_heightData;
 	
 public:
 
 	UMaterialInterface* GetTileMaterial() const;
 	void SetTileMaterial(UMaterialInterface* InMaterial);
-	void SetTileParent(UWorldTileDynamic* InParent);
+	void SetTileParent(AWorldTileDynamic* InParent);
 
 	bool WithinBounds(int x, int y);
 

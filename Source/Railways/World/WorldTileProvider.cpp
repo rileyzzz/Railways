@@ -16,7 +16,7 @@ void UWorldTileProvider::SetTileMaterial(UMaterialInterface* InMaterial)
 	SetupMaterialSlot(0, FName("Material"), Material);
 }
 
-void UWorldTileProvider::SetTileParent(UWorldTileDynamic* InParent)
+void UWorldTileProvider::SetTileParent(AWorldTileDynamic* InParent)
 {
 	Tile = InParent;
 }

@@ -2,19 +2,61 @@
 
 
 #include "WorldEditPlayerController.h"
+#include "Kismet/GameplayStatics.h"
+
+AWorldEditPlayerController::AWorldEditPlayerController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
+	//bReplicates = true;
+	if (HasAuthority()) SetReplicates(true);
+}
 
 void AWorldEditPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	UE_LOG(LogTemp, Warning, TEXT("BEGIN PLAY!"));
-	
+
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AHeightWorld::StaticClass(), FoundActors);
+	WorldRef = Cast<AHeightWorld>(FoundActors[0]);
+
 	FInputModeGameAndUI InputMode;
 	InputMode.SetHideCursorDuringCapture(false);
 	SetInputMode(InputMode);
 	bShowMouseCursor = true;
 }
 
-AWorldEditPlayerController::AWorldEditPlayerController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+void AWorldEditPlayerController::Tick(float DeltaTime)
 {
-	bReplicates = true;
+	Super::Tick(DeltaTime);
+
+	
+
+	if (HasAuthority())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Green, TEXT("AUTHORITY"));
+		APawn* LocalPawn = GetPawn();
+		if (LocalPawn)
+		{
+			FVector PlayerPos = LocalPawn->GetActorLocation() / ((float)WORLD_SIZE * WORLD_SCALE);
+			int TileX = FMath::FloorToInt(PlayerPos.X);
+			int TileY = FMath::FloorToInt(PlayerPos.Y);
+			constexpr int BuildRadius = 4;
+			for (int BuildX = TileX - BuildRadius; BuildX < TileX + BuildRadius; BuildX++)
+			{
+				for (int BuildY = TileY - BuildRadius; BuildY < TileY + BuildRadius; BuildY++)
+				{
+					WorldRef->TestForTile(BuildX, BuildY);
+				}
+			}
+
+		}
+		
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Green, TEXT("CLIENT"));
+		//TArray<AActor*> FoundActors;
+		//UGameplayStatics::GetAllActorsOfClass(GetWorld(), AWorldTileDynamic::StaticClass(), FoundActors);
+		//GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Green, FString::Printf(TEXT("%i tiles in world"), FoundActors.Num()));
+	}
 }
