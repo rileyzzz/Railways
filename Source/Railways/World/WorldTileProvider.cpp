@@ -110,7 +110,7 @@ FBoxSphereBounds UWorldTileProvider::GetBounds()
 	{
 		for (unsigned int y = 0; y < WORLD_SIZE; y++)
 		{
-			float Height = Tile->GetHeight(x, y);
+			float Height = Tile->Terrain.GetHeight(x, y);
 			MinHeight = FMath::Min(MinHeight, Height);
 			MaxHeight = FMath::Max(MaxHeight, Height);
 		}
@@ -193,10 +193,10 @@ bool UWorldTileProvider::GetSectionMeshForLOD(int32 LODIndex, int32 SectionId, F
 			int PointY = y * Simplify;*/
 			float PointX = x * ((float)(WORLD_SIZE - 1) / (float)(SimplifySize - 1));
 			float PointY = y * ((float)(WORLD_SIZE - 1) / (float)(SimplifySize - 1));
-			FVector Position(PointX * WORLD_SCALE, PointY * WORLD_SCALE, Tile->GetHeight(PointX, PointY));
+			FVector Position(PointX * WORLD_SCALE, PointY * WORLD_SCALE, Tile->Terrain.GetHeight(PointX, PointY));
 
-			float dfdx = (Tile->GetHeight(PointX + dx, PointY) - Tile->GetHeight(PointX - dx, PointY)) / (2 * (float)dx); //derivative of f over x
-			float dfdy = (Tile->GetHeight(PointX, PointY + dy) - Tile->GetHeight(PointX, PointY - dy)) / (2 * (float)dy); //derivative of f over y
+			float dfdx = (Tile->Terrain.GetHeight(PointX + dx, PointY) - Tile->Terrain.GetHeight(PointX - dx, PointY)) / (2 * (float)dx); //derivative of f over x
+			float dfdy = (Tile->Terrain.GetHeight(PointX, PointY + dy) - Tile->Terrain.GetHeight(PointX, PointY - dy)) / (2 * (float)dy); //derivative of f over y
 
 
 			FVector Normal(-dfdx, -dfdy, 1);
@@ -263,7 +263,7 @@ bool UWorldTileProvider::GetCollisionMesh(FRuntimeMeshCollisionData& CollisionDa
 	{
 		for (unsigned int x = 0; x < COLLISION_SIZE; x++)
 		{
-			float height = Tile->GetHeight(x * COLLISION_RESOLUTION, y * COLLISION_RESOLUTION);
+			float height = Tile->Terrain.GetHeight(x * COLLISION_RESOLUTION, y * COLLISION_RESOLUTION);
 
 			FVector Position((float)x * (float)WORLD_SCALE * (float)COLLISION_RESOLUTION, (float)y * (float)WORLD_SCALE * (float)COLLISION_RESOLUTION, height);
 

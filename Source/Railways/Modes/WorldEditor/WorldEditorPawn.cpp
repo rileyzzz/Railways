@@ -5,6 +5,7 @@
 #include "Components/DecalComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/PlayerState.h"
+#include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
 
 // Sets default values
@@ -115,6 +116,10 @@ void AWorldEditorPawn::BeginPlay()
 	Super::BeginPlay();
 	Controller = Cast<AWorldEditPlayerController>(GetController());
 
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AHeightWorld::StaticClass(), FoundActors);
+	WorldRef = Cast<AHeightWorld>(FoundActors[0]);
+
 	if (!HasAuthority())
 	{
 		APlayerState* State = GetPlayerState();
@@ -193,15 +198,21 @@ void AWorldEditorPawn::Tick(float DeltaTime)
 
 				if (Actor)
 				{
-					AHeightWorld* CurrentWorld = Cast<AHeightWorld>(Actor->GetAttachParentActor());
+					//AHeightWorld* CurrentWorld = Cast<AHeightWorld>(Actor->GetAttachParentActor());
+					AHeightWorld* CurrentWorld = WorldRef;
 					if (b_leftMouse && (EditMode == 0 || EditMode == 1))
 					{
+						//UE_LOG(LogTemp, Warning, TEXT("pre influence"));
 						if (CurrentWorld)
 						{
-							auto SortedTiles = CurrentWorld->GetSortedTilesToPoint(Target.ImpactPoint);
+							/*auto SortedTiles = CurrentWorld->GetSortedTilesToPoint(Target.ImpactPoint);
 							const int TileCount = FMath::Min(SortedTiles.Num(), 4);
 							for (int i = 0; i < TileCount; i++)
-								SortedTiles[i]->TerrainInfluence(Target.ImpactPoint, EditMode == 0 ? 1.0f : -1.0f, 200);
+								SortedTiles[i]->TerrainInfluence(Target.ImpactPoint, EditMode == 0 ? 1.0f : -1.0f, 200);*/
+							//UE_LOG(LogTemp, Warning, TEXT("calling influence"));
+							//GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Green, TEXT("Calling"));
+							ServerTerrainInfluence(Target.ImpactPoint, EditMode == 0 ? 1.0f : -1.0f, 200);
+							//ServerTerrainInfluence_Implementation(Target.ImpactPoint, EditMode == 0 ? 1.0f : -1.0f, 200);
 						}
 					}
 					else if (b_leftMouse && (EditMode == 2))
@@ -348,6 +359,15 @@ void AWorldEditorPawn::ServerCameraY_Implementation(float AxisValue)
 	//UE_LOG(LogTemp, Warning, TEXT("Pitch %f"), CurrentRotation.Pitch);
 	if (CurrentRotation.Pitch < -1.0f && CurrentRotation.Pitch > -89.0f)
 		SpringArm->SetRelativeRotation(CurrentRotation);
+}
+
+void AWorldEditorPawn::ServerTerrainInfluence_Implementation(const FVector_NetQuantize100& HitPoint, float Direction, int Radius)
+{
+	//Executes on server
+	auto SortedTiles = WorldRef->GetSortedTilesToPoint(HitPoint);
+	const int TileCount = FMath::Min(SortedTiles.Num(), 4);
+	for (int i = 0; i < TileCount; i++)
+		SortedTiles[i]->TerrainInfluence(HitPoint, Direction, Radius);
 }
 
 void AWorldEditorPawn::InputCameraZoom(float AxisValue)

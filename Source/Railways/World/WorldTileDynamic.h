@@ -8,9 +8,37 @@
 #include "Net/UnrealNetwork.h"
 #include "WorldTileDynamic.generated.h"
 
-/**
- * 
- */
+USTRUCT()
+struct FTerrainData
+{
+	GENERATED_BODY()
+
+	float* heightData;
+	//UPROPERTY()
+	//TArray<float> heightData;
+
+	FTerrainData();
+	~FTerrainData();
+
+	//int16& operator[](int index);
+	bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess);
+	//bool NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParms);
+
+	void SetHeightData(int x, int y, const float& height);
+	void AddHeight(int x, int y, const float& height);
+	float GetHeight(int x, int y);
+};
+
+template<>
+struct TStructOpsTypeTraits<FTerrainData> : public TStructOpsTypeTraitsBase2<FTerrainData>
+{
+	enum
+	{
+		WithNetSerializer = true
+	};
+};
+
+
 UCLASS()
 class RAILWAYS_API AWorldTileDynamic : public ARuntimeMeshActor
 {
@@ -25,19 +53,21 @@ private:
 	//UPROPERTY(Replicated)
 	//float heightData[WORLD_SIZE * WORLD_SIZE];
 
-	UPROPERTY(Replicated, Transient, ReplicatedUsing = OnRep_heightData)
-	TArray<float> heightData;
+	//Transient,
+	//UPROPERTY(Replicated, ReplicatedUsing = OnRep_heightData)
+	//TArray<float> heightData;
 public:
-
+	UPROPERTY(Replicated, ReplicatedUsing = OnRep_heightData)
+	FTerrainData Terrain;
 	//UFUNCTION(Server, Reliable)
-	void SetHeightData(int x, int y, float height);
-	//void SetHeightData_Implementation(int x, int y, float height);
+	//void SetHeightData(int x, int y, int16 height);
+	////void SetHeightData_Implementation(int x, int y, float height);
 
-	//UFUNCTION(Server, Reliable)
-	void AddHeight(int x, int y, float height);
-	//void AddHeight_Implementation(int x, int y, float height);
+	////UFUNCTION(Server, Reliable)
+	//void AddHeight(int x, int y, int16 height);
+	////void AddHeight_Implementation(int x, int y, float height);
 
-	float GetHeight(int x, int y);
+	//int16 GetHeight(int x, int y);
 
 	//should happen on all clients
 	UFUNCTION(NetMulticast, Reliable)
@@ -55,14 +85,15 @@ public:
 
 	int TileX;
 	int TileY;
-	//UFUNCTION(NetMulticast, Reliable)
+
 	UFUNCTION()
 	void OnRep_heightData();
 	//void RefreshClientTile_Implementation();
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 	{
-		DOREPLIFETIME(AWorldTileDynamic, heightData);
+		Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+		DOREPLIFETIME(AWorldTileDynamic, Terrain);
 	}
 
 	AWorldTileDynamic();

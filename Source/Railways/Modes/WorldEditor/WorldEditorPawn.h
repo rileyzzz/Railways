@@ -57,6 +57,8 @@ private:
 	bool b_draggingMouse = false;
 	bool b_leftMouse = false;
 
+	AHeightWorld* WorldRef;
+
 	//THIS IS CLIENT ONLY
 	AWorldEditPlayerController* Controller;
 
@@ -91,6 +93,10 @@ private:
 	UFUNCTION(Server, Reliable)
 	void ServerCameraY(float AxisValue);
 	void ServerCameraY_Implementation(float AxisValue);
+
+	UFUNCTION(Server, Unreliable)
+	void ServerTerrainInfluence(const FVector_NetQuantize100& HitPoint, float Direction, int Radius);
+	void ServerTerrainInfluence_Implementation(const FVector_NetQuantize100& HitPoint, float Direction, int Radius);
 
 	void InputCameraZoom(float AxisValue);
 

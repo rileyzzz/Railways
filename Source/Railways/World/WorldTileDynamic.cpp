@@ -3,32 +3,35 @@
 
 #include "WorldTileDynamic.h"
 #include "DrawDebugHelpers.h"
+//#include "Compression/lz4.h"
+//#include "Core/Private/Compression/lz4.cpp"
+#include <ctime>
 //#include "Providers/RuntimeMeshProviderBox.h"
 //#include "TestProvider.h"
 
-void AWorldTileDynamic::SetHeightData(int x, int y, float height)
-{
-    FScopeLock Lock(&PropertySyncRoot);
-    //f_heightData[x][y] = height;
-    heightData[x + y * WORLD_SIZE] = height;
-}
-
-void AWorldTileDynamic::AddHeight(int x, int y, float height)
-{
-    FScopeLock Lock(&PropertySyncRoot);
-    //f_heightData[x][y] += height;
-    heightData[x + y * WORLD_SIZE] += height;
-}
-
-float AWorldTileDynamic::GetHeight(int x, int y)
-{
-    if (x >= WORLD_SIZE) x = WORLD_SIZE - 1;
-    if (y >= WORLD_SIZE) y = WORLD_SIZE - 1;
-    if (x < 0) x = 0;
-    if (y < 0) y = 0;
-    //return f_heightData[x][y];
-    return heightData[x + y * WORLD_SIZE];
-}
+//void AWorldTileDynamic::SetHeightData(int x, int y, int16 height)
+//{
+//    FScopeLock Lock(&PropertySyncRoot);
+//    //f_heightData[x][y] = height;
+//    heightData[x + y * WORLD_SIZE] = height;
+//}
+//
+//void AWorldTileDynamic::AddHeight(int x, int y, int16 height)
+//{
+//    FScopeLock Lock(&PropertySyncRoot);
+//    //f_heightData[x][y] += height;
+//    heightData[x + y * WORLD_SIZE] += height;
+//}
+//
+//int16 AWorldTileDynamic::GetHeight(int x, int y)
+//{
+//    if (x >= WORLD_SIZE) x = WORLD_SIZE - 1;
+//    if (y >= WORLD_SIZE) y = WORLD_SIZE - 1;
+//    if (x < 0) x = 0;
+//    if (y < 0) y = 0;
+//    //return f_heightData[x][y];
+//    return heightData[x + y * WORLD_SIZE];
+//}
 
 void AWorldTileDynamic::Build_Implementation(int X, int Y)
 {
@@ -73,14 +76,19 @@ void AWorldTileDynamic::TerrainInfluence(FVector Pos, float Direction, int Radiu
             if (dist > 0.0f && Provider->WithinBounds(xpos, ypos))
             {
                 float Interpolated = (FMath::Sin(dist * PI - (PI / 2.0f)) + 1.0f) / 2.0f;
-                AddHeight(xpos, ypos, Interpolated * 10.0f * Direction); //dont change height  for world scale
+                Terrain.AddHeight(xpos, ypos, Interpolated * 10.0f * Direction); //dont change height  for world scale
             }
         }
     }
     //UE_LOG(LogTemp, Warning, TEXT("influence at %f %f %f"), InflPos.X, InflPos.Y, InflPos.Z);
 
     //Provider->InvalidateMeshData();
+
+    //Apply changes on server
     OnRep_heightData();
+
+    //Replicate all changes to clients
+    ForceNetUpdate();
 }
 
 void AWorldTileDynamic::TerrainApproach(FVector Pos, float Height, float Strength, int Radius)
@@ -104,19 +112,25 @@ void AWorldTileDynamic::TerrainApproach(FVector Pos, float Height, float Strengt
             //UE_LOG(LogTemp, Warning, TEXT("checking bounds for %i %i"), xpos, ypos);
             if (dist > 0.0f && Provider->WithinBounds(xpos, ypos))
             {
-                float StartHeight = GetHeight(xpos, ypos);
+                float StartHeight = Terrain.GetHeight(xpos, ypos);
 
                 float Influence = (FMath::Sin(dist * PI - (PI / 2.0f)) + 1.0f) / 2.0f;
                 //Interpolated *= Height;
                 //Provider->AddHeight(xpos, ypos, (Interpolated * WORLD_SCALE * Strength) - StartHeight);
-                SetHeightData(xpos, ypos, FMath::Lerp(StartHeight, Height, Influence * Strength));
+                Terrain.SetHeightData(xpos, ypos, FMath::Lerp(StartHeight, Height, Influence * Strength));
             }
         }
     }
     //UE_LOG(LogTemp, Warning, TEXT("influence at %f %f %f"), InflPos.X, InflPos.Y, InflPos.Z);
 
     //Provider->InvalidateMeshData();
+
+    //Apply changes on server
     OnRep_heightData();
+
+    UE_LOG(LogTemp, Warning, TEXT("forcing update"));
+    //Replicate all changes to clients
+    ForceNetUpdate();
 }
 
 void AWorldTileDynamic::OnRep_heightData()
@@ -130,16 +144,16 @@ AWorldTileDynamic::AWorldTileDynamic()
     if (HasAuthority()) SetReplicates(true);
     //heightData = (float*)FMemory::Malloc(WORLD_SIZE * WORLD_SIZE * sizeof(float));
     //i really don't like using a TArray because it's not necessary but it wont replicate otherwise
-    heightData.Reserve(WORLD_SIZE * WORLD_SIZE);
-    for (unsigned int x = 0; x < WORLD_SIZE; x++)
-    {
-        for (unsigned int y = 0; y < WORLD_SIZE; y++)
-        {
-            heightData.Add(0.0f);
-            //heightData.Add((float)FMath::Rand() / (float) RAND_MAX * 10.0f);
-            //SetHeightData(x, y, 0.0f);
-        }
-    }
+    //heightData.Reserve(WORLD_SIZE * WORLD_SIZE);
+    //for (unsigned int x = 0; x < WORLD_SIZE; x++)
+    //{
+    //    for (unsigned int y = 0; y < WORLD_SIZE; y++)
+    //    {
+    //        heightData.Add(0.0f);
+    //        //heightData.Add((float)FMath::Rand() / (float) RAND_MAX * 10.0f);
+    //        //SetHeightData(x, y, 0.0f);
+    //    }
+    //}
     Provider = CreateDefaultSubobject<UWorldTileProvider>(TEXT("Provider"));
     
     //FVector Location = GetComponentTransform().GetLocation();
@@ -150,4 +164,96 @@ AWorldTileDynamic::AWorldTileDynamic()
 AWorldTileDynamic::~AWorldTileDynamic()
 {
     //FMemory::Free(heightData);
+}
+
+FTerrainData::FTerrainData()
+{
+    heightData = (float*)FMemory::Malloc(WORLD_SIZE * WORLD_SIZE * sizeof(float));
+    //heightData.Reserve(WORLD_SIZE * WORLD_SIZE);
+    //for (unsigned int x = 0; x < WORLD_SIZE; x++)
+    //{
+    //    for (unsigned int y = 0; y < WORLD_SIZE; y++)
+    //    {
+    //        heightData.Add(0.0f);
+    //        //heightData.Add((float)FMath::Rand() / (float) RAND_MAX * 10.0f);
+    //        //SetHeightData(x, y, 0.0f);
+    //    }
+    //}
+}
+
+FTerrainData::~FTerrainData()
+{
+    FMemory::Free(heightData);
+}
+
+//int16& FTerrainData::operator[](int index)
+//{
+//    return heightData[index];
+//}
+
+bool FTerrainData::NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bOutSuccess)
+{
+    UE_LOG(LogTemp, Warning, TEXT("SERIALIZING"));
+    
+    constexpr int32 DataCapacity = WORLD_SIZE * WORLD_SIZE * sizeof(float);
+    int32 compressSize = DataCapacity;
+    float* compressData = (float*)FMemory::Malloc(DataCapacity);
+    if (Ar.IsSaving())
+    {
+        clock_t start = clock();
+        //compressSize = LZ4_compress_fast((char*)heightData, compressData, DataCapacity, DataCapacity, 1);
+        FCompression::CompressMemory(NAME_LZ4, compressData, compressSize, heightData, DataCapacity);
+        UE_LOG(LogTemp, Warning, TEXT("Compressed data in %f seconds"), ((double)clock() - (double)start) / (double)CLOCKS_PER_SEC);
+    }
+    Ar << compressSize;
+    for (int i = 0; i < compressSize; i++)
+        Ar << compressData[i];
+
+    if (Ar.IsLoading())
+    {
+        clock_t start = clock();
+        //LZ4_decompress_safe(compressData, (char*)heightData, compressSize, DataCapacity);
+        FCompression::UncompressMemory(NAME_LZ4, heightData, DataCapacity, compressData, compressSize);
+        UE_LOG(LogTemp, Warning, TEXT("Decompressed data in %f seconds"), ((double)clock() - (double)start) / (double)CLOCKS_PER_SEC);
+    }
+    FMemory::Free(compressData);
+
+    //for (unsigned int x = 0; x < WORLD_SIZE; x++)
+    //{
+    //    for (unsigned int y = 0; y < WORLD_SIZE; y++)
+    //    {
+    //        float& height = heightData[x + y * WORLD_SIZE];
+    //        Ar << height;
+    //    }
+    //}
+    //for (auto& height : heightData)
+        //Ar << height;
+    
+
+    bOutSuccess = true;
+    return true;
+}
+
+//bool FTerrainData::NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParms)
+//{
+//    return FFastArraySerializer::FastArrayDeltaSerialize<float, FTerrainData>(heightData, DeltaParms, *this);
+//}
+
+void FTerrainData::SetHeightData(int x, int y, const float& height)
+{
+    heightData[x + y * WORLD_SIZE] = height;
+}
+
+void FTerrainData::AddHeight(int x, int y, const float& height)
+{
+    heightData[x + y * WORLD_SIZE] += height;
+}
+
+float FTerrainData::GetHeight(int x, int y)
+{
+    if (x >= WORLD_SIZE) x = WORLD_SIZE - 1;
+    if (y >= WORLD_SIZE) y = WORLD_SIZE - 1;
+    if (x < 0) x = 0;
+    if (y < 0) y = 0;
+    return heightData[x + y * WORLD_SIZE];
 }

@@ -33,7 +33,7 @@ void AWorldEditPlayerController::Tick(float DeltaTime)
 
 	if (HasAuthority())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Green, TEXT("AUTHORITY"));
+		//GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Green, TEXT("AUTHORITY"));
 		APawn* LocalPawn = GetPawn();
 		if (LocalPawn)
 		{
@@ -54,7 +54,7 @@ void AWorldEditPlayerController::Tick(float DeltaTime)
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Green, TEXT("CLIENT"));
+		//GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Green, TEXT("CLIENT"));
 		//TArray<AActor*> FoundActors;
 		//UGameplayStatics::GetAllActorsOfClass(GetWorld(), AWorldTileDynamic::StaticClass(), FoundActors);
 		//GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Green, FString::Printf(TEXT("%i tiles in world"), FoundActors.Num()));
