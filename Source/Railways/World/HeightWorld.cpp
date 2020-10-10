@@ -63,6 +63,10 @@ void AHeightWorld::TestForTile(int TileX, int TileY)
 
 		NewTile->TileX = TileX;
 		NewTile->TileY = TileY;
+		NewTile->Material = Material;
+		NewTile->OnRep_Material(); //change material on the server
+		NewTile->ForceNetUpdate(); //force update material on all clients
+
 		//NewTile->SetMobility(EComponentMobility::Type::Movable);
 
 		Tiles.Add(TilePos, NewTile);

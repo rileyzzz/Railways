@@ -129,6 +129,11 @@ void AWorldTileDynamic::OnRep_heightData()
     Provider->InvalidateMeshData();
 }
 
+void AWorldTileDynamic::OnRep_Material()
+{
+    Provider->SetTileMaterial(Material);
+}
+
 AWorldTileDynamic::AWorldTileDynamic()
 {
     UE_LOG(LogTemp, Warning, TEXT("constructing client tile"));

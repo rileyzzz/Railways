@@ -95,9 +95,15 @@ public:
 	int TileX;
 	UPROPERTY(Replicated)
 	int TileY;
+	
+	UPROPERTY(Replicated, ReplicatedUsing = OnRep_Material)
+	UMaterialInterface* Material;
 
 	UFUNCTION()
 	void OnRep_heightData();
+
+	UFUNCTION()
+	void OnRep_Material();
 	//void RefreshClientTile_Implementation();
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -106,6 +112,8 @@ public:
 		//DOREPLIFETIME(AWorldTileDynamic, Terrain);
 		DOREPLIFETIME(AWorldTileDynamic, TileX);
 		DOREPLIFETIME(AWorldTileDynamic, TileY);
+
+		DOREPLIFETIME(AWorldTileDynamic, Material);
 	}
 
 	AWorldTileDynamic();
