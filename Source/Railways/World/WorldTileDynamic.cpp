@@ -33,28 +33,19 @@
 //    return heightData[x + y * WORLD_SIZE];
 //}
 
-void AWorldTileDynamic::Build_Implementation(int X, int Y)
-{
-    UE_LOG(LogTemp, Warning, TEXT("building client tile at %i %i"), X, Y);
-    TileX = X;
-    TileY = Y;
-    SetMobility(EComponentMobility::Type::Movable);
-    SetActorLocation(FVector((float)X * (WORLD_SIZE - 1) * WORLD_SCALE, (float)Y * (WORLD_SIZE - 1) * WORLD_SCALE, 0.0f));
+//void AWorldTileDynamic::Build_Implementation(int X, int Y)
+//{
+//    UE_LOG(LogTemp, Warning, TEXT("building client tile at %i %i"), X, Y);
+//    
+//
+//    //Provider = NewObject<UWorldTileProvider>(this, NAME_None);
+//
+//    //FVector Location = GetActorLocation();
+//    //DrawDebugLine(GetWorld(), Location, Location + FVector(0.0f, 0.0f, 200.0f), FColor::Green, true);
+//
+//}
 
-    //Provider = NewObject<UWorldTileProvider>(this, NAME_None);
-
-    FVector Location = GetActorLocation();
-    DrawDebugLine(GetWorld(), Location, Location + FVector(0.0f, 0.0f, 200.0f), FColor::Green, true);
-
-    if (Provider)
-    {
-        //Provider->SetTileMaterial(Material);
-        Provider->SetTileParent(this);
-        GetRuntimeMeshComponent()->Initialize(Provider);
-    }
-}
-
-void AWorldTileDynamic::TerrainInfluence(FVector Pos, float Direction, int Radius)
+void AWorldTileDynamic::TerrainInfluence_Implementation(FVector Pos, float Direction, int Radius)
 {
     int LocalRadius = Radius / 10.0f;
     FTransform transform = GetActorTransform();
@@ -85,13 +76,14 @@ void AWorldTileDynamic::TerrainInfluence(FVector Pos, float Direction, int Radiu
     //Provider->InvalidateMeshData();
 
     //Apply changes on server
-    OnRep_heightData();
+    //OnRep_heightData();
+    if(Provider) Provider->InvalidateMeshData();
 
     //Replicate all changes to clients
-    ForceNetUpdate();
+    //ForceNetUpdate();
 }
 
-void AWorldTileDynamic::TerrainApproach(FVector Pos, float Height, float Strength, int Radius)
+void AWorldTileDynamic::TerrainApproach_Implementation(FVector Pos, float Height, float Strength, int Radius)
 {
     int LocalRadius = Radius / 10.0f;
     FTransform transform = GetActorTransform();
@@ -126,11 +118,10 @@ void AWorldTileDynamic::TerrainApproach(FVector Pos, float Height, float Strengt
     //Provider->InvalidateMeshData();
 
     //Apply changes on server
-    OnRep_heightData();
+    if (Provider) Provider->InvalidateMeshData();
 
-    UE_LOG(LogTemp, Warning, TEXT("forcing update"));
     //Replicate all changes to clients
-    ForceNetUpdate();
+    //ForceNetUpdate();
 }
 
 void AWorldTileDynamic::OnRep_heightData()
@@ -155,10 +146,35 @@ AWorldTileDynamic::AWorldTileDynamic()
     //    }
     //}
     Provider = CreateDefaultSubobject<UWorldTileProvider>(TEXT("Provider"));
+
     
+
     //FVector Location = GetComponentTransform().GetLocation();
     //FVector Location = GetComponentTransform().GetLocation();
     //DrawDebugLine(GetWorld(), Location, Location + FVector(0.0f, 0.0f, 400.0f), FColor::Green, true);
+}
+
+//void AWorldTileDynamic::PostInitProperties()
+//{
+//    Super::PostInitProperties();
+//    
+//}
+
+// Called when the game starts or when spawned
+void AWorldTileDynamic::BeginPlay()
+{
+    Super::BeginPlay();
+    
+    UE_LOG(LogTemp, Warning, TEXT("BUILDING!!!!!"));
+    if (Provider)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("provider initializing"));
+
+        //Provider->SetTileMaterial(Material);
+        Provider->SetTileParent(this);
+        GetRuntimeMeshComponent()->Initialize(Provider);
+    }
+    
 }
 
 AWorldTileDynamic::~AWorldTileDynamic()
@@ -168,22 +184,24 @@ AWorldTileDynamic::~AWorldTileDynamic()
 
 FTerrainData::FTerrainData()
 {
-    heightData = (float*)FMemory::Malloc(WORLD_SIZE * WORLD_SIZE * sizeof(float));
-    //heightData.Reserve(WORLD_SIZE * WORLD_SIZE);
-    //for (unsigned int x = 0; x < WORLD_SIZE; x++)
-    //{
-    //    for (unsigned int y = 0; y < WORLD_SIZE; y++)
-    //    {
-    //        heightData.Add(0.0f);
-    //        //heightData.Add((float)FMath::Rand() / (float) RAND_MAX * 10.0f);
-    //        //SetHeightData(x, y, 0.0f);
-    //    }
-    //}
+    //heightData = (float*)FMemory::Malloc(WORLD_SIZE * WORLD_SIZE * sizeof(float));
+
+    heightData.Reserve(WORLD_SIZE * WORLD_SIZE);
+
+    for (unsigned int x = 0; x < WORLD_SIZE; x++)
+    {
+        for (unsigned int y = 0; y < WORLD_SIZE; y++)
+        {
+            heightData.Add(0.0f);
+            //heightData.Add((float)FMath::Rand() / (float) RAND_MAX * 10.0f);
+            //SetHeightData(x, y, 0.0f);
+        }
+    }
 }
 
 FTerrainData::~FTerrainData()
 {
-    FMemory::Free(heightData);
+    //if(heightData) FMemory::Free(heightData);
 }
 
 //int16& FTerrainData::operator[](int index)
@@ -191,48 +209,47 @@ FTerrainData::~FTerrainData()
 //    return heightData[index];
 //}
 
-bool FTerrainData::NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bOutSuccess)
-{
-    UE_LOG(LogTemp, Warning, TEXT("SERIALIZING"));
-    
-    constexpr int32 DataCapacity = WORLD_SIZE * WORLD_SIZE * sizeof(float);
-    int32 compressSize = DataCapacity;
-    float* compressData = (float*)FMemory::Malloc(DataCapacity);
-    if (Ar.IsSaving())
-    {
-        clock_t start = clock();
-        //compressSize = LZ4_compress_fast((char*)heightData, compressData, DataCapacity, DataCapacity, 1);
-        FCompression::CompressMemory(NAME_LZ4, compressData, compressSize, heightData, DataCapacity);
-        UE_LOG(LogTemp, Warning, TEXT("Compressed data in %f seconds"), ((double)clock() - (double)start) / (double)CLOCKS_PER_SEC);
-    }
-    Ar << compressSize;
-    for (int i = 0; i < compressSize; i++)
-        Ar << compressData[i];
-
-    if (Ar.IsLoading())
-    {
-        clock_t start = clock();
-        //LZ4_decompress_safe(compressData, (char*)heightData, compressSize, DataCapacity);
-        FCompression::UncompressMemory(NAME_LZ4, heightData, DataCapacity, compressData, compressSize);
-        UE_LOG(LogTemp, Warning, TEXT("Decompressed data in %f seconds"), ((double)clock() - (double)start) / (double)CLOCKS_PER_SEC);
-    }
-    FMemory::Free(compressData);
-
-    //for (unsigned int x = 0; x < WORLD_SIZE; x++)
-    //{
-    //    for (unsigned int y = 0; y < WORLD_SIZE; y++)
-    //    {
-    //        float& height = heightData[x + y * WORLD_SIZE];
-    //        Ar << height;
-    //    }
-    //}
-    //for (auto& height : heightData)
-        //Ar << height;
-    
-
-    bOutSuccess = true;
-    return true;
-}
+//bool FTerrainData::NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bOutSuccess)
+//{
+//    UE_LOG(LogTemp, Warning, TEXT("SERIALIZING"));
+//    
+//    //constexpr int32 DataCapacity = WORLD_SIZE * WORLD_SIZE * sizeof(float);
+//    //int32 compressSize = DataCapacity;
+//    //float* compressData = (float*)FMemory::Malloc(DataCapacity);
+//    //if (Ar.IsSaving())
+//    //{
+//    //    clock_t start = clock();
+//    //    //compressSize = LZ4_compress_fast((char*)heightData, compressData, DataCapacity, DataCapacity, 1);
+//    //    FCompression::CompressMemory(NAME_LZ4, compressData, compressSize, heightData, DataCapacity);
+//    //    UE_LOG(LogTemp, Warning, TEXT("Compressed data in %f seconds"), ((double)clock() - (double)start) / (double)CLOCKS_PER_SEC);
+//    //}
+//    //Ar << compressSize;
+//    //for (int i = 0; i < compressSize; i++)
+//    //    Ar << compressData[i];
+//
+//    //if (Ar.IsLoading())
+//    //{
+//    //    clock_t start = clock();
+//    //    //LZ4_decompress_safe(compressData, (char*)heightData, compressSize, DataCapacity);
+//    //    FCompression::UncompressMemory(NAME_LZ4, heightData, DataCapacity, compressData, compressSize);
+//    //    UE_LOG(LogTemp, Warning, TEXT("Decompressed data in %f seconds"), ((double)clock() - (double)start) / (double)CLOCKS_PER_SEC);
+//    //}
+//    //FMemory::Free(compressData);
+//
+//    for (unsigned int x = 0; x < WORLD_SIZE; x++)
+//    {
+//        for (unsigned int y = 0; y < WORLD_SIZE; y++)
+//        {
+//            Ar << heightData[x + y * WORLD_SIZE];
+//        }
+//    }
+//    //for (auto& height : heightData)
+//    //    Ar << height;
+//    
+//
+//    bOutSuccess = true;
+//    return true;
+//}
 
 //bool FTerrainData::NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParms)
 //{

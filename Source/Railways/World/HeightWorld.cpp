@@ -52,11 +52,18 @@ void AHeightWorld::TestForTile(int TileX, int TileY)
 		//NewTile->Build(Material, TileX, TileY);
 		FActorSpawnParameters SpawnParams;
 		//SpawnParams.Name = NAME_None;
-		AWorldTileDynamic* NewTile = GetWorld()->SpawnActor<AWorldTileDynamic>(AWorldTileDynamic::StaticClass(), SpawnParams);
+
+		FVector TileLocation((float)TileX * (WORLD_SIZE - 1) * WORLD_SCALE, (float)TileY * (WORLD_SIZE - 1) * WORLD_SCALE, 0.0f);
+		FRotator TileRotation;
+		AWorldTileDynamic* NewTile = GetWorld()->SpawnActor<AWorldTileDynamic>(AWorldTileDynamic::StaticClass(), TileLocation, TileRotation, SpawnParams);
 		NewTile->SetReplicates(true);
 		NewTile->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 		NewTile->bNetLoadOnClient = true;
-		NewTile->Build(TileX, TileY); //Material
+		//NewTile->Build(TileX, TileY); //Material
+
+		NewTile->TileX = TileX;
+		NewTile->TileY = TileY;
+		//NewTile->SetMobility(EComponentMobility::Type::Movable);
 
 		Tiles.Add(TilePos, NewTile);
 		//Tiles.Add(NewTile);

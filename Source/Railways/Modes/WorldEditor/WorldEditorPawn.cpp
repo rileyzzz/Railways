@@ -118,7 +118,7 @@ void AWorldEditorPawn::BeginPlay()
 
 	TArray<AActor*> FoundActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AHeightWorld::StaticClass(), FoundActors);
-	WorldRef = Cast<AHeightWorld>(FoundActors[0]);
+	if(FoundActors.Num()) WorldRef = Cast<AHeightWorld>(FoundActors[0]);
 
 	if (!HasAuthority())
 	{
@@ -219,10 +219,7 @@ void AWorldEditorPawn::Tick(float DeltaTime)
 					{
 						if (CurrentWorld)
 						{
-							auto SortedTiles = CurrentWorld->GetSortedTilesToPoint(Target.ImpactPoint);
-							const int TileCount = (SortedTiles.Num() < 4) ? SortedTiles.Num() : 4;
-							for (int i = 0; i < TileCount; i++)
-								SortedTiles[i]->TerrainApproach(Target.ImpactPoint, TargetHeight, 0.4f, 200);
+							ServerTerrainApproach(Target.ImpactPoint, TargetHeight, 0.4f, 200);
 						}
 					}
 				}
@@ -368,6 +365,15 @@ void AWorldEditorPawn::ServerTerrainInfluence_Implementation(const FVector_NetQu
 	const int TileCount = FMath::Min(SortedTiles.Num(), 4);
 	for (int i = 0; i < TileCount; i++)
 		SortedTiles[i]->TerrainInfluence(HitPoint, Direction, Radius);
+}
+
+void AWorldEditorPawn::ServerTerrainApproach_Implementation(const FVector_NetQuantize100& HitPoint, float Height, float Strength, int Radius)
+{
+	//Executes on server
+	auto SortedTiles = WorldRef->GetSortedTilesToPoint(HitPoint);
+	const int TileCount = (SortedTiles.Num() < 4) ? SortedTiles.Num() : 4;
+	for (int i = 0; i < TileCount; i++)
+		SortedTiles[i]->TerrainApproach(HitPoint, Height, Strength, Radius);
 }
 
 void AWorldEditorPawn::InputCameraZoom(float AxisValue)

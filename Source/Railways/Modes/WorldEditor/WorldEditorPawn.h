@@ -98,6 +98,10 @@ private:
 	void ServerTerrainInfluence(const FVector_NetQuantize100& HitPoint, float Direction, int Radius);
 	void ServerTerrainInfluence_Implementation(const FVector_NetQuantize100& HitPoint, float Direction, int Radius);
 
+	UFUNCTION(Server, Unreliable)
+	void ServerTerrainApproach(const FVector_NetQuantize100& HitPoint, float Height, float Strength, int Radius);
+	void ServerTerrainApproach_Implementation(const FVector_NetQuantize100& HitPoint, float Height, float Strength, int Radius);
+
 	void InputCameraZoom(float AxisValue);
 
 	void StartDrag();

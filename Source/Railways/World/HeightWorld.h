@@ -45,6 +45,7 @@ public:
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 	{
+		Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 		//DOREPLIFETIME(AHeightWorld, Tiles);
 	}
 

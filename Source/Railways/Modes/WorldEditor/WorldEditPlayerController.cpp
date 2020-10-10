@@ -17,7 +17,7 @@ void AWorldEditPlayerController::BeginPlay()
 
 	TArray<AActor*> FoundActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AHeightWorld::StaticClass(), FoundActors);
-	WorldRef = Cast<AHeightWorld>(FoundActors[0]);
+	if(FoundActors.Num()) WorldRef = Cast<AHeightWorld>(FoundActors[0]);
 
 	FInputModeGameAndUI InputMode;
 	InputMode.SetHideCursorDuringCapture(false);
@@ -29,34 +29,30 @@ void AWorldEditPlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	
 
 	if (HasAuthority())
 	{
 		//GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Green, TEXT("AUTHORITY"));
-		APawn* LocalPawn = GetPawn();
-		if (LocalPawn)
-		{
-			FVector PlayerPos = LocalPawn->GetActorLocation() / ((float)WORLD_SIZE * WORLD_SCALE);
-			int TileX = FMath::FloorToInt(PlayerPos.X);
-			int TileY = FMath::FloorToInt(PlayerPos.Y);
-			constexpr int BuildRadius = 4;
-			for (int BuildX = TileX - BuildRadius; BuildX < TileX + BuildRadius; BuildX++)
-			{
-				for (int BuildY = TileY - BuildRadius; BuildY < TileY + BuildRadius; BuildY++)
-				{
-					WorldRef->TestForTile(BuildX, BuildY);
-				}
-			}
-
-		}
+		TestForTileServer_Implementation();
 		
 	}
-	else
+}
+
+void AWorldEditPlayerController::TestForTileServer_Implementation()
+{
+	APawn* LocalPawn = GetPawn();
+	if (LocalPawn)
 	{
-		//GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Green, TEXT("CLIENT"));
-		//TArray<AActor*> FoundActors;
-		//UGameplayStatics::GetAllActorsOfClass(GetWorld(), AWorldTileDynamic::StaticClass(), FoundActors);
-		//GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Green, FString::Printf(TEXT("%i tiles in world"), FoundActors.Num()));
+		FVector PlayerPos = LocalPawn->GetActorLocation() / ((float)WORLD_SIZE * WORLD_SCALE);
+		int TileX = FMath::FloorToInt(PlayerPos.X);
+		int TileY = FMath::FloorToInt(PlayerPos.Y);
+		constexpr int BuildRadius = 4;
+		for (int BuildX = TileX - BuildRadius; BuildX < TileX + BuildRadius; BuildX++)
+		{
+			for (int BuildY = TileY - BuildRadius; BuildY < TileY + BuildRadius; BuildY++)
+			{
+				WorldRef->TestForTile(BuildX, BuildY);
+			}
+		}
 	}
 }

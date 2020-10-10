@@ -21,6 +21,11 @@ public:
 	AWorldEditPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(Server, Unreliable)
+	void TestForTileServer();
+	void TestForTileServer_Implementation();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

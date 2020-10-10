@@ -13,15 +13,15 @@ struct FTerrainData
 {
 	GENERATED_BODY()
 
-	float* heightData;
-	//UPROPERTY()
-	//TArray<float> heightData;
+	//float* heightData;
+	UPROPERTY()
+	TArray<float> heightData;
 
 	FTerrainData();
 	~FTerrainData();
 
 	//int16& operator[](int index);
-	bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess);
+	//bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess);
 	//bool NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParms);
 
 	void SetHeightData(int x, int y, const float& height);
@@ -29,14 +29,14 @@ struct FTerrainData
 	float GetHeight(int x, int y);
 };
 
-template<>
-struct TStructOpsTypeTraits<FTerrainData> : public TStructOpsTypeTraitsBase2<FTerrainData>
-{
-	enum
-	{
-		WithNetSerializer = true
-	};
-};
+//template<>
+//struct TStructOpsTypeTraits<FTerrainData> : public TStructOpsTypeTraitsBase2<FTerrainData>
+//{
+//	enum
+//	{
+//		WithNetSerializer = true
+//	};
+//};
 
 
 UCLASS()
@@ -48,7 +48,6 @@ private:
 
 	UWorldTileProvider* Provider;
 
-	
 	//float* heightData;
 	//UPROPERTY(Replicated)
 	//float heightData[WORLD_SIZE * WORLD_SIZE];
@@ -56,8 +55,15 @@ private:
 	//Transient,
 	//UPROPERTY(Replicated, ReplicatedUsing = OnRep_heightData)
 	//TArray<float> heightData;
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+
 public:
-	UPROPERTY(Replicated, ReplicatedUsing = OnRep_heightData)
+	//UPROPERTY(Replicated, ReplicatedUsing = OnRep_heightData)
+	UPROPERTY()
 	FTerrainData Terrain;
 	//UFUNCTION(Server, Reliable)
 	//void SetHeightData(int x, int y, int16 height);
@@ -70,20 +76,24 @@ public:
 	//int16 GetHeight(int x, int y);
 
 	//should happen on all clients
-	UFUNCTION(NetMulticast, Reliable)
-	void Build(int X, int Y);
-	void Build_Implementation(int X, int Y);
+
+	//UFUNCTION(NetMulticast, Reliable)
+	//void Build(int X, int Y);
+	//void Build_Implementation(int X, int Y);
 
 	//will modify replicated height data
-	//UFUNCTION(Server, Reliable)
+	//needs to be reliable to sync correctly
+	UFUNCTION(NetMulticast, Reliable)
 	void TerrainInfluence(FVector Pos, float Direction, int Radius);
-	//void TerrainInfluence_Implementation(FVector Pos, float Direction, int Radius);
+	void TerrainInfluence_Implementation(FVector Pos, float Direction, int Radius);
 
-	//UFUNCTION(Server, Reliable)
+	UFUNCTION(NetMulticast, Reliable)
 	void TerrainApproach(FVector Pos, float Height, float Strength, int Radius);
-	//void TerrainApproach_Implementation(FVector Pos, float Height, float Strength, int Radius);
+	void TerrainApproach_Implementation(FVector Pos, float Height, float Strength, int Radius);
 
+	UPROPERTY(Replicated)
 	int TileX;
+	UPROPERTY(Replicated)
 	int TileY;
 
 	UFUNCTION()
@@ -93,7 +103,9 @@ public:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 	{
 		Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-		DOREPLIFETIME(AWorldTileDynamic, Terrain);
+		//DOREPLIFETIME(AWorldTileDynamic, Terrain);
+		DOREPLIFETIME(AWorldTileDynamic, TileX);
+		DOREPLIFETIME(AWorldTileDynamic, TileY);
 	}
 
 	AWorldTileDynamic();

@@ -32,9 +32,7 @@ public:
 
 	bool WithinBounds(int x, int y);
 
-	UFUNCTION(Server, Reliable)
 	void InvalidateMeshData();
-	void InvalidateMeshData_Implementation();
 
 	//UWorldTileProvider();
 	//~UWorldTileProvider();

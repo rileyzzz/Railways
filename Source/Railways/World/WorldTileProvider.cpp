@@ -30,7 +30,7 @@ bool UWorldTileProvider::WithinBounds(int x, int y)
 	return true;
 }
 
-void UWorldTileProvider::InvalidateMeshData_Implementation()
+void UWorldTileProvider::InvalidateMeshData()
 {
 	FScopeLock Lock(&PropertySyncRoot);
 	MarkAllLODsDirty();
@@ -64,7 +64,7 @@ void UWorldTileProvider::Initialize()
 	//	}
 	//}
 
-	//UE_LOG(LogTemp, Warning, TEXT("TILE INIT"));
+	UE_LOG(LogTemp, Warning, TEXT("TILE INIT"));
 
 
 	/*FRuntimeMeshLODProperties LODProperties;
@@ -130,7 +130,6 @@ bool UWorldTileProvider::GetSectionMeshForLOD(int32 LODIndex, int32 SectionId, F
 	//check(LODIndex == 0 && SectionId == 0);
 	FScopeLock Lock(&PropertySyncRoot);
 	const unsigned int Simplify = (LODIndex * 1 + 1);
-
 	//int dx = 1; //change of x between two points
 	//int dy = 1; //change of y between two points
 	
