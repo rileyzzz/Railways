@@ -13,6 +13,10 @@ UCLASS()
 class RAILWAYS_API UTerrainMovementComponent : public UPawnMovementComponent
 {
 	GENERATED_BODY()
+private:
+	//void UpdatePositionToGround(FVector& Position);
+
 public:
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 };

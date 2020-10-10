@@ -20,6 +20,7 @@ struct FSteamID
 {
 	GENERATED_BODY()
 public:
+	UPROPERTY()
 	uint64 ID;
 	FSteamID() : ID(0) { }
 	FSteamID(uint64 InID) : ID(InID) { }

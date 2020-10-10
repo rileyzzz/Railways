@@ -54,7 +54,7 @@ void AHeightWorld::TestForTile(int TileX, int TileY)
 		//SpawnParams.Name = NAME_None;
 
 		FVector TileLocation((float)TileX * (WORLD_SIZE - 1) * WORLD_SCALE, (float)TileY * (WORLD_SIZE - 1) * WORLD_SCALE, 0.0f);
-		FRotator TileRotation;
+		FRotator TileRotation(0.0f, 0.0f, 0.0f);
 		AWorldTileDynamic* NewTile = GetWorld()->SpawnActor<AWorldTileDynamic>(AWorldTileDynamic::StaticClass(), TileLocation, TileRotation, SpawnParams);
 		NewTile->SetReplicates(true);
 		NewTile->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
@@ -74,16 +74,16 @@ void AHeightWorld::TestForTile(int TileX, int TileY)
 		UE_LOG(LogTemp, Log, TEXT("Created tile at %i %i"), TileX, TileY);
 		if (HasAuthority())
 		{
-			for (unsigned int x = 0; x < WORLD_SIZE; x++)
-			{
-				for (unsigned int y = 0; y < WORLD_SIZE; y++)
-				{
-					//float height = (float)FMath::Rand() / (float)RAND_MAX * 20.0f;
-					float height = FMath::Sin(x / 2.0f) * 80.0f;
-					NewTile->Terrain.AddHeight(x, y, height);
-				}
-			}
-			NewTile->ForceNetUpdate();
+			//for (unsigned int x = 0; x < WORLD_SIZE; x++)
+			//{
+			//	for (unsigned int y = 0; y < WORLD_SIZE; y++)
+			//	{
+			//		//float height = (float)FMath::Rand() / (float)RAND_MAX * 20.0f;
+			//		float height = FMath::Sin(x / 2.0f) * 80.0f;
+			//		NewTile->Terrain.AddHeight(x, y, height);
+			//	}
+			//}
+			//NewTile->ForceNetUpdate();
 		}
 	}
 }

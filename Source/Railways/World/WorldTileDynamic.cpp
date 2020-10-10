@@ -196,12 +196,15 @@ bool FTerrainData::NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bOutSucces
 {
     heightData.Reserve(WORLD_SIZE * WORLD_SIZE); //ensure that array can fit required data
 
+    FName Format = NAME_LZ4;
+
     constexpr int32 DataCapacity = WORLD_SIZE * WORLD_SIZE * sizeof(float);
     int32 compressSize = DataCapacity;
     float* compressData = (float*)FMemory::Malloc(DataCapacity);
     if (Ar.IsSaving())
     {
-        FCompression::CompressMemory(NAME_LZ4, compressData, compressSize, heightData.GetData(), DataCapacity, COMPRESS_BiasMemory);
+        
+        FCompression::CompressMemory(Format, compressData, compressSize, heightData.GetData(), DataCapacity, COMPRESS_BiasMemory);
     }
     Ar << compressSize;
     for (int i = 0; i < compressSize; i++)
@@ -209,7 +212,7 @@ bool FTerrainData::NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bOutSucces
 
     if (Ar.IsLoading())
     {
-        FCompression::UncompressMemory(NAME_LZ4, heightData.GetData(), DataCapacity, compressData, compressSize);
+        FCompression::UncompressMemory(Format, heightData.GetData(), DataCapacity, compressData, compressSize);
     }
     FMemory::Free(compressData);
 

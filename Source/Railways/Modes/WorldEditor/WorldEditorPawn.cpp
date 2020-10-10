@@ -9,7 +9,7 @@
 #include "DrawDebugHelpers.h"
 
 // Sets default values
-AWorldEditorPawn::AWorldEditorPawn()
+AWorldEditorPawn::AWorldEditorPawn(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -39,16 +39,27 @@ AWorldEditorPawn::AWorldEditorPawn()
 	SpringArm->TargetArmLength = 400.0f;
 	SpringArm->bEnableCameraLag = true;
 	SpringArm->CameraLagSpeed = 3.0f;
+	SpringArm->SetIsReplicated(true);
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
+	
 
 	Username = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Username"));
-	Username->SetupAttachment(Cursor);
+	Username->SetupAttachment(SpringArm);
+	//Username->SetFont(TextFont);
 
-	
 	//Username->SetText(TEXT("test"));
 	Username->SetRelativeScale3D(FVector(2.0f, 2.0f, 2.0f));
+
+	AvatarImage = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AvatarImage"));
+	AvatarImage->SetupAttachment(SpringArm);
+	//AvatarImage->SetMobility(EComponentMobility::Movable);
+	AvatarImage->SetRelativeLocation(FVector(0.0f, 30.0f, 30.0f));
+	AvatarImage->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));
+	//AvatarImage->SetStaticMesh(AvatarImageMesh);
+	AvatarImage->SetRelativeScale3D(FVector(1.0f, 1.0f, 1.0f));
+	
 
 	MovementComponent = CreateDefaultSubobject<UTerrainMovementComponent>(TEXT("MovementComponent"));
 	MovementComponent->UpdatedComponent = RootComponent;
@@ -120,22 +131,38 @@ void AWorldEditorPawn::BeginPlay()
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AHeightWorld::StaticClass(), FoundActors);
 	if(FoundActors.Num()) WorldRef = Cast<AHeightWorld>(FoundActors[0]);
 
-	if (!HasAuthority())
+	if (HasAuthority())
 	{
+		//Player name
 		APlayerState* State = GetPlayerState();
 		if (State)
 		{
-			FString Name = State->GetPlayerName();
-			UE_LOG(LogTemp, Warning, TEXT("Setting name %s on server"), *Name);
-			SetNameText(Name);
+			PlayerName = State->GetPlayerName();
+			OnRep_NameText();
 		}
+		URailwaysGameInstance* GameInstance = Cast<URailwaysGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+		PlayerID = GameInstance->getSteamID();
+		OnRep_SteamID();
+
+		ForceNetUpdate();
 	}
+
+	//static ConstructorHelpers::FObjectFinder<UMaterialInterface> DefaultMat(TEXT("/Game/Railways/Core/Meshes/Avatar/AvatarMaterial"));
+	AvatarMaterial = UMaterialInstanceDynamic::Create(AvatarImage->GetMaterial(0), this);
+	AvatarImage->SetMaterial(0, AvatarMaterial);
 }
 
-void AWorldEditorPawn::SetNameText_Implementation(const FString& Name)
+void AWorldEditorPawn::OnRep_NameText()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Received name %s on client"), *Name);
-	Username->SetText(Name);
+	Username->SetText(PlayerName);
+}
+
+void AWorldEditorPawn::OnRep_SteamID()
+{
+	URailwaysGameInstance* GameInstance = Cast<URailwaysGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	//static ConstructorHelpers::FObjectFinder<UTexture2D> DefaultAvatar(TEXT("/Game/Railways/Core/Modes/Menu/UI/Assets/default_icon"));
+	AvatarTexture = GameInstance->getPlayerSteamAvatar(PlayerID, nullptr);
+	if(AvatarTexture) AvatarMaterial->SetTextureParameterValue(FName(TEXT("AvatarImage")), AvatarTexture);
 }
 
 // Called every frame
@@ -164,6 +191,9 @@ void AWorldEditorPawn::Tick(float DeltaTime)
 	//UpdatePositionToGround(NewLocation);
 	//SetActorLocation(NewLocation);
 	
+	FVector Height = RootComponent->GetComponentLocation();
+	UpdatePositionToGround(Height);
+	RootComponent->SetWorldLocation(Height);
 
 	//if (GEngine->GetNetMode(GetWorld()) == NM_Client || NM_Standalone)
 	if (Controller)
@@ -339,6 +369,26 @@ void AWorldEditorPawn::InputCameraY(float AxisValue)
 	}
 }
 
+void AWorldEditorPawn::InputCameraZoom(float AxisValue)
+{
+	ServerCameraZoom(AxisValue);
+	ServerCameraZoom_Implementation(AxisValue);
+}
+
+void AWorldEditorPawn::ServerCameraZoom_Implementation(float AxisValue)
+{
+	ClientCameraZoom(AxisValue);
+}
+
+void AWorldEditorPawn::ClientCameraZoom_Implementation(float AxisValue)
+{
+	float Target = SpringArm->TargetArmLength;
+	Target /= (AxisValue / 4.0f) + 1.0f;
+	//Target /= AxisValue * 40.0f;
+	if (Target > 10.0f && Target <= 16000.0f)
+		SpringArm->TargetArmLength = Target;
+}
+
 void AWorldEditorPawn::ServerCameraX_Implementation(float AxisValue)
 {
 	FRotator CurrentRotation = SpringArm->GetRelativeRotation();
@@ -374,15 +424,6 @@ void AWorldEditorPawn::ServerTerrainApproach_Implementation(const FVector_NetQua
 	const int TileCount = (SortedTiles.Num() < 4) ? SortedTiles.Num() : 4;
 	for (int i = 0; i < TileCount; i++)
 		SortedTiles[i]->TerrainApproach(HitPoint, Height, Strength, Radius);
-}
-
-void AWorldEditorPawn::InputCameraZoom(float AxisValue)
-{
-	float Target = SpringArm->TargetArmLength;
-	Target /= (AxisValue / 4.0f) + 1.0f;
-	//Target /= AxisValue * 40.0f;
-	if (Target > 10.0f && Target <= 16000.0f)
-		SpringArm->TargetArmLength = Target;
 }
 
 void AWorldEditorPawn::StartDrag()

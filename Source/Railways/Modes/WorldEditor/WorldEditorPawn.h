@@ -12,6 +12,7 @@
 #include "../../World/HeightWorld.h"
 #include "../../World/WorldTileDynamic.h"
 #include "../../Core/Objects/DynamicSplineSection.h"
+#include "../../Core/RailwaysGameInstance.h"
 #include "../TerrainMovementComponent.h"
 #include "WorldEditorPawn.generated.h"
 
@@ -22,7 +23,7 @@ class RAILWAYS_API AWorldEditorPawn : public APawn
 
 public:
 	// Sets default values for this pawn's properties
-	AWorldEditorPawn();
+	AWorldEditorPawn(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	virtual void PostInitializeComponents() override;
 
 	//UPROPERTY(EditAnywhere)
@@ -48,6 +49,27 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	UTextRenderComponent* Username;
+
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* AvatarImage;
+
+	UPROPERTY()
+	UMaterialInstanceDynamic* AvatarMaterial;
+
+	UPROPERTY(EditAnywhere)
+	UFont* TextFont;
+
+	//UPROPERTY(EditAnywhere)
+	//UStaticMesh* AvatarImageMesh;
+
+	UPROPERTY(Replicated, ReplicatedUsing = OnRep_NameText)
+	FString PlayerName;
+
+	UPROPERTY(Replicated, ReplicatedUsing = OnRep_SteamID)
+	FSteamID PlayerID;
+
+	UPROPERTY()
+	UTexture2D* AvatarTexture;
 
 protected:
 	// Called when the game starts or when spawned
@@ -79,18 +101,29 @@ private:
 	void ServerMoveRight(float AxisValue);
 	void ServerMoveRight_Implementation(float AxisValue);
 
-	UFUNCTION(Server, Reliable)
-	void SetNameText(const FString& Name);
-	void SetNameText_Implementation(const FString& Name);
+	UFUNCTION()
+	void OnRep_NameText();
+
+	UFUNCTION()
+	void OnRep_SteamID();
 
 	void InputCameraX(float AxisValue);
 	void InputCameraY(float AxisValue);
 
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, Unreliable)
+	void ServerCameraZoom(float AxisValue);
+	void ServerCameraZoom_Implementation(float AxisValue);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void ClientCameraZoom(float AxisValue);
+	void ClientCameraZoom_Implementation(float AxisValue);
+
+
+	UFUNCTION(Server, Unreliable)
 	void ServerCameraX(float AxisValue);
 	void ServerCameraX_Implementation(float AxisValue);
 
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, Unreliable)
 	void ServerCameraY(float AxisValue);
 	void ServerCameraY_Implementation(float AxisValue);
 
@@ -143,6 +176,13 @@ public:
 
 	//FVector Velocity;
 	
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+	{
+		Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+		DOREPLIFETIME(AWorldEditorPawn, PlayerName);
+		DOREPLIFETIME(AWorldEditorPawn, PlayerID);
+
+	}
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

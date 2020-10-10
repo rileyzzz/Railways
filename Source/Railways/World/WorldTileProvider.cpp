@@ -48,7 +48,7 @@ void UWorldTileProvider::InvalidateMeshData()
 //}
 
 //#define MAXLOD 5
-#define MAXLOD 1
+#define MAXLOD 5
 
 void UWorldTileProvider::Initialize()
 {
@@ -63,8 +63,6 @@ void UWorldTileProvider::Initialize()
 	//		f_heightData[x][y] = 0.0f;
 	//	}
 	//}
-
-	UE_LOG(LogTemp, Warning, TEXT("TILE INIT"));
 
 
 	/*FRuntimeMeshLODProperties LODProperties;
