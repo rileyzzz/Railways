@@ -74,11 +74,16 @@ void AHeightWorld::TestForTile(int TileX, int TileY)
 		UE_LOG(LogTemp, Log, TEXT("Created tile at %i %i"), TileX, TileY);
 		if (HasAuthority())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("SERVER EXEC"));
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("CLIENT EXEC"));
+			for (unsigned int x = 0; x < WORLD_SIZE; x++)
+			{
+				for (unsigned int y = 0; y < WORLD_SIZE; y++)
+				{
+					//float height = (float)FMath::Rand() / (float)RAND_MAX * 20.0f;
+					float height = FMath::Sin(x / 2.0f) * 80.0f;
+					NewTile->Terrain.AddHeight(x, y, height);
+				}
+			}
+			NewTile->ForceNetUpdate();
 		}
 	}
 }

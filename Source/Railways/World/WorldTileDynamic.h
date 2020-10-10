@@ -21,7 +21,7 @@ struct FTerrainData
 	~FTerrainData();
 
 	//int16& operator[](int index);
-	//bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess);
+	bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess);
 	//bool NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParms);
 
 	void SetHeightData(int x, int y, const float& height);
@@ -29,14 +29,14 @@ struct FTerrainData
 	float GetHeight(int x, int y);
 };
 
-//template<>
-//struct TStructOpsTypeTraits<FTerrainData> : public TStructOpsTypeTraitsBase2<FTerrainData>
-//{
-//	enum
-//	{
-//		WithNetSerializer = true
-//	};
-//};
+template<>
+struct TStructOpsTypeTraits<FTerrainData> : public TStructOpsTypeTraitsBase2<FTerrainData>
+{
+	enum
+	{
+		WithNetSerializer = true
+	};
+};
 
 
 UCLASS()
@@ -63,7 +63,7 @@ protected:
 
 public:
 	//UPROPERTY(Replicated, ReplicatedUsing = OnRep_heightData)
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	FTerrainData Terrain;
 	//UFUNCTION(Server, Reliable)
 	//void SetHeightData(int x, int y, int16 height);
@@ -114,6 +114,7 @@ public:
 		DOREPLIFETIME(AWorldTileDynamic, TileY);
 
 		DOREPLIFETIME(AWorldTileDynamic, Material);
+		DOREPLIFETIME_CONDITION(AWorldTileDynamic, Terrain, COND_InitialOnly);
 	}
 
 	AWorldTileDynamic();

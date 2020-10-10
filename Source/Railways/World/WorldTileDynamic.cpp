@@ -136,27 +136,9 @@ void AWorldTileDynamic::OnRep_Material()
 
 AWorldTileDynamic::AWorldTileDynamic()
 {
-    UE_LOG(LogTemp, Warning, TEXT("constructing client tile"));
     if (HasAuthority()) SetReplicates(true);
-    //heightData = (float*)FMemory::Malloc(WORLD_SIZE * WORLD_SIZE * sizeof(float));
-    //i really don't like using a TArray because it's not necessary but it wont replicate otherwise
-    //heightData.Reserve(WORLD_SIZE * WORLD_SIZE);
-    //for (unsigned int x = 0; x < WORLD_SIZE; x++)
-    //{
-    //    for (unsigned int y = 0; y < WORLD_SIZE; y++)
-    //    {
-    //        heightData.Add(0.0f);
-    //        //heightData.Add((float)FMath::Rand() / (float) RAND_MAX * 10.0f);
-    //        //SetHeightData(x, y, 0.0f);
-    //    }
-    //}
     Provider = CreateDefaultSubobject<UWorldTileProvider>(TEXT("Provider"));
 
-    
-
-    //FVector Location = GetComponentTransform().GetLocation();
-    //FVector Location = GetComponentTransform().GetLocation();
-    //DrawDebugLine(GetWorld(), Location, Location + FVector(0.0f, 0.0f, 400.0f), FColor::Green, true);
 }
 
 //void AWorldTileDynamic::PostInitProperties()
@@ -169,13 +151,9 @@ AWorldTileDynamic::AWorldTileDynamic()
 void AWorldTileDynamic::BeginPlay()
 {
     Super::BeginPlay();
-    
-    UE_LOG(LogTemp, Warning, TEXT("BUILDING!!!!!"));
+
     if (Provider)
     {
-        UE_LOG(LogTemp, Warning, TEXT("provider initializing"));
-
-        //Provider->SetTileMaterial(Material);
         Provider->SetTileParent(this);
         GetRuntimeMeshComponent()->Initialize(Provider);
     }
@@ -214,47 +192,38 @@ FTerrainData::~FTerrainData()
 //    return heightData[index];
 //}
 
-//bool FTerrainData::NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bOutSuccess)
-//{
-//    UE_LOG(LogTemp, Warning, TEXT("SERIALIZING"));
-//    
-//    //constexpr int32 DataCapacity = WORLD_SIZE * WORLD_SIZE * sizeof(float);
-//    //int32 compressSize = DataCapacity;
-//    //float* compressData = (float*)FMemory::Malloc(DataCapacity);
-//    //if (Ar.IsSaving())
-//    //{
-//    //    clock_t start = clock();
-//    //    //compressSize = LZ4_compress_fast((char*)heightData, compressData, DataCapacity, DataCapacity, 1);
-//    //    FCompression::CompressMemory(NAME_LZ4, compressData, compressSize, heightData, DataCapacity);
-//    //    UE_LOG(LogTemp, Warning, TEXT("Compressed data in %f seconds"), ((double)clock() - (double)start) / (double)CLOCKS_PER_SEC);
-//    //}
-//    //Ar << compressSize;
-//    //for (int i = 0; i < compressSize; i++)
-//    //    Ar << compressData[i];
-//
-//    //if (Ar.IsLoading())
-//    //{
-//    //    clock_t start = clock();
-//    //    //LZ4_decompress_safe(compressData, (char*)heightData, compressSize, DataCapacity);
-//    //    FCompression::UncompressMemory(NAME_LZ4, heightData, DataCapacity, compressData, compressSize);
-//    //    UE_LOG(LogTemp, Warning, TEXT("Decompressed data in %f seconds"), ((double)clock() - (double)start) / (double)CLOCKS_PER_SEC);
-//    //}
-//    //FMemory::Free(compressData);
-//
-//    for (unsigned int x = 0; x < WORLD_SIZE; x++)
-//    {
-//        for (unsigned int y = 0; y < WORLD_SIZE; y++)
-//        {
-//            Ar << heightData[x + y * WORLD_SIZE];
-//        }
-//    }
-//    //for (auto& height : heightData)
-//    //    Ar << height;
-//    
-//
-//    bOutSuccess = true;
-//    return true;
-//}
+bool FTerrainData::NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bOutSuccess)
+{
+    heightData.Reserve(WORLD_SIZE * WORLD_SIZE); //ensure that array can fit required data
+
+    constexpr int32 DataCapacity = WORLD_SIZE * WORLD_SIZE * sizeof(float);
+    int32 compressSize = DataCapacity;
+    float* compressData = (float*)FMemory::Malloc(DataCapacity);
+    if (Ar.IsSaving())
+    {
+        FCompression::CompressMemory(NAME_LZ4, compressData, compressSize, heightData.GetData(), DataCapacity, COMPRESS_BiasMemory);
+    }
+    Ar << compressSize;
+    for (int i = 0; i < compressSize; i++)
+        Ar << compressData[i];
+
+    if (Ar.IsLoading())
+    {
+        FCompression::UncompressMemory(NAME_LZ4, heightData.GetData(), DataCapacity, compressData, compressSize);
+    }
+    FMemory::Free(compressData);
+
+    //for (unsigned int x = 0; x < WORLD_SIZE; x++)
+    //{
+    //    for (unsigned int y = 0; y < WORLD_SIZE; y++)
+    //    {
+    //        Ar << heightData[x + y * WORLD_SIZE];
+    //    }
+    //}
+
+    bOutSuccess = true;
+    return true;
+}
 
 //bool FTerrainData::NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParms)
 //{
