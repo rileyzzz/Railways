@@ -249,5 +249,6 @@ float FTerrainData::GetHeight(int x, int y)
     if (y >= WORLD_SIZE) y = WORLD_SIZE - 1;
     if (x < 0) x = 0;
     if (y < 0) y = 0;
-    return heightData[x + y * WORLD_SIZE];
+    if(heightData[x + y * WORLD_SIZE]) return heightData[x + y * WORLD_SIZE];
+    return 0.0f;
 }

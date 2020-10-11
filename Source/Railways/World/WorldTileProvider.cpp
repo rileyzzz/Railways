@@ -13,7 +13,7 @@ void UWorldTileProvider::SetTileMaterial(UMaterialInterface* InMaterial)
 {
 	FScopeLock Lock(&PropertySyncRoot);
 	Material = InMaterial;
-	SetupMaterialSlot(0, FName("Material"), Material);
+	//SetupMaterialSlot(0, FName("Material"), Material);
 }
 
 void UWorldTileProvider::SetTileParent(AWorldTileDynamic* InParent)
@@ -76,12 +76,12 @@ void UWorldTileProvider::Initialize()
 		//float alpha = (float)LOD / (float)MAXLOD;
 
 		FRuntimeMeshLODProperties LODProperties;
-		LODProperties.ScreenSize = FMath::Pow(0.5, LOD);
+		LODProperties.ScreenSize = FMath::Pow(0.75, LOD);
 		LODs.Add(LODProperties);
 	}
 	ConfigureLODs(LODs);
 
-	SetupMaterialSlot(0, FName("Material"), GetTileMaterial());
+	SetupMaterialSlot(0, FName("Material"), Material);
 
 	for (int LOD = 0; LOD < MAXLOD; LOD++)
 	{
@@ -91,7 +91,8 @@ void UWorldTileProvider::Initialize()
 		Properties.MaterialSlot = 0;
 		Properties.bWants32BitIndices = true;
 		Properties.UpdateFrequency = ERuntimeMeshUpdateFrequency::Frequent;
-		CreateSection(LOD, 0, Properties);
+		static int SectionID = 0;
+		CreateSection(LOD, SectionID++, Properties);
 	}
 	//CreateSection(0, 0, Properties);
 	//MarkAllLODsDirty();
@@ -174,6 +175,7 @@ bool UWorldTileProvider::GetSectionMeshForLOD(int32 LODIndex, int32 SectionId, F
 	//	}
 	//}
 
+
 	int dx = Simplify; //change of x between two points
 	int dy = Simplify; //change of y between two points
 
@@ -246,32 +248,29 @@ bool UWorldTileProvider::HasCollisionMesh()
 bool UWorldTileProvider::GetCollisionMesh(FRuntimeMeshCollisionData& CollisionData)
 {
 	FScopeLock Lock(&PropertySyncRoot);
-	constexpr int COLLISION_RESOLUTION = 4;
-	constexpr int COLLISION_SIZE = WORLD_SIZE / COLLISION_RESOLUTION + 1;
-
-	constexpr int COLLISION_COUNT = ((COLLISION_SIZE) * (COLLISION_SIZE)) * 2;
-	// Add the single collision section
-	//CollisionData.CollisionSources.Emplace(0, COLLISION_COUNT, this, 0, ERuntimeMeshCollisionFaceSourceType::Collision);
 
 	FRuntimeMeshCollisionVertexStream& CollisionVertices = CollisionData.Vertices;
 	FRuntimeMeshCollisionTriangleStream& CollisionTriangles = CollisionData.Triangles;
 
-	for (unsigned int y = 0; y < COLLISION_SIZE; y++)
-	{
-		for (unsigned int x = 0; x < COLLISION_SIZE; x++)
-		{
-			float height = Tile->Terrain.GetHeight(x * COLLISION_RESOLUTION, y * COLLISION_RESOLUTION);
+	const unsigned int Simplify = 8;
 
-			FVector Position((float)x * (float)WORLD_SCALE * (float)COLLISION_RESOLUTION, (float)y * (float)WORLD_SCALE * (float)COLLISION_RESOLUTION, height);
+	const unsigned int SimplifySize = WORLD_SIZE / Simplify;
+	for (unsigned int y = 0; y < SimplifySize; y++)
+	{
+		for (unsigned int x = 0; x < SimplifySize; x++)
+		{
+			float PointX = x * ((float)(WORLD_SIZE - 1) / (float)(SimplifySize - 1));
+			float PointY = y * ((float)(WORLD_SIZE - 1) / (float)(SimplifySize - 1));
+			FVector Position(PointX * WORLD_SCALE, PointY * WORLD_SCALE, Tile->Terrain.GetHeight(PointX, PointY));
 
 			CollisionVertices.Add(Position);
 
-			if (x != COLLISION_SIZE - 1 && y != COLLISION_SIZE - 1)
+			if (x != SimplifySize - 1 && y != SimplifySize - 1)
 			{
-				int32 AIndex = x + y * COLLISION_SIZE;
-				int32 BIndex = AIndex + 1;
-				int32 CIndex = AIndex + COLLISION_SIZE;
-				int32 DIndex = CIndex + 1;
+				uint32 AIndex = x + y * SimplifySize;
+				uint32 BIndex = AIndex + 1;
+				uint32 CIndex = AIndex + SimplifySize;
+				uint32 DIndex = CIndex + 1;
 				CollisionTriangles.Add(AIndex, CIndex, BIndex);
 				CollisionTriangles.Add(BIndex, CIndex, DIndex);
 			}

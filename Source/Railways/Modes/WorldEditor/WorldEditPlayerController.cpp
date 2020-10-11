@@ -70,7 +70,7 @@ void AWorldEditPlayerController::OnRep_SteamID()
 	AWorldEditorPawn* PawnRef = Cast<AWorldEditorPawn>(GetPawn());
 	if (!HasAuthority()) //server?
 	{
-		PawnRef->PlayerID = PlayerID;
+		if(PawnRef) PawnRef->PlayerID = PlayerID;
 	}
 }
 

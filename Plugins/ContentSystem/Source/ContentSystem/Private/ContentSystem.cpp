@@ -33,7 +33,8 @@ void FContentSystemModule::StartupModule()
 	}
 	else
 	{
-		FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("ThirdPartyLibraryError", "Failed to load Assimp!"));
+		FText ErrorMsg = FText::Format(LOCTEXT("ThirdPartyLibraryError", "Failed to load Assimp from directory {0}!"), FText::FromString(LibraryPath));
+		FMessageDialog::Open(EAppMsgType::Ok, ErrorMsg);
 	}
 }
 
