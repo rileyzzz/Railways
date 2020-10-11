@@ -37,7 +37,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* TestMesh;
 
-
 	TMap<TPair<int, int>, AWorldTileDynamic*> Tiles;
 	//UPROPERTY(Replicated)
 	//TArray<AWorldTileDynamic*> Tiles;

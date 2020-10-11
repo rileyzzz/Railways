@@ -20,7 +20,11 @@ class RAILWAYS_API UWorldTileProvider : public URuntimeMeshProvider
 
 private:
 	mutable FCriticalSection PropertySyncRoot;
+
+	UPROPERTY()
 	UMaterialInterface* Material;
+
+	UPROPERTY()
 	AWorldTileDynamic* Tile;
 	//float** f_heightData;
 	

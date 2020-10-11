@@ -31,11 +31,16 @@ class RAILWAYS_API URailwaysGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 private:
+	UPROPERTY()
 	UContentSystemInterface* Interface;
+
 	IOnlineSessionPtr SessionInterface;
 	TSharedPtr<FOnlineSessionSearch> SessionSearch;
+
+	UPROPERTY()
 	UServerList* ActiveServerList;
 public:
+	UPROPERTY()
 	UAssimpInterface* AssimpInterface;
 
 	virtual void Init() override;

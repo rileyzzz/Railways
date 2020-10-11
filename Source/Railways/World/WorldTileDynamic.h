@@ -46,6 +46,7 @@ class RAILWAYS_API AWorldTileDynamic : public ARuntimeMeshActor
 private:
 	mutable FCriticalSection PropertySyncRoot;
 
+	UPROPERTY()
 	UWorldTileProvider* Provider;
 
 	//float* heightData;

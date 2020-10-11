@@ -13,11 +13,12 @@ void UWorldTileProvider::SetTileMaterial(UMaterialInterface* InMaterial)
 {
 	FScopeLock Lock(&PropertySyncRoot);
 	Material = InMaterial;
-	//SetupMaterialSlot(0, FName("Material"), Material);
+	SetupMaterialSlot(0, FName("Material"), Material);
 }
 
 void UWorldTileProvider::SetTileParent(AWorldTileDynamic* InParent)
 {
+	FScopeLock Lock(&PropertySyncRoot);
 	Tile = InParent;
 }
 
@@ -32,7 +33,6 @@ bool UWorldTileProvider::WithinBounds(int x, int y)
 
 void UWorldTileProvider::InvalidateMeshData()
 {
-	FScopeLock Lock(&PropertySyncRoot);
 	MarkAllLODsDirty();
 	MarkCollisionDirty();
 }
@@ -90,7 +90,7 @@ void UWorldTileProvider::Initialize()
 		Properties.bIsVisible = true;
 		Properties.MaterialSlot = 0;
 		Properties.bWants32BitIndices = true;
-		Properties.UpdateFrequency = ERuntimeMeshUpdateFrequency::Frequent;
+		Properties.UpdateFrequency = ERuntimeMeshUpdateFrequency::Frequent; //potential crash source?
 		static int SectionID = 0;
 		CreateSection(LOD, SectionID++, Properties);
 	}
@@ -228,7 +228,6 @@ bool UWorldTileProvider::GetSectionMeshForLOD(int32 LODIndex, int32 SectionId, F
 
 FRuntimeMeshCollisionSettings UWorldTileProvider::GetCollisionSettings()
 {
-	FScopeLock Lock(&PropertySyncRoot);
 	FRuntimeMeshCollisionSettings Settings;
 	//Settings.bUseAsyncCooking = false;
 	Settings.bUseAsyncCooking = true;
@@ -247,8 +246,6 @@ bool UWorldTileProvider::HasCollisionMesh()
 
 bool UWorldTileProvider::GetCollisionMesh(FRuntimeMeshCollisionData& CollisionData)
 {
-	FScopeLock Lock(&PropertySyncRoot);
-
 	FRuntimeMeshCollisionVertexStream& CollisionVertices = CollisionData.Vertices;
 	FRuntimeMeshCollisionTriangleStream& CollisionTriangles = CollisionData.Triangles;
 
@@ -283,5 +280,6 @@ bool UWorldTileProvider::GetCollisionMesh(FRuntimeMeshCollisionData& CollisionDa
 
 bool UWorldTileProvider::IsThreadSafe()
 {
-	return true;
+	//return true; potential crash source?
+	return false;
 }

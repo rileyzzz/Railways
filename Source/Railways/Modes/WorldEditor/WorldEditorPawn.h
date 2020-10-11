@@ -90,9 +90,11 @@ private:
 	bool b_draggingMouse = false;
 	bool b_leftMouse = false;
 
+	UPROPERTY()
 	AHeightWorld* WorldRef;
 
 	//THIS IS CLIENT ONLY
+	UPROPERTY()
 	AWorldEditPlayerController* WorldEditController;
 
 	//float ForwardVelocity = 0.0f;
@@ -156,9 +158,16 @@ private:
 
 	float TargetHeight = 0.0;
 
+	UPROPERTY()
 	ADynamicSplineSection* EditSplineSection = nullptr;
+
+	UPROPERTY()
 	USplineComponent* EditSpline = nullptr;
+
+	UPROPERTY()
 	UDynamicSplinePoint* EditSplinePoint = nullptr;
+
+	UPROPERTY()
 	USphereComponent* EditSplineDummy = nullptr;
 	//FVector EditSplineStart;
 

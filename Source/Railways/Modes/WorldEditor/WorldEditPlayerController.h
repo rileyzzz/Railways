@@ -16,6 +16,7 @@ class RAILWAYS_API AWorldEditPlayerController : public APlayerController
 	GENERATED_BODY()
 
 private:
+	UPROPERTY()
 	AHeightWorld* WorldRef;
 
 public:

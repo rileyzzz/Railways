@@ -22,7 +22,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	UMaterialInterface* PBRMaterial;
 
+	UPROPERTY()
 	UProceduralMeshComponent* DynamicMesh;
+
 	void InitMesh();
 protected:
 	// Called when the game starts or when spawned
