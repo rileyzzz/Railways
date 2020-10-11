@@ -15,7 +15,8 @@ AWorldEditorPawn::AWorldEditorPawn(const FObjectInitializer& ObjectInitializer) 
 	PrimaryActorTick.bCanEverTick = true;
 	
 	// Set this pawn to be controlled by the lowest-numbered player
-	AutoPossessPlayer = EAutoReceiveInput::Player0;
+	AutoPossessPlayer = EAutoReceiveInput::Disabled;
+
 
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 
@@ -67,8 +68,6 @@ AWorldEditorPawn::AWorldEditorPawn(const FObjectInitializer& ObjectInitializer) 
 	//bReplicates = true;
 	//bReplicateMovement = true;
 	if (HasAuthority()) SetReplicates(true);
-	//Camera->SetRelativeLocation(FVector(-250.0f, 0.0f, 250.0f));
-	//Camera->SetRelativeRotation(FRotator(-45.0f, 0.0f, 0.0f));
 }
 
 #if UE_BUILD_DEBUG
@@ -125,27 +124,13 @@ void AWorldEditorPawn::PostInitializeComponents()
 void AWorldEditorPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	Controller = Cast<AWorldEditPlayerController>(GetController());
+
+	WorldEditController = Cast<AWorldEditPlayerController>(GetController());
 
 	TArray<AActor*> FoundActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AHeightWorld::StaticClass(), FoundActors);
 	if(FoundActors.Num()) WorldRef = Cast<AHeightWorld>(FoundActors[0]);
 
-	if (HasAuthority())
-	{
-		//Player name
-		APlayerState* State = GetPlayerState();
-		if (State)
-		{
-			PlayerName = State->GetPlayerName();
-			OnRep_NameText();
-		}
-		URailwaysGameInstance* GameInstance = Cast<URailwaysGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-		PlayerID = GameInstance->getSteamID();
-		OnRep_SteamID();
-
-		ForceNetUpdate();
-	}
 
 	//static ConstructorHelpers::FObjectFinder<UMaterialInterface> DefaultMat(TEXT("/Game/Railways/Core/Meshes/Avatar/AvatarMaterial"));
 	AvatarMaterial = UMaterialInstanceDynamic::Create(AvatarImage->GetMaterial(0), this);
@@ -162,8 +147,29 @@ void AWorldEditorPawn::OnRep_SteamID()
 	URailwaysGameInstance* GameInstance = Cast<URailwaysGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	//static ConstructorHelpers::FObjectFinder<UTexture2D> DefaultAvatar(TEXT("/Game/Railways/Core/Modes/Menu/UI/Assets/default_icon"));
 	AvatarTexture = GameInstance->getPlayerSteamAvatar(PlayerID, nullptr);
-	if(AvatarTexture) AvatarMaterial->SetTextureParameterValue(FName(TEXT("AvatarImage")), AvatarTexture);
+	if (AvatarTexture) AvatarMaterial->SetTextureParameterValue(FName(TEXT("AvatarImage")), AvatarTexture);
 }
+
+//void AWorldEditorPawn::ServerSetPlayerName_Implementation(const FString& InName)
+//{
+//	PlayerName = InName;
+//
+//}
+
+//void AWorldEditorPawn::ServerSetupClientData_Implementation()
+//{
+//	//Executed on server
+//	UE_LOG(LogTemp, Warning, TEXT("Setting up server data"));
+//	//Player name
+//	APlayerState* State = GetPlayerState();
+//	if (State)
+//	{
+//		PlayerName = State->GetPlayerName();
+//		UE_LOG(LogTemp, Warning, TEXT("Player name %s"), *PlayerName);
+//		OnRep_NameText();
+//	}
+//	ForceNetUpdate();
+//}
 
 // Called every frame
 void AWorldEditorPawn::Tick(float DeltaTime)
@@ -196,7 +202,7 @@ void AWorldEditorPawn::Tick(float DeltaTime)
 	RootComponent->SetWorldLocation(Height);
 
 	//if (GEngine->GetNetMode(GetWorld()) == NM_Client || NM_Standalone)
-	if (Controller)
+	if (WorldEditController)
 	{
 		FHitResult Target;
 		if (GetMouseHit(Target))
@@ -311,7 +317,6 @@ void AWorldEditorPawn::InputMoveForward(float AxisValue)
 		ServerMoveForward(AxisValue);
 		ServerMoveForward_Implementation(AxisValue);
 	}
-		
 }
 
 void AWorldEditorPawn::InputMoveRight(float AxisValue)
@@ -325,6 +330,7 @@ void AWorldEditorPawn::InputMoveRight(float AxisValue)
 
 void AWorldEditorPawn::ServerMoveForward_Implementation(float AxisValue)
 {
+	
 	if (MovementComponent && (MovementComponent->UpdatedComponent == RootComponent))
 	{
 		const float ZoomFactor = 1.0f + (SpringArm->TargetArmLength / 4000.0f);
@@ -625,7 +631,7 @@ bool AWorldEditorPawn::GetMouseHit(FHitResult& OutHit, ECollisionChannel channel
 {
 	//UE_LOG(LogTemp, Warning, TEXT("tracing line"));
 	FVector Position, Direction;
-	Controller->DeprojectMousePositionToWorld(Position, Direction);
+	WorldEditController->DeprojectMousePositionToWorld(Position, Direction);
 	FVector End = Position + Direction * 40000.0f;
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredComponents(Ignore);

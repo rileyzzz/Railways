@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "WorldEditorPawn.h"
 #include "WorldEditorGameModeBase.generated.h"
 
 /**
@@ -13,5 +14,6 @@ UCLASS()
 class RAILWAYS_API AWorldEditorGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+public:
+	virtual void PostLogin(APlayerController* NewPlayer) override;
 };

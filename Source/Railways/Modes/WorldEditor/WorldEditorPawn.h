@@ -62,6 +62,7 @@ public:
 	//UPROPERTY(EditAnywhere)
 	//UStaticMesh* AvatarImageMesh;
 
+
 	UPROPERTY(Replicated, ReplicatedUsing = OnRep_NameText)
 	FString PlayerName;
 
@@ -70,6 +71,16 @@ public:
 
 	UPROPERTY()
 	UTexture2D* AvatarTexture;
+
+	UFUNCTION()
+	void OnRep_NameText();
+
+	UFUNCTION()
+	void OnRep_SteamID();
+
+	//UFUNCTION(Server, Reliable)
+	//void ServerSetPlayerName(const FString& InName);
+	//void ServerSetPlayerName_Implementation(const FString& InName);
 
 protected:
 	// Called when the game starts or when spawned
@@ -82,7 +93,7 @@ private:
 	AHeightWorld* WorldRef;
 
 	//THIS IS CLIENT ONLY
-	AWorldEditPlayerController* Controller;
+	AWorldEditPlayerController* WorldEditController;
 
 	//float ForwardVelocity = 0.0f;
 	//float RightVelocity = 0.0f;
@@ -93,6 +104,11 @@ private:
 	void InputMoveForward(float AxisValue);
 	void InputMoveRight(float AxisValue);
 
+	//UFUNCTION(Server, Reliable)
+	//void ServerSetupClientData();
+	//void ServerSetupClientData_Implementation();
+
+
 	UFUNCTION(Server, Reliable)
 	void ServerMoveForward(float AxisValue);
 	void ServerMoveForward_Implementation(float AxisValue);
@@ -101,11 +117,6 @@ private:
 	void ServerMoveRight(float AxisValue);
 	void ServerMoveRight_Implementation(float AxisValue);
 
-	UFUNCTION()
-	void OnRep_NameText();
-
-	UFUNCTION()
-	void OnRep_SteamID();
 
 	void InputCameraX(float AxisValue);
 	void InputCameraY(float AxisValue);
