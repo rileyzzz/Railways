@@ -6,6 +6,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
+#include "../../RailwaysPlayerState.h"
 #include "DrawDebugHelpers.h"
 
 // Sets default values
@@ -60,10 +61,13 @@ AWorldEditorPawn::AWorldEditorPawn(const FObjectInitializer& ObjectInitializer) 
 	AvatarImage->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));
 	//AvatarImage->SetStaticMesh(AvatarImageMesh);
 	AvatarImage->SetRelativeScale3D(FVector(1.0f, 1.0f, 1.0f));
-	
+	AvatarImage->SetCastShadow(false);
 
 	MovementComponent = CreateDefaultSubobject<UTerrainMovementComponent>(TEXT("MovementComponent"));
 	MovementComponent->UpdatedComponent = RootComponent;
+
+
+	
 
 	//bReplicates = true;
 	//bReplicateMovement = true;
@@ -113,13 +117,6 @@ void AWorldEditorPawn::SetTargetHeight(float height)
 	TargetHeight = height;
 }
 
-void AWorldEditorPawn::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-	Cursor->SetDecalMaterial(DecalMaterial);
-	EditCursor->SetDecalMaterial(PaintMaterial);
-}
-
 // Called when the game starts or when spawned
 void AWorldEditorPawn::BeginPlay()
 {
@@ -133,22 +130,59 @@ void AWorldEditorPawn::BeginPlay()
 
 
 	//static ConstructorHelpers::FObjectFinder<UMaterialInterface> DefaultMat(TEXT("/Game/Railways/Core/Meshes/Avatar/AvatarMaterial"));
-	AvatarMaterial = UMaterialInstanceDynamic::Create(AvatarImage->GetMaterial(0), this);
-	AvatarImage->SetMaterial(0, AvatarMaterial);
+	
+
 }
 
-void AWorldEditorPawn::OnRep_NameText()
+void AWorldEditorPawn::PostInitializeComponents()
 {
-	Username->SetText(PlayerName);
+	Super::PostInitializeComponents();
+	Cursor->SetDecalMaterial(DecalMaterial);
+	EditCursor->SetDecalMaterial(PaintMaterial);
+
 }
 
-void AWorldEditorPawn::OnRep_SteamID()
+void AWorldEditorPawn::OnRep_PlayerState()
 {
-	URailwaysGameInstance* GameInstance = Cast<URailwaysGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	//static ConstructorHelpers::FObjectFinder<UTexture2D> DefaultAvatar(TEXT("/Game/Railways/Core/Modes/Menu/UI/Assets/default_icon"));
-	AvatarTexture = GameInstance->getPlayerSteamAvatar(PlayerID, nullptr);
-	if (AvatarTexture) AvatarMaterial->SetTextureParameterValue(FName(TEXT("AvatarImage")), AvatarTexture);
+	Super::OnRep_PlayerState();
+
+	ARailwaysPlayerState* NewPlayerState = GetPlayerState<ARailwaysPlayerState>();
+	if (NewPlayerState)
+	{
+		FString Message = FString::Printf(TEXT("Received playerstate replication for %s"), *NewPlayerState->GetPlayerName());
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, Message);
+		FString PlayerName = NewPlayerState->GetPlayerName();
+		Username->SetText(PlayerName);
+		if (!AvatarTexture && NewPlayerState->SteamID.ID != 0)
+		{
+			URailwaysGameInstance* GameInstance = Cast<URailwaysGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+			FString IDMessage = FString::Printf(TEXT("Found SteamID %u"), NewPlayerState->SteamID.ID);
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, IDMessage);
+
+			if (!AvatarMaterial)
+			{
+				AvatarMaterial = UMaterialInstanceDynamic::Create(AvatarImage->GetMaterial(0), this, TEXT("AvatarMaterial"));
+				AvatarImage->SetMaterial(0, AvatarMaterial);
+			}
+
+			AvatarTexture = GameInstance->getPlayerSteamAvatar(NewPlayerState->SteamID, nullptr);
+			if (AvatarTexture) AvatarMaterial->SetTextureParameterValue(FName(TEXT("AvatarImage")), AvatarTexture);
+		}
+	}
 }
+
+//void AWorldEditorPawn::OnRep_NameText()
+//{
+//	//Username->SetText(PlayerName);
+//}
+
+//void AWorldEditorPawn::OnRep_SteamID()
+//{
+//	URailwaysGameInstance* GameInstance = Cast<URailwaysGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+//	//static ConstructorHelpers::FObjectFinder<UTexture2D> DefaultAvatar(TEXT("/Game/Railways/Core/Modes/Menu/UI/Assets/default_icon"));
+//	AvatarTexture = GameInstance->getPlayerSteamAvatar(PlayerID, nullptr);
+//	if (AvatarTexture) AvatarMaterial->SetTextureParameterValue(FName(TEXT("AvatarImage")), AvatarTexture);
+//}
 
 //void AWorldEditorPawn::ServerSetPlayerName_Implementation(const FString& InName)
 //{
@@ -176,6 +210,12 @@ void AWorldEditorPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
+	if (HasAuthority())
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("PAWN AUTHORITY"));
+		//OnRep_PlayerState();
+	}
+
 	const float ZoomFactor = 1.0f + (SpringArm->TargetArmLength / 4000.0f);
 	//UE_LOG(LogTemp, Log, TEXT("zoom factor %f"), ZoomFactor);
 	//FVector Forward = Camera->GetForwardVector();

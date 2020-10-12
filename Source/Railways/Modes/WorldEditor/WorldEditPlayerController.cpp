@@ -4,6 +4,7 @@
 #include "WorldEditPlayerController.h"
 #include "WorldEditorPawn.h"
 #include "Kismet/GameplayStatics.h"
+#include "../../RailwaysPlayerState.h"
 
 AWorldEditPlayerController::AWorldEditPlayerController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -27,21 +28,28 @@ void AWorldEditPlayerController::BeginPlay()
 
 
 	//PawnRef = Cast<AWorldEditorPawn>(GetPawn());
-
-	if (HasAuthority())
+	if (UGameplayStatics::GetPlayerControllerID(this) == 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("has authority"));
-
-		
-		//needs to be in here? pawn doesnt have authority for some reason
-		URailwaysGameInstance* GameInstance = Cast<URailwaysGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-		PlayerID = GameInstance->getSteamID();
-		
-		//PawnRef->ForceNetUpdate();
-		
+		//UE_LOG(LogTemp, Warning, TEXT("has authority"));
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, TEXT("AUTHORITY"));
+		//send steamID after 0.4 seconds
+		FTimerHandle UnusedHandle;
+		GetWorldTimerManager().SetTimer(UnusedHandle, this, &AWorldEditPlayerController::SendSteamID, 0.4f, false);
 	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("NO PLAYERCONTROLLER AUTHORITY"));
+	}
+	
+}
 
-	ServerSetupClientData_Implementation();
+void AWorldEditPlayerController::SendSteamID()
+{
+	URailwaysGameInstance* GameInstance = Cast<URailwaysGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	FSteamID ID = GameInstance->getSteamID();
+	FString Message = FString::Printf(TEXT("Sending SteamID %u"), ID.ID);
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, Message);
+	ServerSetSteamID(ID);
 }
 
 //void AWorldEditPlayerController::PostInitializeComponents()
@@ -51,47 +59,19 @@ void AWorldEditPlayerController::BeginPlay()
 //	OnRep_PlayerState();
 //}
 
+void AWorldEditPlayerController::ServerSetSteamID_Implementation(const FSteamID& ID)
+{
+	//set the steam ID to be replicated on the server
+	ARailwaysPlayerState* MyPlayerState = GetPlayerState<ARailwaysPlayerState>();
+	MyPlayerState->SetSteamID(ID);
+}
+
 void AWorldEditPlayerController::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
-	UE_LOG(LogTemp, Warning, TEXT("player state rep"));
-	if (PlayerState)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("player state exists"));
-		//UE_LOG(LogTemp, Warning, TEXT("has state %s"), *PlayerState->GetPlayerName());
-		//PlayerName = PlayerState->GetPlayerName();
-		//OnRep_NameText();
-		ServerSetupClientData();
-	}
+
 }
 
-void AWorldEditPlayerController::OnRep_SteamID()
-{
-	AWorldEditorPawn* PawnRef = Cast<AWorldEditorPawn>(GetPawn());
-	if (!HasAuthority()) //server?
-	{
-		if(PawnRef) PawnRef->PlayerID = PlayerID;
-	}
-}
-
-void AWorldEditPlayerController::ServerSetupClientData_Implementation()
-{
-	//Executed on server
-	UE_LOG(LogTemp, Warning, TEXT("Setting up server data"));
-	AWorldEditorPawn* PawnRef = Cast<AWorldEditorPawn>(GetPawn());
-	//Player name
-	if (PawnRef)
-	{
-		if (PlayerState)
-		{
-			PawnRef->PlayerName = PlayerState->GetPlayerName();
-			//UE_LOG(LogTemp, Warning, TEXT("Player name %s"), *PlayerName);
-			PawnRef->OnRep_NameText();
-		}
-
-		PawnRef->ForceNetUpdate();
-	}
-}
 
 void AWorldEditPlayerController::Tick(float DeltaTime)
 {
@@ -130,5 +110,5 @@ void AWorldEditPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProp
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	//DOREPLIFETIME(AWorldEditPlayerController, PlayerName);
-	DOREPLIFETIME(AWorldEditPlayerController, PlayerID);
+	//DOREPLIFETIME(AWorldEditPlayerController, PlayerID);
 }

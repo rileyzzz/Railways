@@ -177,6 +177,7 @@ FSteamID URailwaysGameInstance::getSteamID()
 
 UTexture2D* URailwaysGameInstance::getPlayerSteamAvatar(FSteamID SteamID, UTexture2D* Default)
 {
+	//SteamAPI_IsSteamRunning()
 	if (SteamAPI_IsSteamRunning()) //SteamAPI_Init()
 	{
 		ISteamFriends* Friends = SteamFriends();

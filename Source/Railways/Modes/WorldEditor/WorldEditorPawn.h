@@ -25,7 +25,7 @@ public:
 	// Sets default values for this pawn's properties
 	AWorldEditorPawn(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	virtual void PostInitializeComponents() override;
-
+	virtual void OnRep_PlayerState() override;
 	//UPROPERTY(EditAnywhere)
 	//UStaticMeshComponent* MainMesh;
 
@@ -63,24 +63,20 @@ public:
 	//UStaticMesh* AvatarImageMesh;
 
 
-	UPROPERTY(Replicated, ReplicatedUsing = OnRep_NameText)
-	FString PlayerName;
+	//UPROPERTY(Replicated, ReplicatedUsing = OnRep_NameText)
+	//FString PlayerName;
 
-	UPROPERTY(Replicated, ReplicatedUsing = OnRep_SteamID)
-	FSteamID PlayerID;
+	//UPROPERTY(Replicated, ReplicatedUsing = OnRep_SteamID)
+	//FSteamID PlayerID;
 
 	UPROPERTY()
 	UTexture2D* AvatarTexture;
 
-	UFUNCTION()
-	void OnRep_NameText();
+	//UFUNCTION()
+	//void OnRep_NameText();
 
-	UFUNCTION()
-	void OnRep_SteamID();
-
-	//UFUNCTION(Server, Reliable)
-	//void ServerSetPlayerName(const FString& InName);
-	//void ServerSetPlayerName_Implementation(const FString& InName);
+	//UFUNCTION()
+	//void OnRep_SteamID();
 
 protected:
 	// Called when the game starts or when spawned
@@ -199,8 +195,8 @@ public:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 	{
 		Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-		DOREPLIFETIME(AWorldEditorPawn, PlayerName);
-		DOREPLIFETIME(AWorldEditorPawn, PlayerID);
+		//DOREPLIFETIME(AWorldEditorPawn, PlayerName);
+		//DOREPLIFETIME(AWorldEditorPawn, PlayerID);
 
 	}
 

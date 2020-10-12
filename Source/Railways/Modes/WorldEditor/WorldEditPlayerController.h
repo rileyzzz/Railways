@@ -28,15 +28,12 @@ public:
 	void TestForTileServer();
 	void TestForTileServer_Implementation();
 
-	UPROPERTY(Replicated, ReplicatedUsing = OnRep_SteamID)
-	FSteamID PlayerID;
-
 	UFUNCTION()
-	void OnRep_SteamID();
+	void SendSteamID();
 
 	UFUNCTION(Server, Reliable)
-	void ServerSetupClientData();
-	void ServerSetupClientData_Implementation();
+	void ServerSetSteamID(const FSteamID& ID);
+	void ServerSetSteamID_Implementation(const FSteamID& ID);
 
 	virtual void OnRep_PlayerState() override;
 
