@@ -19,7 +19,7 @@
 struct DynamicSplineSegment;
 
 UCLASS()
-class RAILWAYS_API ADynamicSplineSection : public ARuntimeActorAsset
+class RAILWAYS_API ADynamicSplineSection : public AActor
 {
 	GENERATED_BODY()
 	

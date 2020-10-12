@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ProceduralMeshComponent.h"
+#include "AssimpInterface.h"
 #include "RuntimeActorAsset.generated.h"
 
 UCLASS()
@@ -14,8 +15,9 @@ class RAILWAYS_API ARuntimeActorAsset : public AActor
 	
 private:
 	//UAssimpInterface* AssimpInterface;
-
-public:	
+	AssimpImportData* MeshData;
+	void BuildMeshNode(const AssimpNode& Node);
+public:
 	// Sets default values for this actor's properties
 	ARuntimeActorAsset();
 

@@ -21,7 +21,7 @@ public class AssimpLibrary : ModuleRules
 			PublicDelayLoadDLLs.Add("assimp-vc142-mt.dll");
 
 			// Ensure that the DLL is staged along with the executable
-			RuntimeDependencies.Add("$(PluginDir)/Binaries/Win64/ThirdParty/AssimpLibrary/assimp-vc142-mt.dll");
+			RuntimeDependencies.Add("$(PluginDir)/Binaries/ThirdParty/AssimpLibrary/assimp-vc142-mt.dll");
         }
         //else if (Target.Platform == UnrealTargetPlatform.Mac)
         //{

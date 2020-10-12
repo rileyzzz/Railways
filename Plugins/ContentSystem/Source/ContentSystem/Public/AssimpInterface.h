@@ -7,6 +7,11 @@
 #include "ProceduralSkeletalMeshComponent.h"
 #include "AssimpInterface.generated.h"
 
+
+
+struct aiScene;
+struct aiNode;
+
 struct CONTENTSYSTEM_API AssimpVert
 {
 	FVector Location;
@@ -47,15 +52,28 @@ struct CONTENTSYSTEM_API AssimpMesh
 	AssimpMaterial Material;
 };
 
+struct CONTENTSYSTEM_API AssimpNode
+{
+	FString Name;
+	FMatrix Transform;
+	TArray<AssimpMesh*> Meshes;
+	TArray<AssimpNode> Children;
+	AssimpNode(const FString& FilePath, const aiScene* scene, aiNode* node);
+};
+
 struct CONTENTSYSTEM_API AssimpImportData
 {
-	TArray<AssimpMesh*> Meshes;
+	AssimpNode* RootNode;
+	AssimpImportData(AssimpNode* InRootNode) : RootNode(InRootNode) { };
 };
 
 UCLASS()
 class CONTENTSYSTEM_API UAssimpInterface : public UObject
 {
 	GENERATED_BODY()
+private:
+	//void ProcessNode(const FString& FilePath, const aiScene* scene, aiNode* node, AssimpNode& Parent);
+
 public:
 	AssimpImportData* ImportFBX();
 	void BuildComponent(UProceduralSkeletalMeshComponent* Component, AssimpImportData* Data);
