@@ -149,15 +149,15 @@ void AWorldEditorPawn::OnRep_PlayerState()
 	ARailwaysPlayerState* NewPlayerState = GetPlayerState<ARailwaysPlayerState>();
 	if (NewPlayerState)
 	{
-		FString Message = FString::Printf(TEXT("Received playerstate replication for %s"), *NewPlayerState->GetPlayerName());
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, Message);
+		//FString Message = FString::Printf(TEXT("Received playerstate replication for %s"), *NewPlayerState->GetPlayerName());
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, Message);
 		FString PlayerName = NewPlayerState->GetPlayerName();
 		Username->SetText(PlayerName);
 		if (!AvatarTexture && NewPlayerState->SteamID.ID != 0)
 		{
 			URailwaysGameInstance* GameInstance = Cast<URailwaysGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-			FString IDMessage = FString::Printf(TEXT("Found SteamID %u"), NewPlayerState->SteamID.ID);
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, IDMessage);
+			//FString IDMessage = FString::Printf(TEXT("Found SteamID %u"), NewPlayerState->SteamID.ID);
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, IDMessage);
 
 			if (!AvatarMaterial)
 			{

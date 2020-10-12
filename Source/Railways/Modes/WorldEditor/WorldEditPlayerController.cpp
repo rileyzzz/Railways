@@ -30,15 +30,14 @@ void AWorldEditPlayerController::BeginPlay()
 	//PawnRef = Cast<AWorldEditorPawn>(GetPawn());
 	if (UGameplayStatics::GetPlayerControllerID(this) == 0)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("has authority"));
-		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, TEXT("AUTHORITY"));
+		//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, TEXT("AUTHORITY"));
 		//send steamID after 0.4 seconds
 		FTimerHandle UnusedHandle;
 		GetWorldTimerManager().SetTimer(UnusedHandle, this, &AWorldEditPlayerController::SendSteamID, 0.4f, false);
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("NO PLAYERCONTROLLER AUTHORITY"));
+		//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("NO PLAYERCONTROLLER AUTHORITY"));
 	}
 	
 }
@@ -47,8 +46,8 @@ void AWorldEditPlayerController::SendSteamID()
 {
 	URailwaysGameInstance* GameInstance = Cast<URailwaysGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	FSteamID ID = GameInstance->getSteamID();
-	FString Message = FString::Printf(TEXT("Sending SteamID %u"), ID.ID);
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, Message);
+	//FString Message = FString::Printf(TEXT("Sending SteamID %u"), ID.ID);
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, Message);
 	ServerSetSteamID(ID);
 }
 

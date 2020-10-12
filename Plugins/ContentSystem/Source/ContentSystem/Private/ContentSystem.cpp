@@ -23,27 +23,27 @@ void FContentSystemModule::StartupModule()
     //LibraryPath = FPaths::Combine(*BaseDir, TEXT("Source/ThirdParty/ContentSystemLibrary/Mac/Release/libExampleLibrary.dylib"));
 #endif // PLATFORM_WINDOWS
 
-	LibraryHandle = !LibraryPath.IsEmpty() ? FPlatformProcess::GetDllHandle(*LibraryPath) : nullptr;
+	//LibraryHandle = !LibraryPath.IsEmpty() ? FPlatformProcess::GetDllHandle(*LibraryPath) : nullptr;
 
-	if (LibraryHandle)
-	{
-		// Call the test function in the third party library that opens a message box
+	//if (LibraryHandle)
+	//{
+	//	// Call the test function in the third party library that opens a message box
 
 
-	}
-	else
-	{
-		if (LibraryPath.IsEmpty())
-		{
-			FText ErrorMsg = FText::Format(LOCTEXT("ThirdPartyLibraryError", "Could not find Assimp DLL {0}!"), FText::FromString(LibraryPath));
-			FMessageDialog::Open(EAppMsgType::Ok, ErrorMsg);
-		}
-		else
-		{
-			FText ErrorMsg = FText::Format(LOCTEXT("ThirdPartyLibraryError", "Failed to load Assimp from directory {0}!"), FText::FromString(LibraryPath));
-			FMessageDialog::Open(EAppMsgType::Ok, ErrorMsg);
-		}
-	}
+	//}
+	//else
+	//{
+	//	if (LibraryPath.IsEmpty())
+	//	{
+	//		FText ErrorMsg = FText::Format(LOCTEXT("ThirdPartyLibraryError", "Could not find Assimp DLL {0}!"), FText::FromString(LibraryPath));
+	//		FMessageDialog::Open(EAppMsgType::Ok, ErrorMsg);
+	//	}
+	//	else
+	//	{
+	//		FText ErrorMsg = FText::Format(LOCTEXT("ThirdPartyLibraryError", "Failed to load Assimp from directory {0}!"), FText::FromString(LibraryPath));
+	//		FMessageDialog::Open(EAppMsgType::Ok, ErrorMsg);
+	//	}
+	//}
 }
 
 void FContentSystemModule::ShutdownModule()
