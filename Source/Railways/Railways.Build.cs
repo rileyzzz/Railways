@@ -17,6 +17,12 @@ public class Railways : ModuleRules
 		PublicDependencyModuleNames.Add("OnlineSubsystem");
 		PublicDependencyModuleNames.Add("OnlineSubsystemUtils");
 		PublicDependencyModuleNames.Add("OnlineSubsystemSteam");
+
+		//procedural
+		PublicDependencyModuleNames.Add("RHI");
+		PublicDependencyModuleNames.Add("RenderCore");
+		//PublicDependencyModuleNames.Add("ShaderCore"); merged to rendercore
+
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
 

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ProceduralMeshComponent.h"
+//#include "ProceduralSkeletalMeshComponent.h"
 #include "AssimpInterface.h"
 #include "RuntimeActorAsset.generated.h"
 
@@ -15,19 +16,31 @@ class RAILWAYS_API ARuntimeActorAsset : public AActor
 	
 private:
 	//UAssimpInterface* AssimpInterface;
-	AssimpImportData* MeshData;
-	void BuildMeshNode(const AssimpNode& Node);
+	
+	//void BuildMeshNode(const AssimpNode& Node);
+	//FProcSkeletalMeshNode BuildNodeTree(const AssimpNode& Node);
+
+	//retrieve content information from content system
+	void LoadContentData();
 public:
 	// Sets default values for this actor's properties
 	ARuntimeActorAsset();
 
+	AssimpImportData* MeshData;
+
+	UPROPERTY()
+	uint64 ContentID;
+
 	UPROPERTY(EditAnywhere)
 	UMaterialInterface* PBRMaterial;
 
-	UPROPERTY()
-	UProceduralMeshComponent* DynamicMesh;
+	//UPROPERTY()
+	//UProceduralSkeletalMeshComponent* DynamicMesh;
 
-	void InitMesh();
+	//Called automatically, after all relevant content data has been loaded
+	UFUNCTION()
+	virtual void InitAsset();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

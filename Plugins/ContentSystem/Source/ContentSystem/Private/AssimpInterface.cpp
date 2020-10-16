@@ -8,7 +8,7 @@
 
 #define AIVEC3_TO_FVEC(vector) FVector(vector->x, vector->y, vector->z)
 
-FMatrix AIMattoFMatrix(aiMatrix4x4& mat)
+FMatrix AIMattoFMatrix(const aiMatrix4x4& mat)
 {
     FMatrix Ret;
     Ret.M[0][0] = mat.a1;
@@ -34,23 +34,25 @@ FMatrix AIMattoFMatrix(aiMatrix4x4& mat)
     return Ret;
 }
 
-AssimpNode::AssimpNode(const FString& FilePath, const aiScene* scene, aiNode* node)
+AssimpNode::AssimpNode(const FString& FilePath, TArray<AssimpBone>& Bones, const aiScene* scene, aiNode* node)
 {
+    
     Name = UTF8_TO_TCHAR(node->mName.C_Str());
     Transform = AIMattoFMatrix(node->mTransformation);
 
-    for (unsigned int i = 0; i < node->mNumMeshes; i++)
+    for (uint32 i = 0; i < node->mNumMeshes; i++)
     {
         AssimpMesh* NewMesh = new AssimpMesh();
         const aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
         NewMesh->Name = UTF8_TO_TCHAR(mesh->mName.C_Str());
 
         //mesh data
-        for (unsigned int t = 0; t < mesh->mNumVertices; t++)
+        for (uint32 t = 0; t < mesh->mNumVertices; t++)
         {
             const auto& Vert = &mesh->mVertices[t];
             const auto& Normal = &mesh->mNormals[t];
             const auto& Tangent = &mesh->mTangents[t];
+            
             FVector2D TexCoords(0.0f, 0.0f);
             if (mesh->HasTextureCoords(0))
             {
@@ -59,11 +61,15 @@ AssimpNode::AssimpNode(const FString& FilePath, const aiScene* scene, aiNode* no
             }
             const FVector scalefactor(1.0f, -1.0f, -1.0f);
             //const FVector scalefactor(1.0f, 1.0f, 1.0f);
-            NewMesh->Vertices.Emplace(AIVEC3_TO_FVEC(Vert) * scalefactor, AIVEC3_TO_FVEC(Normal) * scalefactor, AIVEC3_TO_FVEC(Tangent) * scalefactor, TexCoords);
-            //NewMesh->Vertices.Emplace(FVector(Vert->x, Vert->y, Vert->z * -1.0f), AIVEC3_TO_FVEC(Normal), AIVEC3_TO_FVEC(Tangent), TexCoords);
+            
+            //NewMesh->Vertices.Emplace(AIVEC3_TO_FVEC(Vert) * scalefactor, AIVEC3_TO_FVEC(Normal) * scalefactor, AIVEC3_TO_FVEC(Tangent) * scalefactor, TexCoords);
+            NewMesh->Vertices.Emplace(Transform.TransformFVector4(AIVEC3_TO_FVEC(Vert)) * scalefactor,
+                Transform.TransformFVector4(AIVEC3_TO_FVEC(Normal)) * scalefactor,
+                Transform.TransformFVector4(AIVEC3_TO_FVEC(Tangent)) * scalefactor,
+                TexCoords);
         }
 
-        for (unsigned int t = 0; t < mesh->mNumFaces; t++)
+        for (uint32 t = 0; t < mesh->mNumFaces; t++)
         {
             const aiFace* face = &mesh->mFaces[t];
             for (unsigned int j = 0; j < face->mNumIndices; j++)
@@ -92,12 +98,34 @@ AssimpNode::AssimpNode(const FString& FilePath, const aiScene* scene, aiNode* no
             NewMesh->Material.Textures.Emplace(TextureType::Parameter, TexPath);
         }
 
+        for (uint32 t = 0; t < mesh->mNumBones; t++)
+        {
+            const aiBone* bone = mesh->mBones[t];
+            AssimpBone NewBone;
+            NewBone.Name = UTF8_TO_TCHAR(bone->mName.C_Str());
+            NewBone.OffsetTransform = AIMattoFMatrix(bone->mOffsetMatrix);
+            
+            const int BoneIndex = Bones.Num();
+            for (uint32 w = 0; w < bone->mNumWeights; w++)
+            {
+                const aiVertexWeight& weight = bone->mWeights[w];
+                AssimpVert& TargetVertex = NewMesh->Vertices[weight.mVertexId];
+
+                TargetVertex.InfluenceBones.Add(BoneIndex);
+                TargetVertex.InfluenceWeights.Add((uint8)(weight.mWeight * 255.0f));
+
+                //NewMesh->Vertices[weight.mVertexId].InfluenceWeights[] = weight.mWeight;
+            }
+            UE_LOG(LogTemp, Display, TEXT("Loaded bone %s with %i weights"), *NewBone.Name, bone->mNumWeights);
+            Bones.Add(NewBone);
+        }
+
         UE_LOG(LogTemp, Display, TEXT("Loaded mesh %s with %i verts and %i triangles"), *NewMesh->Name, NewMesh->Vertices.Num(), NewMesh->Elements.Num() / 3);
         Meshes.Add(NewMesh);
     }
 
-    for (unsigned int i = 0; i < node->mNumChildren; i++)
-        Children.Emplace(FilePath, scene, node->mChildren[i]);
+    for (uint32 i = 0; i < node->mNumChildren; i++)
+        Children.Emplace(FilePath, Bones, scene, node->mChildren[i]);
 
     //ProcessNode(FilePath, scene, node->mChildren[i], NewNode);
 }
@@ -185,7 +213,7 @@ AssimpNode::AssimpNode(const FString& FilePath, const aiScene* scene, aiNode* no
 //    Parent.Children.Add(NewNode);
 //}
 
-AssimpImportData* UAssimpInterface::ImportFBX()
+AssimpImportData* UAssimpInterface::ImportFBX(bool PreTransformVerts)
 {
     Assimp::Importer importer;
 
@@ -193,16 +221,18 @@ AssimpImportData* UAssimpInterface::ImportFBX()
     const FString FilePath = FPaths::GetPath(FileDir);
 	UE_LOG(LogTemp, Display, TEXT("Importing FBX file %s"), *FileDir);
 
-	const aiScene* scene = importer.ReadFile(TCHAR_TO_UTF8(*FileDir),
-		aiProcess_CalcTangentSpace |
-		aiProcess_Triangulate |
-		aiProcess_JoinIdenticalVertices |
-		aiProcess_SortByPType |
-        aiProcess_PreTransformVertices |
+    unsigned int flags = aiProcess_CalcTangentSpace |
+        aiProcess_Triangulate |
+        aiProcess_JoinIdenticalVertices |
+        aiProcess_SortByPType |
         aiProcess_MakeLeftHanded |
         aiProcess_FlipUVs |
         //aiProcess_ConvertToLeftHanded |
-		aiProcess_GenNormals);
+        aiProcess_GenNormals;
+
+    if (PreTransformVerts) flags |= aiProcess_PreTransformVertices;
+
+	const aiScene* scene = importer.ReadFile(TCHAR_TO_UTF8(*FileDir), flags);
     //aiProcess_MakeLeftHanded |
     //aiProcess_FlipWindingOrder |
     //aiProcess_FlipUVs |
@@ -214,7 +244,10 @@ AssimpImportData* UAssimpInterface::ImportFBX()
 
 	UE_LOG(LogTemp, Display, TEXT("Import sucessful."));
 
-    AssimpImportData* MeshData = new AssimpImportData(new AssimpNode(FilePath, scene, scene->mRootNode));
+    AssimpImportData* MeshData = new AssimpImportData();
+    MeshData->RootNode = new AssimpNode(FilePath, MeshData->Bones, scene, scene->mRootNode);
+
+    //AssimpImportData* MeshData = new AssimpImportData(new AssimpNode(FilePath, scene, scene->mRootNode));
     //ProcessNode(FilePath, scene, scene->mRootNode, MeshData->RootNode);
 
 	return MeshData;

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "ProceduralSkeletalMeshComponent.h"
+//#include "ProceduralSkeletalMeshComponent.h"
 #include "AssimpInterface.generated.h"
 
 
@@ -18,6 +18,9 @@ struct CONTENTSYSTEM_API AssimpVert
 	FVector Normal;
 	FVector Tangent;
 	FVector2D TexCoords;
+
+	TArray<uint8> InfluenceWeights;
+	TArray<uint16> InfluenceBones;
 
 	AssimpVert(FVector InLocation, FVector InNormal, FVector InTangent, FVector2D InTexCoords) : Location(InLocation), Normal(InNormal), Tangent(InTangent), TexCoords(InTexCoords) { }
 };
@@ -52,19 +55,30 @@ struct CONTENTSYSTEM_API AssimpMesh
 	AssimpMaterial Material;
 };
 
+struct CONTENTSYSTEM_API AssimpBone
+{
+	FString Name;
+	FMatrix OffsetTransform; //inverse bind/inverse bind pose
+};
+
 struct CONTENTSYSTEM_API AssimpNode
 {
 	FString Name;
 	FMatrix Transform;
 	TArray<AssimpMesh*> Meshes;
 	TArray<AssimpNode> Children;
-	AssimpNode(const FString& FilePath, const aiScene* scene, aiNode* node);
+	AssimpNode(const FString& FilePath, TArray<AssimpBone>& Bones, const aiScene* scene, aiNode* node);
 };
 
 struct CONTENTSYSTEM_API AssimpImportData
 {
 	AssimpNode* RootNode;
-	AssimpImportData(AssimpNode* InRootNode) : RootNode(InRootNode) { };
+	TArray<AssimpBone> Bones;
+	//AssimpImportData(AssimpNode* InRootNode) : RootNode(InRootNode) { };
+	AssimpImportData()
+	{
+
+	}
 };
 
 UCLASS()
@@ -75,6 +89,6 @@ private:
 	//void ProcessNode(const FString& FilePath, const aiScene* scene, aiNode* node, AssimpNode& Parent);
 
 public:
-	AssimpImportData* ImportFBX();
-	void BuildComponent(UProceduralSkeletalMeshComponent* Component, AssimpImportData* Data);
+	AssimpImportData* ImportFBX(bool PretransformVerts);
+	//void BuildComponent(UProceduralSkeletalMeshComponent* Component, AssimpImportData* Data);
 };
