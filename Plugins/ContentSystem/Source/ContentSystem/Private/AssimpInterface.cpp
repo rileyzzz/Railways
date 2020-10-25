@@ -98,7 +98,7 @@ FMeshContent UAssimpInterface::ImportFBX(bool PreTransformVerts)
 
     //MeshData->RootNode = new AssimpNode(FilePath, MeshData->m_BoneMapping, MeshData->Bones, scene, scene->mRootNode, FTransform(AIMattoFMatrix(mat))); //AIMattoFMatrix(mat)
     FMatrix Identity = FMatrix::Identity;
-    MeshData->RootNode = new RailwaysNode(FilePath, MeshData->m_BoneMapping, MeshData->Bones, scene, scene->mRootNode, FTransform(Identity)); //AIMattoFMatrix(mat)
+    MeshData->RootNode = RailwaysNode(FilePath, MeshData->m_BoneMapping, MeshData->Bones, scene, scene->mRootNode, FTransform(Identity)); //AIMattoFMatrix(mat)
     //MeshData->RootNode = new AssimpNode(FilePath, MeshData->m_BoneMapping, MeshData->Bones, scene, scene->mRootNode, FTransform(AIMattoFMatrix(mat))); //AIMattoFMatrix(mat)
     
     //process materials
@@ -130,7 +130,7 @@ FMeshContent UAssimpInterface::ImportFBX(bool PreTransformVerts)
     }
 
     //MeshData->RootNode->ProcessBoneHierarchy(MeshData->m_BoneMapping, MeshData->Bones, FTransform(AIMattoFMatrix(mat)), 0);
-    MeshData->RootNode->ProcessBoneHierarchy(MeshData->m_BoneMapping, MeshData->Bones, AIMattoFMatrix2(scene->mRootNode->mTransformation), INDEX_NONE);
+    MeshData->RootNode.ProcessBoneHierarchy(MeshData->m_BoneMapping, MeshData->Bones, AIMattoFMatrix2(scene->mRootNode->mTransformation), INDEX_NONE);
     //AssimpImportData* MeshData = new AssimpImportData(new AssimpNode(FilePath, scene, scene->mRootNode));
     //ProcessNode(FilePath, scene, scene->mRootNode, MeshData->RootNode);
 

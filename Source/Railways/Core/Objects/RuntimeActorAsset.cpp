@@ -68,19 +68,22 @@ ARuntimeActorAsset::ARuntimeActorAsset()
 void ARuntimeActorAsset::InitAsset()
 {
     URailwaysGameInstance* GameInstance = Cast<URailwaysGameInstance>(GetGameInstance());
-    if (GameInstance) MeshContent = GameInstance->AssimpInterface->ImportFBX(false);
+    //if (GameInstance) MeshContent = GameInstance->AssimpInterface->ImportFBX(false);
+    MeshContent.LoadMesh(TEXT("E:/Users/riley_000/Documents/Unreal Projects/Railways/Plugins/ContentSystem/Content/Samples/other/neville/test4.rmsh"));
+    UE_LOG(LogTemp, Warning, TEXT("Mesh loaded"));
 
     //initialize materials
     for (const auto& Material : MeshContent.MeshData->Materials)
     {
+        UE_LOG(LogTemp, Warning, TEXT("loading material with %i textures"), Material.Textures.Num());
         //create material
         UMaterialInstanceDynamic* DynMaterial = UMaterialInstanceDynamic::Create(PBRMaterial, this);
 
         //create textures
         for (const auto& Texture : Material.Textures)
         {
-            bool SRGB = Texture.Type == TextureType::Diffuse;
-
+            bool SRGB = (Texture.Type == TextureType::Diffuse);
+            UE_LOG(LogTemp, Warning, TEXT("texture %s"), *(MeshContent.DataPath + Texture.Path));
             UTexture2D* NewTexture = LoadTextureFile(MeshContent.DataPath + Texture.Path, SRGB);
 
             if (NewTexture)

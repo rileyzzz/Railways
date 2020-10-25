@@ -13,7 +13,7 @@ void AStaticRuntimeActorAsset::BeginPlay()
     UE_LOG(LogTemp, Warning, TEXT("BEGIN STATIC ASSET"));
 
     InitAsset();
-    MeshContent.SaveMesh(TEXT("test"));
+    //MeshContent.SaveMesh(TEXT("test"));
 }
 
 // Called every frame
@@ -72,7 +72,7 @@ void AStaticRuntimeActorAsset::BuildMeshNode(const RailwaysNode& Node)
             Triangles[tri] = Mesh.Elements[tri];
         }
 
-        MeshComponent->SetMaterial(MeshIndex, MaterialInstances[Mesh.MaterialIndex]);
+        if(Mesh.MaterialIndex < MaterialInstances.Num()) MeshComponent->SetMaterial(MeshIndex, MaterialInstances[Mesh.MaterialIndex]);
 
         MeshComponent->CreateMeshSection(MeshIndex, Positions, Triangles, Normals, UVs, Colors, Tangents, false);
         //DynamicMesh->CreateMeshSection(MeshIndex, Positions, Triangles, Normals, UVs, Tangents);
@@ -87,5 +87,5 @@ void AStaticRuntimeActorAsset::InitAsset()
 {
     Super::InitAsset(); //creates material instances
 
-    BuildMeshNode(*MeshContent.MeshData->RootNode);
+    BuildMeshNode(MeshContent.MeshData->RootNode);
 }

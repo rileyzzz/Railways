@@ -272,14 +272,14 @@ bool RailwaysNode::Serialize(FArchive& Ar)
     int32 MeshCount = Meshes.Num();
     Ar << MeshCount;
 
-    if (Ar.IsLoading()) Meshes.Reset(MeshCount);
+    if (Ar.IsLoading()) Meshes.AddDefaulted(MeshCount);
     for (int32 i = 0; i < MeshCount; i++)
     {
         RailwaysMesh& Mesh = Meshes[i];
         //Ar << Mesh.Vertices;
         int32 vertCount = Mesh.Vertices.Num();
         Ar << vertCount;
-        if (Ar.IsLoading()) Mesh.Vertices.AddUninitialized(vertCount);
+        if (Ar.IsLoading()) Mesh.Vertices.AddDefaulted(vertCount);
         for (int32 v = 0; v < vertCount; v++)
         {
             RailwaysVert& Vert = Mesh.Vertices[v];
@@ -296,7 +296,7 @@ bool RailwaysNode::Serialize(FArchive& Ar)
 
     int32 ChildCount = Children.Num();
     Ar << ChildCount;
-    if (Ar.IsLoading()) Children.Reset(ChildCount);
+    if (Ar.IsLoading()) Children.AddDefaulted(ChildCount);
     for (int32 i = 0; i < ChildCount; i++)
         Children[i].Serialize(Ar);
 
@@ -311,9 +311,9 @@ bool FMeshContent::Serialize(FArchive& Ar)
     }
     else
     {
-        char Header[4];
+        char Header[5] = { 0x00 };
         Ar.Serialize(&Header[0], 4);
-        if (!strcmp("RMSH", &Header[0]))
+        if (strcmp(Header, "RMSH") != 0)
         {
             UE_LOG(LogTemp, Error, TEXT("Incorrect mesh header!"));
             return false;
@@ -325,16 +325,24 @@ bool FMeshContent::Serialize(FArchive& Ar)
 
     //bounds
     //static or skeletal type
-
-    MeshData->RootNode->Serialize(Ar);
+    if (Ar.IsLoading())
+    {
+        delete MeshData;
+        MeshData = new RailwaysImportData();
+    }
+    MeshData->RootNode.Serialize(Ar);
 
     int32 NumMaterials = MeshData->Materials.Num();
+    Ar << NumMaterials;
+    UE_LOG(LogTemp, Warning, TEXT("%i materials"), NumMaterials);
     if (Ar.IsLoading()) MeshData->Materials.AddDefaulted(NumMaterials);
     for (int32 i = 0; i < NumMaterials; i++)
     {
         RailwaysMaterial& Material = MeshData->Materials[i];
         int32 NumTextures = Material.Textures.Num();
-        if (Ar.IsLoading()) MeshData->Materials.AddDefaulted(NumTextures);
+        Ar << NumTextures;
+        UE_LOG(LogTemp, Warning, TEXT("%i textures"), NumTextures);
+        if (Ar.IsLoading()) Material.Textures.AddDefaulted(NumTextures);
         for (int32 t = 0; t < NumTextures; t++)
         {
             RailwaysTexture& Tex = Material.Textures[t];
@@ -354,7 +362,7 @@ void FMeshContent::SaveMesh(FString Path)
     Serialize(Writer);
     IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 
-    auto file = PlatformFile.OpenWrite(TEXT("E:/Users/riley_000/Documents/Unreal Projects/Railways/Plugins/ContentSystem/Content/Samples/test3.rmsh"));
+    auto file = PlatformFile.OpenWrite(Path.GetCharArray().GetData());
     if (file)
     {
         file->Write(Buffer.GetData(), Buffer.Num());
@@ -366,7 +374,22 @@ void FMeshContent::SaveMesh(FString Path)
 
 void FMeshContent::LoadMesh(FString Path)
 {
+    DataPath = FPaths::GetPath(Path) + TEXT("/");
+    IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+    auto file = PlatformFile.OpenRead(Path.GetCharArray().GetData());
+    if (file)
+    {
+        //file->Write(Buffer.GetData(), Buffer.Num());
+        //file->Read
+        TArray<uint8> Buffer;
+        Buffer.AddZeroed(file->Size());
+        file->Read(Buffer.GetData(), Buffer.Num());
+        FMemoryReader Reader(Buffer);
+        Reader.SetIsLoading(true);
+        Serialize(Reader);
 
+        delete file; //close handle
+    }
 }
 
 FMeshContent::FMeshContent()

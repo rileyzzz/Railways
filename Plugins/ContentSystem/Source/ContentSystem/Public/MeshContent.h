@@ -37,10 +37,8 @@ struct CONTENTSYSTEM_API RailwaysTexture
 {
 	TextureType Type;
 	FString Path;
-	RailwaysTexture(TextureType InType, FString InPath) : Type(InType), Path(InPath)
-	{
-
-	}
+	RailwaysTexture(TextureType InType, FString InPath) : Type(InType), Path(InPath) { }
+	RailwaysTexture() { }
 };
 
 struct CONTENTSYSTEM_API RailwaysMaterial
@@ -82,6 +80,7 @@ struct CONTENTSYSTEM_API RailwaysNode
 	FTransform Transform;
 	TArray<RailwaysMesh> Meshes;
 	TArray<RailwaysNode> Children;
+	RailwaysNode() {}
 	RailwaysNode(const FString& FilePath, TMap<FString, uint32>& m_BoneMapping, TArray<RailwaysBone>& Bones, const aiScene* scene, aiNode* node, const FTransform& ParentTransform); //, aiMatrix4x4 ParentTransform
 	void RecursiveParentEmpty(int32 ParentIdx);
 	void ProcessBoneHierarchy(TMap<FString, uint32>& m_BoneMapping, TArray<RailwaysBone>& Bones, const FMatrix& ParentTransform, int ParentIndex);
@@ -96,7 +95,7 @@ struct CONTENTSYSTEM_API RailwaysAnimMetadata
 
 struct CONTENTSYSTEM_API RailwaysImportData
 {
-	RailwaysNode* RootNode;
+	RailwaysNode RootNode;
 	TMap<FString, uint32> m_BoneMapping;
 	TArray<RailwaysMaterial> Materials;
 	TArray<RailwaysBone> Bones;
