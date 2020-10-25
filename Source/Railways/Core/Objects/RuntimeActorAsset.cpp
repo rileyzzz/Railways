@@ -67,6 +67,9 @@ ARuntimeActorAsset::ARuntimeActorAsset()
 
 void ARuntimeActorAsset::InitAsset()
 {
+    URailwaysGameInstance* GameInstance = Cast<URailwaysGameInstance>(GetGameInstance());
+    if (GameInstance) MeshContent = GameInstance->AssimpInterface->ImportFBX(false);
+
     //initialize materials
     for (const auto& Material : MeshContent.MeshData->Materials)
     {

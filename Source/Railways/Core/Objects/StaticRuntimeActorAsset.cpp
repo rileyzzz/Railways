@@ -11,14 +11,9 @@ void AStaticRuntimeActorAsset::BeginPlay()
 {
     Super::BeginPlay();
     UE_LOG(LogTemp, Warning, TEXT("BEGIN STATIC ASSET"));
-    URailwaysGameInstance* GameInstance = Cast<URailwaysGameInstance>(GetGameInstance());
-    if (GameInstance)
-    {
-        //MeshData = GameInstance->AssimpInterface->ImportFBX(false);
-        MeshContent = GameInstance->AssimpInterface->ImportFBX(false);
-        InitAsset();
-        MeshContent.SaveMesh(TEXT("test"));
-    }
+
+    InitAsset();
+    MeshContent.SaveMesh(TEXT("test"));
 }
 
 // Called every frame

@@ -68,12 +68,7 @@ void ASkeletalRuntimeActorAsset::BeginPlay()
 
     //NewTile->RegisterComponent();
 
-    URailwaysGameInstance* GameInstance = Cast<URailwaysGameInstance>(GetGameInstance());
-    if (GameInstance)
-    {
-        MeshContent = GameInstance->AssimpInterface->ImportFBX(false);
-        if(MeshContent.MeshData) InitAsset();
-    }
+    InitAsset();
 }
 
 // Called every frame
