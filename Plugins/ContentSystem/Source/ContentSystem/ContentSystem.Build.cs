@@ -28,7 +28,6 @@ public class ContentSystem : ModuleRules
 				"Core",
 				"CoreUObject",
 				"Engine",
-                "ProceduralSkeletalMesh",
                 "AssimpLibrary",
                 "Projects"
 				// ... add other public dependencies that you statically link with here ...

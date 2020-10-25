@@ -15,8 +15,13 @@ class RAILWAYS_API AStaticRuntimeActorAsset : public ARuntimeActorAsset
 	GENERATED_BODY()
 	
 private:
+	UPROPERTY()
+	TArray<UMaterialInstanceDynamic*> MaterialInstances;
+
+	UPROPERTY()
 	UProceduralMeshComponent* MeshComponent;
-	void BuildMeshNode(const AssimpNode& Node);
+
+	void BuildMeshNode(const RailwaysNode& Node);
 public:
 
 	virtual void InitAsset() override;

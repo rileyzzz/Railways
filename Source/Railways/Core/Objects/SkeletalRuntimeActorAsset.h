@@ -4,9 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "RuntimeActorAsset.h"
+#include "Components/PoseableMeshComponent.h"
 #include "SkeletalRuntimeActorAsset.generated.h"
 
 //class FSkeletalMeshLODRenderData;
+struct FSoftSkinVertex;
+
+#define USE_EDITOR_RENDER 0
 
 UCLASS()
 class RAILWAYS_API ASkeletalRuntimeActorAsset : public ARuntimeActorAsset
@@ -14,16 +18,31 @@ class RAILWAYS_API ASkeletalRuntimeActorAsset : public ARuntimeActorAsset
 	GENERATED_BODY()
 private:
 
-	USkeleton* Skeleton;
+	//USkeleton* Skeleton;
 
 	UPROPERTY()
 	USkeletalMesh* SkeletalMesh;
 
 	UPROPERTY()
 	USkeletalMeshComponent* MeshComponent;
+	//UPoseableMeshComponent* MeshComponent;
 
-	//UProceduralMeshComponent* MeshComponent;
-	void GenerateSkeletalRenderMesh(TArray<FDynamicMeshVertex>& Vertices, TArray<FSoftSkinVertex>& SkinnedVertices, TArray<uint32>& Elements, FSkeletalMeshLODRenderData* LOD, FSkeletalMeshLODInfo& LODInfo, const AssimpNode& Node);
+	UPROPERTY(EditAnywhere)
+	UAnimationAsset* TestAnim;
+
+	UPROPERTY()
+	UAnimInstance* AnimInstance;
+
+	UPROPERTY()
+	UAnimSequence* Animation;
+	//UProceduralMeshComponent* MeshComponent; TArray<FDynamicMeshVertex>& Vertices, 
+
+#if USE_EDITOR_RENDER
+	void GenerateSkeletalRenderMesh(TArray<FSoftSkinVertex>& Vertices, TArray<uint32>& Elements, FSkeletalMeshLODModel* LOD, FSkeletalMeshLODInfo& LODInfo, const RailwaysNode& Node, const int BoneCount);
+#else
+	void GenerateSkeletalRenderMesh(TArray<FSoftSkinVertex>& Vertices, TArray<uint32>& Elements, FSkeletalMeshLODRenderData* LOD, FSkeletalMeshLODInfo& LODInfo, const RailwaysNode& Node, const int BoneCount);
+#endif
+
 	//void BuildMeshNode(FSkeletalMeshLODRenderData& LOD, const AssimpNode& Node);
 public:
 

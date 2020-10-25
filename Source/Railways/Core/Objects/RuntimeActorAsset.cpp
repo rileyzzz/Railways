@@ -5,6 +5,53 @@
 #include "RenderUtils.h"
 #include "ImageUtils.h"
 #include "../RailwaysGameInstance.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "../Helpers/stb_image.h"
+
+UTexture2D* ARuntimeActorAsset::LoadTextureFile(FString Path, bool SRGB)
+{
+    UTexture2D* NewTexture = nullptr;
+    if (TextureCache.Contains(Path))
+    {
+        NewTexture = TextureCache[Path];
+    }
+    else
+    {
+        int width, height, nrComponents;
+        unsigned char* data = stbi_load(TCHAR_TO_UTF8(*Path), &width, &height, &nrComponents, 4);
+        if (data)
+        {
+            FName TextureName = MakeUniqueObjectName(this, UTexture2D::StaticClass());
+            NewTexture = NewObject<UTexture2D>(this, TextureName, RF_Transient);
+
+            EPixelFormat format = PF_R8G8B8A8;
+            NewTexture->PlatformData = new FTexturePlatformData();
+            NewTexture->PlatformData->SizeX = width;
+            NewTexture->PlatformData->SizeY = height;
+            NewTexture->PlatformData->PixelFormat = format;
+
+            NewTexture->SRGB = SRGB;
+
+            //mipmaps
+            int32 NumBlocksX = width;
+            int32 NumBlocksY = height;
+            FTexture2DMipMap* Mip = new(NewTexture->PlatformData->Mips) FTexture2DMipMap();
+            Mip->SizeX = width;
+            Mip->SizeY = height;
+            Mip->BulkData.Lock(LOCK_READ_WRITE);
+            void* TextureData = Mip->BulkData.Realloc(NumBlocksX * NumBlocksY * 4); //GPixelFormats[format].BlockBytes
+            FMemory::Memcpy(TextureData, data, width * height * 4);
+            Mip->BulkData.Unlock();
+
+            NewTexture->UpdateResource();
+
+            stbi_image_free(data);
+
+            TextureCache.Add(Path, NewTexture);
+        }
+    }
+    return NewTexture;
+}
 
 // Sets default values
 ARuntimeActorAsset::ARuntimeActorAsset()

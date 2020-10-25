@@ -7,6 +7,7 @@
 #include "ProceduralMeshComponent.h"
 //#include "ProceduralSkeletalMeshComponent.h"
 #include "AssimpInterface.h"
+#include "MeshContent.h"
 #include "RuntimeActorAsset.generated.h"
 
 UCLASS()
@@ -15,18 +16,21 @@ class RAILWAYS_API ARuntimeActorAsset : public AActor
 	GENERATED_BODY()
 	
 private:
-	//UAssimpInterface* AssimpInterface;
-	
-	//void BuildMeshNode(const AssimpNode& Node);
-	//FProcSkeletalMeshNode BuildNodeTree(const AssimpNode& Node);
 
 	//retrieve content information from content system
 	void LoadContentData();
+
+	
 public:
 	// Sets default values for this actor's properties
 	ARuntimeActorAsset();
 
-	AssimpImportData* MeshData;
+	FMeshContent MeshContent;
+
+	UPROPERTY()
+	TMap<FString, UTexture2D*> TextureCache;
+
+	UTexture2D* LoadTextureFile(FString Path, bool SRGB = true);
 
 	UPROPERTY()
 	uint64 ContentID;

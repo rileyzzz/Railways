@@ -1,0 +1,42 @@
+RMSH header
+int version
+enum type {static, skeletal}
+FBox bounds?
+
+int lodcount
+{
+	float screensize
+	int meshcount
+	{
+		enum verttype
+		verts
+		indices
+		material index
+	}
+}
+int materials
+{
+	name
+	enum compatibilitytype {albedoonly, albedonormal, PBR, trainzswizzle}
+	int textures
+	{
+		enum type {Albedo, Normal, OcclusionRoughnessMetallic}
+		enum compressiontype
+		data
+	}	
+}
+int attachments
+{
+	name
+	int32 parentboneindex
+	FTransform transform
+}
+int bones
+{
+	name
+	int32 parentindex
+	FTransform transform
+	tarray posframes
+	tarray rotframes
+	tarray scaleframes
+}
