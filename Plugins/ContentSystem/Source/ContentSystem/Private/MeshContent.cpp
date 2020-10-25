@@ -291,8 +291,7 @@ bool RailwaysNode::Serialize(FArchive& Ar)
             Ar << Vert.InfluenceWeights;
         }
         Ar << Mesh.Elements;
-
-        //material index
+        Ar << Mesh.MaterialIndex;
     }
 
     int32 ChildCount = Children.Num();
@@ -329,6 +328,21 @@ bool FMeshContent::Serialize(FArchive& Ar)
 
     MeshData->RootNode->Serialize(Ar);
 
+    int32 NumMaterials = MeshData->Materials.Num();
+    if (Ar.IsLoading()) MeshData->Materials.AddDefaulted(NumMaterials);
+    for (int32 i = 0; i < NumMaterials; i++)
+    {
+        RailwaysMaterial& Material = MeshData->Materials[i];
+        int32 NumTextures = Material.Textures.Num();
+        if (Ar.IsLoading()) MeshData->Materials.AddDefaulted(NumTextures);
+        for (int32 t = 0; t < NumTextures; t++)
+        {
+            RailwaysTexture& Tex = Material.Textures[t];
+            Ar << Tex.Type;
+            Ar << Tex.Path;
+        }
+    }
+
     return true;
 }
 
@@ -340,11 +354,14 @@ void FMeshContent::SaveMesh(FString Path)
     Serialize(Writer);
     IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 
-    auto file = PlatformFile.OpenWrite(TEXT("E:/Users/riley_000/Documents/Unreal Projects/Railways/Plugins/ContentSystem/Content/Samples/test2.rmsh"));
-    file->Write(Buffer.GetData(), Buffer.Num());
-    //file->Flush();
+    auto file = PlatformFile.OpenWrite(TEXT("E:/Users/riley_000/Documents/Unreal Projects/Railways/Plugins/ContentSystem/Content/Samples/test3.rmsh"));
+    if (file)
+    {
+        file->Write(Buffer.GetData(), Buffer.Num());
+        //file->Flush();
 
-    delete file; //close handle
+        delete file; //close handle
+    }
 }
 
 void FMeshContent::LoadMesh(FString Path)

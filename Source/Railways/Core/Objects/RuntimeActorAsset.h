@@ -26,6 +26,8 @@ public:
 	ARuntimeActorAsset();
 
 	FMeshContent MeshContent;
+	UPROPERTY()
+	TArray<UMaterialInstanceDynamic*> MaterialInstances;
 
 	UPROPERTY()
 	TMap<FString, UTexture2D*> TextureCache;

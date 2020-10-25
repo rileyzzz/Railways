@@ -33,8 +33,10 @@ FMatrix AIMattoFMatrix2(const aiMatrix4x4& mat)
     return Ret;
 }
 
-RailwaysImportData* UAssimpInterface::ImportFBX(bool PreTransformVerts)
+FMeshContent UAssimpInterface::ImportFBX(bool PreTransformVerts)
 {
+    FMeshContent MeshContent;
+
     Assimp::Importer importer;
 
 	//const FString FileDir = FPaths::ProjectPluginsDir() + "ContentSystem/Content/Samples/other/main.fbx";
@@ -42,6 +44,8 @@ RailwaysImportData* UAssimpInterface::ImportFBX(bool PreTransformVerts)
 	//const FString FileDir = FPaths::ProjectPluginsDir() + "ContentSystem/Content/Samples/dave/daveanim.fbx";
 	//const FString FileDir = FPaths::ProjectPluginsDir() + "ContentSystem/Content/Samples/other/duncan/bogey.fbx";
     const FString FilePath = FPaths::GetPath(FileDir);
+    MeshContent.DataPath = FilePath + TEXT("/");
+
 	UE_LOG(LogTemp, Display, TEXT("Importing FBX file %s"), *FileDir);
 
     unsigned int flags = aiProcess_CalcTangentSpace |
@@ -61,7 +65,7 @@ RailwaysImportData* UAssimpInterface::ImportFBX(bool PreTransformVerts)
 	if (!scene)
 	{
 		UE_LOG(LogTemp, Error, TEXT("File import failed! %s"), UTF8_TO_TCHAR(importer.GetErrorString()));
-		return nullptr;
+		return MeshContent;
 	}
 
     int upAxis = 2;
@@ -90,6 +94,8 @@ RailwaysImportData* UAssimpInterface::ImportFBX(bool PreTransformVerts)
 	UE_LOG(LogTemp, Display, TEXT("Import sucessful."));
 
     RailwaysImportData* MeshData = new RailwaysImportData();
+    MeshContent.MeshData = MeshData;
+
     //MeshData->RootNode = new AssimpNode(FilePath, MeshData->m_BoneMapping, MeshData->Bones, scene, scene->mRootNode, FTransform(AIMattoFMatrix(mat))); //AIMattoFMatrix(mat)
     FMatrix Identity = FMatrix::Identity;
     MeshData->RootNode = new RailwaysNode(FilePath, MeshData->m_BoneMapping, MeshData->Bones, scene, scene->mRootNode, FTransform(Identity)); //AIMattoFMatrix(mat)
@@ -106,18 +112,19 @@ RailwaysImportData* UAssimpInterface::ImportFBX(bool PreTransformVerts)
         aiString path;
         if (Material->GetTexture(aiTextureType_DIFFUSE, 0, &path) == aiReturn_SUCCESS)
         {
-            FString TexPath = FilePath + TEXT("/") + FPaths::GetPathLeaf(UTF8_TO_TCHAR(path.C_Str()));
+            //FString TexPath = FilePath + TEXT("/") + FPaths::GetPathLeaf();
+            FString TexPath = FPaths::GetPathLeaf(UTF8_TO_TCHAR(path.C_Str()));
             NewMaterial.Textures.Emplace(TextureType::Diffuse, TexPath);
             UE_LOG(LogTemp, Log, TEXT("Loaded diffuse texture %s"), *TexPath);
         }
         if (Material->GetTexture(aiTextureType_NORMALS, 0, &path) == aiReturn_SUCCESS)
         {
-            FString TexPath = FilePath + TEXT("/") + FPaths::GetPathLeaf(UTF8_TO_TCHAR(path.C_Str()));
+            FString TexPath = FPaths::GetPathLeaf(UTF8_TO_TCHAR(path.C_Str()));
             NewMaterial.Textures.Emplace(TextureType::Normal, TexPath);
         }
         if (Material->GetTexture(aiTextureType_SHININESS, 0, &path) == aiReturn_SUCCESS)
         {
-            FString TexPath = FilePath + TEXT("/") + FPaths::GetPathLeaf(UTF8_TO_TCHAR(path.C_Str()));
+            FString TexPath = FPaths::GetPathLeaf(UTF8_TO_TCHAR(path.C_Str()));
             NewMaterial.Textures.Emplace(TextureType::Parameter, TexPath);
         }
     }
@@ -178,5 +185,7 @@ RailwaysImportData* UAssimpInterface::ImportFBX(bool PreTransformVerts)
         UE_LOG(LogTemp, Warning, TEXT("loaded animation %s"), *AnimName);
     }
 
-	return MeshData;
+
+    return MeshContent;
+	//return MeshData;
 }

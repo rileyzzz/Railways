@@ -26,11 +26,11 @@ struct CONTENTSYSTEM_API RailwaysVert
 	RailwaysVert() { }
 };
 
-enum class CONTENTSYSTEM_API TextureType
+enum class CONTENTSYSTEM_API TextureType : uint32
 {
-	Diffuse,
-	Normal,
-	Parameter
+	Diffuse = 0,
+	Normal = 1,
+	Parameter = 2
 };
 
 struct CONTENTSYSTEM_API RailwaysTexture
@@ -114,7 +114,7 @@ struct CONTENTSYSTEM_API FMeshContent
 	GENERATED_BODY()
 public:
 	RailwaysImportData* MeshData;
-
+	FString DataPath; //textures etc
 private:
 	bool Serialize(FArchive& Ar);
 public:

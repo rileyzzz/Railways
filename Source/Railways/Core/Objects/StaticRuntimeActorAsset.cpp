@@ -15,9 +15,9 @@ void AStaticRuntimeActorAsset::BeginPlay()
     if (GameInstance)
     {
         //MeshData = GameInstance->AssimpInterface->ImportFBX(false);
-        MeshContent.MeshData = GameInstance->AssimpInterface->ImportFBX(false);
+        MeshContent = GameInstance->AssimpInterface->ImportFBX(false);
         InitAsset();
-        //MeshContent.SaveMesh(TEXT("test"));
+        MeshContent.SaveMesh(TEXT("test"));
     }
 }
 
@@ -90,42 +90,7 @@ void AStaticRuntimeActorAsset::BuildMeshNode(const RailwaysNode& Node)
 
 void AStaticRuntimeActorAsset::InitAsset()
 {
-    //material setup
-    for (const auto& Material : MeshContent.MeshData->Materials)
-    {
-        //create material
-        UMaterialInstanceDynamic* DynMaterial = UMaterialInstanceDynamic::Create(PBRMaterial, this);
-
-        //create textures
-        for (const auto& Texture : Material.Textures)
-        {
-            bool SRGB = !(Texture.Type == TextureType::Normal || Texture.Type == TextureType::Parameter);
-
-            UTexture2D* NewTexture = LoadTextureFile(Texture.Path, SRGB);
-
-            if (NewTexture)
-            {
-                FName TextureTarget;
-                switch (Texture.Type)
-                {
-                default:
-                case TextureType::Diffuse:
-                    TextureTarget = FName(TEXT("BaseColor"));
-                    break;
-                case TextureType::Normal:
-                    TextureTarget = FName(TEXT("Normal"));
-                    break;
-                case TextureType::Parameter:
-                    TextureTarget = FName(TEXT("Parameter"));
-                    break;
-                }
-
-                DynMaterial->SetTextureParameterValue(TextureTarget, NewTexture);
-            }
-        }
-
-        MaterialInstances.Add(DynMaterial);
-    }
+    Super::InitAsset(); //creates material instances
 
     BuildMeshNode(*MeshContent.MeshData->RootNode);
 }

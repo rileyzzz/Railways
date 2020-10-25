@@ -71,7 +71,7 @@ void ASkeletalRuntimeActorAsset::BeginPlay()
     URailwaysGameInstance* GameInstance = Cast<URailwaysGameInstance>(GetGameInstance());
     if (GameInstance)
     {
-        MeshContent.MeshData = GameInstance->AssimpInterface->ImportFBX(false);
+        MeshContent = GameInstance->AssimpInterface->ImportFBX(false);
         if(MeshContent.MeshData) InitAsset();
     }
 }
@@ -107,6 +107,7 @@ void ASkeletalRuntimeActorAsset::Tick(float DeltaTime)
 
 void ASkeletalRuntimeActorAsset::InitAsset()
 {
+    Super::InitAsset(); //creates material instances
     //FSuspendRenderingThread suspend(false);
     //MeshComponent->SetRelativeScale3D(FVector(30.0f));
 
@@ -141,38 +142,9 @@ void ASkeletalRuntimeActorAsset::InitAsset()
 #endif
 
     //material setup
-    for (const auto& Material : MeshContent.MeshData->Materials)
+    for (UMaterialInstanceDynamic* Instance : MaterialInstances)
     {
-        UMaterialInstanceDynamic* DynMaterial = UMaterialInstanceDynamic::Create(PBRMaterial, this);
-        //create textures
-        for (const auto& Texture : Material.Textures)
-        {
-            bool SRGB = !(Texture.Type == TextureType::Normal || Texture.Type == TextureType::Parameter);
-
-            UTexture2D* NewTexture = LoadTextureFile(Texture.Path, SRGB);
-
-            if (NewTexture)
-            {
-                FName TextureTarget;
-                switch (Texture.Type)
-                {
-                default:
-                case TextureType::Diffuse:
-                    TextureTarget = FName(TEXT("BaseColor"));
-                    break;
-                case TextureType::Normal:
-                    TextureTarget = FName(TEXT("Normal"));
-                    break;
-                case TextureType::Parameter:
-                    TextureTarget = FName(TEXT("Parameter"));
-                    break;
-                }
-
-                DynMaterial->SetTextureParameterValue(TextureTarget, NewTexture);
-            }
-        }
-        //MeshComponent->SetMaterial(Section.MaterialIndex, DynMaterial);
-        SkeletalMesh->Materials.Add(DynMaterial);
+        SkeletalMesh->Materials.Add(Instance);
         SkeletalMesh->Materials.Last().UVChannelData.bInitialized = true;
     }
 

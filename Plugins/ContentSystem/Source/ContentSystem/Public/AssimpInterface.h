@@ -18,6 +18,6 @@ private:
 	//void ProcessNode(const FString& FilePath, const aiScene* scene, aiNode* node, AssimpNode& Parent);
 
 public:
-	RailwaysImportData* ImportFBX(bool PretransformVerts);
+	FMeshContent ImportFBX(bool PretransformVerts);
 	//void BuildComponent(UProceduralSkeletalMeshComponent* Component, AssimpImportData* Data);
 };

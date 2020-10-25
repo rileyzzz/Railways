@@ -15,8 +15,6 @@ class RAILWAYS_API AStaticRuntimeActorAsset : public ARuntimeActorAsset
 	GENERATED_BODY()
 	
 private:
-	UPROPERTY()
-	TArray<UMaterialInstanceDynamic*> MaterialInstances;
 
 	UPROPERTY()
 	UProceduralMeshComponent* MeshComponent;
