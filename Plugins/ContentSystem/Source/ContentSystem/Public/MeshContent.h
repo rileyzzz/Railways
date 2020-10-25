@@ -50,7 +50,7 @@ struct CONTENTSYSTEM_API RailwaysMesh
 {
 	FString Name;
 	TArray<RailwaysVert> Vertices;
-	TArray<uint32> Elements;
+	TArray<uint16> Elements;
 	//RailwaysMaterial Material;
 	int32 MaterialIndex;
 };

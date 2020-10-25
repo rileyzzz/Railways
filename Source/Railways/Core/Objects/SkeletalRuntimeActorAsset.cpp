@@ -137,11 +137,17 @@ void ASkeletalRuntimeActorAsset::InitAsset()
 #endif
 
     //material setup
-    for (UMaterialInstanceDynamic* Instance : MaterialInstances)
+    for (int32 i = 0; i < MeshContent.MeshData->Materials.Num(); i++)
     {
-        SkeletalMesh->Materials.Add(Instance);
+        //default material
+        SkeletalMesh->Materials.Add(UMaterial::GetDefaultMaterial(MD_Surface));
         SkeletalMesh->Materials.Last().UVChannelData.bInitialized = true;
     }
+    //for (UMaterialInstanceDynamic* Instance : MaterialInstances)
+    //{
+    //    SkeletalMesh->Materials.Add(Instance);
+    //    SkeletalMesh->Materials.Last().UVChannelData.bInitialized = true;
+    //}
 
     //bone setup
     for (int i = 0; i < MeshContent.MeshData->Bones.Num(); i++)
@@ -303,6 +309,13 @@ void ASkeletalRuntimeActorAsset::InitAsset()
     //UE_LOG(LogTemp, Warning, TEXT("final track count %i"), Animation->GetRawAnimationData().Num());
     //
     //MeshComponent->PlayAnimation(Animation, true);
+}
+
+void ASkeletalRuntimeActorAsset::MaterialInitCallback(int32 index)
+{
+    MeshComponent->SetMaterial(index, MaterialInstances[index]);
+    //SkeletalMesh->Materials[index] = MaterialInstances[index];
+    //SkeletalMesh->Materials[index].UVChannelData.bInitialized = true;
 }
 
 

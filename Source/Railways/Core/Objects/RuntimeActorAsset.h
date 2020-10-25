@@ -20,7 +20,7 @@ private:
 	//retrieve content information from content system
 	void LoadContentData();
 
-	
+	void InitMaterialsAsync();
 public:
 	// Sets default values for this actor's properties
 	ARuntimeActorAsset();
@@ -47,6 +47,10 @@ public:
 	UFUNCTION()
 	virtual void InitAsset();
 
+	//Handle an async material load
+	UFUNCTION()
+	virtual void MaterialInitCallback(int32 index);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -58,4 +62,21 @@ public:
 public:
 	void UpdatePositionToGround(FVector& Position);
 	void UpdatePositionToGroundLocal(FVector& Position);
+};
+
+class MaterialLoadAsyncTask : public FNonAbandonableTask
+{
+	friend class FAutoDeleteAsyncTask<MaterialLoadAsyncTask>;
+protected:
+	TArray<RailwaysMaterial>& Materials;
+	ARuntimeActorAsset* ParentActor;
+public:
+	MaterialLoadAsyncTask(TArray<RailwaysMaterial>& InMaterials, ARuntimeActorAsset* InParentActor) : Materials(InMaterials), ParentActor(InParentActor) { }
+
+	FORCEINLINE TStatId GetStatId() const
+	{
+		RETURN_QUICK_DECLARE_CYCLE_STAT(MaterialLoadAsyncTask, STATGROUP_ThreadPoolAsyncTasks);
+	}
+
+	void DoWork();
 };

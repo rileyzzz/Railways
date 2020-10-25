@@ -53,6 +53,7 @@ UTexture2D* ARuntimeActorAsset::LoadTextureFile(FString Path, bool SRGB)
     return NewTexture;
 }
 
+
 // Sets default values
 ARuntimeActorAsset::ARuntimeActorAsset()
 {
@@ -65,26 +66,27 @@ ARuntimeActorAsset::ARuntimeActorAsset()
     //DynamicMesh->SetupAttachment(RootComponent);
 }
 
-void ARuntimeActorAsset::InitAsset()
+void ARuntimeActorAsset::InitMaterialsAsync()
 {
-    URailwaysGameInstance* GameInstance = Cast<URailwaysGameInstance>(GetGameInstance());
-    //if (GameInstance) MeshContent = GameInstance->AssimpInterface->ImportFBX(false);
-    MeshContent.LoadMesh(TEXT("E:/Users/riley_000/Documents/Unreal Projects/Railways/Plugins/ContentSystem/Content/Samples/other/neville/test4.rmsh"));
-    UE_LOG(LogTemp, Warning, TEXT("Mesh loaded"));
+    (new FAutoDeleteAsyncTask<MaterialLoadAsyncTask>(MeshContent.MeshData->Materials, this))->StartBackgroundTask();
+}
 
-    //initialize materials
-    for (const auto& Material : MeshContent.MeshData->Materials)
+void MaterialLoadAsyncTask::DoWork()
+{
+    for (int32 i = 0; i < Materials.Num(); i++)
     {
-        UE_LOG(LogTemp, Warning, TEXT("loading material with %i textures"), Material.Textures.Num());
+        RailwaysMaterial& Material = Materials[i];
+        UE_LOG(LogTemp, Display, TEXT("loading material with %i textures"), Material.Textures.Num());
         //create material
-        UMaterialInstanceDynamic* DynMaterial = UMaterialInstanceDynamic::Create(PBRMaterial, this);
+        UMaterialInstanceDynamic* DynMaterial = UMaterialInstanceDynamic::Create(ParentActor->PBRMaterial, ParentActor);
 
+        TMap<UTexture2D*, FName> TextureMap;
         //create textures
         for (const auto& Texture : Material.Textures)
         {
             bool SRGB = (Texture.Type == TextureType::Diffuse);
-            UE_LOG(LogTemp, Warning, TEXT("texture %s"), *(MeshContent.DataPath + Texture.Path));
-            UTexture2D* NewTexture = LoadTextureFile(MeshContent.DataPath + Texture.Path, SRGB);
+            //UE_LOG(LogTemp, Warning, TEXT("texture %s"), *(MeshContent.DataPath + Texture.Path));
+            UTexture2D* NewTexture = ParentActor->LoadTextureFile(ParentActor->MeshContent.DataPath + Texture.Path, SRGB);
 
             if (NewTexture)
             {
@@ -103,12 +105,73 @@ void ARuntimeActorAsset::InitAsset()
                     break;
                 }
 
-                DynMaterial->SetTextureParameterValue(TextureTarget, NewTexture);
+                TextureMap.Add(NewTexture, TextureTarget);
             }
         }
 
-        MaterialInstances.Add(DynMaterial);
+        AsyncTask(ENamedThreads::GameThread, [this, i, DynMaterial, TextureMap]() {
+            for (const auto& tex : TextureMap)
+            {
+                DynMaterial->SetTextureParameterValue(tex.Value, tex.Key);
+            }
+            ParentActor->MaterialInstances.Add(DynMaterial);
+            ParentActor->MaterialInitCallback(i);
+        });
     }
+    UE_LOG(LogTemp, Display, TEXT("Finished loading textures."));
+}
+
+void ARuntimeActorAsset::InitAsset()
+{
+    URailwaysGameInstance* GameInstance = Cast<URailwaysGameInstance>(GetGameInstance());
+    if (GameInstance) MeshContent = GameInstance->AssimpInterface->ImportFBX(false);
+    MeshContent.SaveMesh(TEXT("E:/Users/riley_000/Documents/Unreal Projects/Railways/Plugins/ContentSystem/Content/Samples/pb15main/pb15_lod0.rmsh"));
+    UE_LOG(LogTemp, Warning, TEXT("Mesh loaded"));
+
+    InitMaterialsAsync();
+
+    //initialize materials
+    //for (const auto& Material : MeshContent.MeshData->Materials)
+    //{
+    //    UE_LOG(LogTemp, Warning, TEXT("loading material with %i textures"), Material.Textures.Num());
+    //    //create material
+    //    UMaterialInstanceDynamic* DynMaterial = UMaterialInstanceDynamic::Create(PBRMaterial, this);
+
+    //    //create textures
+    //    for (const auto& Texture : Material.Textures)
+    //    {
+    //        bool SRGB = (Texture.Type == TextureType::Diffuse);
+    //        UE_LOG(LogTemp, Warning, TEXT("texture %s"), *(MeshContent.DataPath + Texture.Path));
+    //        UTexture2D* NewTexture = LoadTextureFile(MeshContent.DataPath + Texture.Path, SRGB);
+
+    //        if (NewTexture)
+    //        {
+    //            FName TextureTarget;
+    //            switch (Texture.Type)
+    //            {
+    //            default:
+    //            case TextureType::Diffuse:
+    //                TextureTarget = FName(TEXT("BaseColor"));
+    //                break;
+    //            case TextureType::Normal:
+    //                TextureTarget = FName(TEXT("Normal"));
+    //                break;
+    //            case TextureType::Parameter:
+    //                TextureTarget = FName(TEXT("Parameter"));
+    //                break;
+    //            }
+
+    //            DynMaterial->SetTextureParameterValue(TextureTarget, NewTexture);
+    //        }
+    //    }
+
+    //    MaterialInstances.Add(DynMaterial);
+    //}
+}
+
+void ARuntimeActorAsset::MaterialInitCallback(int32 index)
+{
+    UE_LOG(LogTemp, Error, TEXT("Virtual material init callback failed!"));
 }
 
 // Called when the game starts or when spawned

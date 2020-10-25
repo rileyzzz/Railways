@@ -48,6 +48,8 @@ public:
 
 	virtual void InitAsset() override;
 
+	virtual void MaterialInitCallback(int32 index);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

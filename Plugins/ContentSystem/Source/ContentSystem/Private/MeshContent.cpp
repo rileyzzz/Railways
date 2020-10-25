@@ -351,6 +351,39 @@ bool FMeshContent::Serialize(FArchive& Ar)
         }
     }
 
+    int32 NumBones = MeshData->Bones.Num();
+    Ar << NumBones;
+    if (Ar.IsLoading()) MeshData->Bones.AddDefaulted(NumBones);
+    for (int32 i = 0; i < NumBones; i++)
+    {
+        RailwaysBone& Bone = MeshData->Bones[i];
+        Ar << Bone.ParentIndex;
+        Ar << Bone.Name;
+        if (IsLoading()) Bone.FName = FName(Bone.Name);
+        Ar << Bone.Transform;
+
+        int32 NumTracks = Bone.AnimTracks.Num();
+        Ar << NumTracks;
+        if (Ar.IsLoading()) Bone.AnimTracks.AddDefaulted(NumTracks);
+        for (int32 t = 0; t < NumTracks; t++)
+        {
+            RailwaysAnimationTrack Track = Bone.AnimTracks[t];
+            //Ar << Track.Name;
+            Ar << Track.PosFrames;
+            Ar << Track.RotFrames;
+            Ar << Track.ScaleFrames;
+        }
+    }
+    
+    int32 NumAnimations = MeshData->AnimData.Num();
+    Ar << NumAnimations;
+    if (Ar.IsLoading()) MeshData->AnimData.AddDefaulted(NumAnimations);
+    for (int32 i = 0; i < NumAnimations; i++)
+    {
+        RailwaysAnimMetadata Metadata = MeshData->AnimData[i];
+        Ar << Metadata.Duration;
+    }
+
     return true;
 }
 

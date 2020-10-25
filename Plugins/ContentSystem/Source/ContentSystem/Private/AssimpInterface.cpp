@@ -38,9 +38,10 @@ FMeshContent UAssimpInterface::ImportFBX(bool PreTransformVerts)
     FMeshContent MeshContent;
 
     Assimp::Importer importer;
-
+    importer.SetPropertyInteger(AI_CONFIG_PP_SLM_VERTEX_LIMIT, 0xFFFF);
 	//const FString FileDir = FPaths::ProjectPluginsDir() + "ContentSystem/Content/Samples/other/main.fbx";
-	const FString FileDir = FPaths::ProjectPluginsDir() + "ContentSystem/Content/Samples/other/neville/bogey.fbx";
+	//const FString FileDir = FPaths::ProjectPluginsDir() + "ContentSystem/Content/Samples/other/neville/bogey.fbx";
+	const FString FileDir = FPaths::ProjectPluginsDir() + "ContentSystem/Content/Samples/pb15main/pb15_lod0.fbx";
 	//const FString FileDir = FPaths::ProjectPluginsDir() + "ContentSystem/Content/Samples/dave/daveanim.fbx";
 	//const FString FileDir = FPaths::ProjectPluginsDir() + "ContentSystem/Content/Samples/other/duncan/bogey.fbx";
     const FString FilePath = FPaths::GetPath(FileDir);
@@ -54,7 +55,8 @@ FMeshContent UAssimpInterface::ImportFBX(bool PreTransformVerts)
         aiProcess_SortByPType |
         aiProcess_MakeLeftHanded |
         aiProcess_FlipUVs |
-        aiProcess_GenNormals;
+        aiProcess_GenNormals |
+        aiProcess_SplitLargeMeshes; //16 bit indices
 
     if (PreTransformVerts) flags |= aiProcess_PreTransformVertices;
 

@@ -36,7 +36,7 @@ AStaticRuntimeActorAsset::~AStaticRuntimeActorAsset()
 void AStaticRuntimeActorAsset::BuildMeshNode(const RailwaysNode& Node)
 {
     const int32 NumMeshes = Node.Meshes.Num();
-    static int MeshIndex = 0;
+    static int32 MeshIndex = 0;
     for (const RailwaysMesh& Mesh : Node.Meshes)
     {
         //const AssimpMesh* Mesh = Node.Meshes[i];
@@ -72,7 +72,8 @@ void AStaticRuntimeActorAsset::BuildMeshNode(const RailwaysNode& Node)
             Triangles[tri] = Mesh.Elements[tri];
         }
 
-        if(Mesh.MaterialIndex < MaterialInstances.Num()) MeshComponent->SetMaterial(MeshIndex, MaterialInstances[Mesh.MaterialIndex]);
+        //if(Mesh.MaterialIndex < MaterialInstances.Num()) MeshComponent->SetMaterial(MeshIndex, MaterialInstances[Mesh.MaterialIndex]);
+        MaterialMap.Add(MeshIndex, Mesh.MaterialIndex);
 
         MeshComponent->CreateMeshSection(MeshIndex, Positions, Triangles, Normals, UVs, Colors, Tangents, false);
         //DynamicMesh->CreateMeshSection(MeshIndex, Positions, Triangles, Normals, UVs, Tangents);
@@ -88,4 +89,17 @@ void AStaticRuntimeActorAsset::InitAsset()
     Super::InitAsset(); //creates material instances
 
     BuildMeshNode(MeshContent.MeshData->RootNode);
+}
+
+
+
+void AStaticRuntimeActorAsset::MaterialInitCallback(int32 index)
+{
+    for (const auto& entry : MaterialMap)
+    {
+        if (entry.Value == index)
+        {
+            MeshComponent->SetMaterial(entry.Key, MaterialInstances[index]);
+        }
+    }
 }

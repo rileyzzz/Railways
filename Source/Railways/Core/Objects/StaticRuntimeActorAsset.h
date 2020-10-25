@@ -16,6 +16,8 @@ class RAILWAYS_API AStaticRuntimeActorAsset : public ARuntimeActorAsset
 	
 private:
 
+	TMap<int32, int32> MaterialMap;
+
 	UPROPERTY()
 	UProceduralMeshComponent* MeshComponent;
 
@@ -23,6 +25,8 @@ private:
 public:
 
 	virtual void InitAsset() override;
+
+	virtual void MaterialInitCallback(int32 index);
 
 protected:
 	// Called when the game starts or when spawned
