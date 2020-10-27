@@ -16,6 +16,12 @@ enum class ContentType
 	Bogey = 6
 };
 
+struct FContentInfo
+{
+	FString ContentDir;
+
+};
+
 UCLASS()
 class RAILWAYS_API UContentSystemInterface : public UObject
 {
@@ -24,7 +30,6 @@ public:
 	static UContentSystemInterface* GetInterface();
 	static void ShutdownInterface();
 
-	void DebugLog();
 private:
 	FString ContentDir;
 
@@ -35,6 +40,8 @@ private:
 	//type directories
 	
 public:
+	FContentInfo RetrieveContentData(FString ContentID);
+
 	UContentSystemInterface();
 	~UContentSystemInterface();
 };

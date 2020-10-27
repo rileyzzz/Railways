@@ -9,7 +9,7 @@ void URailwaysGameInstance::Init()
 {
 	Super::Init();
 	//Interface = GetContentSystem();
-	Interface = UContentSystemInterface::GetInterface();
+	ContentInterface = UContentSystemInterface::GetInterface();
 	AssimpInterface = NewObject<UAssimpInterface>();
 	//FOnlineSubsystemSteam::Get();
 	IOnlineSubsystem* SubSystem = IOnlineSubsystem::Get();
@@ -28,7 +28,7 @@ void URailwaysGameInstance::Shutdown()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Shutdown instance"));
 	UContentSystemInterface::ShutdownInterface();
-	Interface = nullptr;
+	ContentInterface = nullptr;
 	Super::Shutdown();
 }
 

@@ -31,8 +31,7 @@ class RAILWAYS_API URailwaysGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 private:
-	UPROPERTY()
-	UContentSystemInterface* Interface;
+	
 
 	IOnlineSessionPtr SessionInterface;
 	TSharedPtr<FOnlineSessionSearch> SessionSearch;
@@ -40,6 +39,10 @@ private:
 	UPROPERTY()
 	UServerList* ActiveServerList;
 public:
+
+	UPROPERTY()
+	UContentSystemInterface* ContentInterface;
+
 	UPROPERTY()
 	UAssimpInterface* AssimpInterface;
 

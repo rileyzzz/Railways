@@ -8,69 +8,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "../Helpers/stb_image.h"
 
-UTexture2D* ARuntimeActorAsset::LoadTextureFile(FString Path, bool SRGB)
-{
-    UTexture2D* NewTexture = nullptr;
-    if (TextureCache.Contains(Path))
-    {
-        NewTexture = TextureCache[Path];
-    }
-    else
-    {
-        int width, height, nrComponents;
-        unsigned char* data = stbi_load(TCHAR_TO_UTF8(*Path), &width, &height, &nrComponents, 4);
-        if (data)
-        {
-            FName TextureName = MakeUniqueObjectName(this, UTexture2D::StaticClass());
-            NewTexture = NewObject<UTexture2D>(this, TextureName, RF_Transient);
-
-            EPixelFormat format = PF_R8G8B8A8;
-            NewTexture->PlatformData = new FTexturePlatformData();
-            NewTexture->PlatformData->SizeX = width;
-            NewTexture->PlatformData->SizeY = height;
-            NewTexture->PlatformData->PixelFormat = format;
-
-            NewTexture->SRGB = SRGB;
-
-            //mipmaps
-            int32 NumBlocksX = width;
-            int32 NumBlocksY = height;
-            FTexture2DMipMap* Mip = new(NewTexture->PlatformData->Mips) FTexture2DMipMap();
-            Mip->SizeX = width;
-            Mip->SizeY = height;
-            Mip->BulkData.Lock(LOCK_READ_WRITE);
-            void* TextureData = Mip->BulkData.Realloc(NumBlocksX * NumBlocksY * 4); //GPixelFormats[format].BlockBytes
-            FMemory::Memcpy(TextureData, data, width * height * 4);
-            Mip->BulkData.Unlock();
-
-            NewTexture->UpdateResource();
-
-            stbi_image_free(data);
-
-            TextureCache.Add(Path, NewTexture);
-        }
-    }
-    return NewTexture;
-}
-
-
-// Sets default values
-ARuntimeActorAsset::ARuntimeActorAsset()
-{
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
-    RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
-
-    //DynamicMesh = CreateDefaultSubobject<UProceduralSkeletalMeshComponent>(TEXT("Mesh"));
-    //DynamicMesh->SetupAttachment(RootComponent);
-}
-
-void ARuntimeActorAsset::InitMaterialsAsync()
-{
-    (new FAutoDeleteAsyncTask<MaterialLoadAsyncTask>(MeshContent.MeshData->Materials, this))->StartBackgroundTask();
-}
-
 void MaterialLoadAsyncTask::DoWork()
 {
     for (int32 i = 0; i < Materials.Num(); i++)
@@ -116,19 +53,127 @@ void MaterialLoadAsyncTask::DoWork()
             }
             ParentActor->MaterialInstances.Add(DynMaterial);
             ParentActor->MaterialInitCallback(i);
-        });
+            });
     }
+
     UE_LOG(LogTemp, Display, TEXT("Finished loading textures."));
+}
+
+UTexture2D* ARuntimeActorAsset::LoadTextureFile(FString Path, bool SRGB)
+{
+    UTexture2D* NewTexture = nullptr;
+    if (TextureCache.Contains(Path))
+    {
+        NewTexture = TextureCache[Path];
+    }
+    else
+    {
+        //NewTexture = FImageUtils::ImportFileAsTexture2D(Path);
+        //if (NewTexture)
+        //{
+        //    NewTexture->SRGB = SRGB;
+        //    //NewTexture->UpdateResource();
+        //    TextureCache.Add(Path, NewTexture);
+        //}
+        int width, height, nrComponents;
+        unsigned char* data = stbi_load(TCHAR_TO_UTF8(*Path), &width, &height, &nrComponents, 4);
+        if (data)
+        {
+            FName TextureName = MakeUniqueObjectName(this, UTexture2D::StaticClass());
+            NewTexture = NewObject<UTexture2D>(this, TextureName, RF_Transient);
+
+            EPixelFormat format = PF_R8G8B8A8;
+            NewTexture->PlatformData = new FTexturePlatformData();
+            NewTexture->PlatformData->SizeX = width;
+            NewTexture->PlatformData->SizeY = height;
+            NewTexture->PlatformData->PixelFormat = format;
+
+            NewTexture->SRGB = SRGB;
+
+            //mipmaps
+            int32 NumBlocksX = width;
+            int32 NumBlocksY = height;
+            FTexture2DMipMap* Mip = new(NewTexture->PlatformData->Mips) FTexture2DMipMap();
+            Mip->SizeX = width;
+            Mip->SizeY = height;
+            Mip->BulkData.Lock(LOCK_READ_WRITE);
+            void* TextureData = Mip->BulkData.Realloc(NumBlocksX * NumBlocksY * 4); //GPixelFormats[format].BlockBytes
+            FMemory::Memcpy(TextureData, data, width * height * 4);
+            Mip->BulkData.Unlock();
+
+            NewTexture->UpdateResource();
+
+            stbi_image_free(data);
+
+            TextureCache.Add(Path, NewTexture);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Failed to load texture %s"), *Path);
+        }
+    }
+    return NewTexture;
+}
+
+
+// Sets default values
+ARuntimeActorAsset::ARuntimeActorAsset()
+{
+ 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
+
+    RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
+
+    //DynamicMesh = CreateDefaultSubobject<UProceduralSkeletalMeshComponent>(TEXT("Mesh"));
+    //DynamicMesh->SetupAttachment(RootComponent);
+}
+
+void ARuntimeActorAsset::BeginDestroy()
+{
+    Super::BeginDestroy();
+    
+    //UE_LOG(LogTemp, Warning, TEXT("Begin destroy"));
+    //if (MaterialLoadTask)
+    //{
+    //    //MaterialLoadTask->Cancel();
+    //    if (!MaterialLoadTask->IsDone())
+    //    {
+    //        MaterialLoadTask->Cancel();
+    //    }
+
+    //    //if (!MaterialLoadTask->IsDone()) MaterialLoadTask->GetTask().Abandon();
+    //    //delete MaterialLoadTask;
+    //}
+}
+
+ARuntimeActorAsset::~ARuntimeActorAsset()
+{
+
+}
+
+void ARuntimeActorAsset::InitMaterialsAsync()
+{
+    (new FAutoDeleteAsyncTask<MaterialLoadAsyncTask>(MeshContent.MeshData->Materials, this))->StartBackgroundTask();
+    //MaterialLoadTask = new FAsyncTask<MaterialLoadAsyncTask>(MeshContent.MeshData->Materials, this);
+    //MaterialLoadTask->StartBackgroundTask();
 }
 
 void ARuntimeActorAsset::InitAsset()
 {
     URailwaysGameInstance* GameInstance = Cast<URailwaysGameInstance>(GetGameInstance());
-    if (GameInstance) MeshContent = GameInstance->AssimpInterface->ImportFBX(false);
-    MeshContent.SaveMesh(TEXT("E:/Users/riley_000/Documents/Unreal Projects/Railways/Plugins/ContentSystem/Content/Samples/pb15main/pb15_lod0.rmsh"));
+    //if (GameInstance) MeshContent = GameInstance->AssimpInterface->ImportFBX(false);
+    //MeshContent.LoadMesh(TEXT("E:/Users/riley_000/Documents/Unreal Projects/Railways/Plugins/ContentSystem/Content/Samples/pb15main/pb15_lod0.rmsh"));
+    if (GameInstance)
+    {
+        UContentSystemInterface* Interface = GameInstance->ContentInterface;
+        ContentInfo = Interface->RetrieveContentData(TEXT("00000000"));
+        UE_LOG(LogTemp, Display, TEXT("Content directory %s"), *ContentInfo.ContentDir);
+        MeshContent.LoadMesh(FPaths::Combine(ContentInfo.ContentDir, TEXT("pb15_lod0.rmsh")));
+        InitMaterialsAsync();
+    }
     UE_LOG(LogTemp, Warning, TEXT("Mesh loaded"));
-
-    InitMaterialsAsync();
+    
+    
 
     //initialize materials
     //for (const auto& Material : MeshContent.MeshData->Materials)

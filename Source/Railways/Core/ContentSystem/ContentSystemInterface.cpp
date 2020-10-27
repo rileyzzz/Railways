@@ -24,6 +24,29 @@ void UContentSystemInterface::ShutdownInterface()
 	instance = nullptr;
 }
 
+FContentInfo UContentSystemInterface::RetrieveContentData(FString ContentID)
+{
+	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+	FContentInfo Data;
+	FString SourceDir = FPaths::Combine(ActiveDir, ContentID);
+	//download content if not locally installed
+
+	//get json metadata
+
+	if (PlatformFile.DirectoryExists(*SourceDir))
+	{
+		Data.ContentDir = SourceDir;
+
+
+		UE_LOG(LogTemp, Display, TEXT("Successfully loaded content %s"), *ContentID);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to find content directory for asset %s"), *ContentID);
+	}
+	return Data;
+}
+
 UContentSystemInterface::UContentSystemInterface()
 {
 	UE_LOG(LogTemp, Log, TEXT("Initializing Railways content system."));

@@ -6,9 +6,12 @@
 #include "GameFramework/Actor.h"
 #include "ProceduralMeshComponent.h"
 //#include "ProceduralSkeletalMeshComponent.h"
+#include "../RailwaysGameInstance.h"
 #include "AssimpInterface.h"
 #include "MeshContent.h"
 #include "RuntimeActorAsset.generated.h"
+
+class MaterialLoadAsyncTask;
 
 UCLASS()
 class RAILWAYS_API ARuntimeActorAsset : public AActor
@@ -17,13 +20,19 @@ class RAILWAYS_API ARuntimeActorAsset : public AActor
 	
 private:
 
-	//retrieve content information from content system
-	void LoadContentData();
+	//CLIENT ONLY!
+	FContentInfo ContentInfo;
 
+
+
+	//FAutoDeleteAsyncTask<MaterialLoadAsyncTask>* MaterialLoadTask;
+	//FAsyncTask<MaterialLoadAsyncTask>* MaterialLoadTask;
+	
 	void InitMaterialsAsync();
 public:
 	// Sets default values for this actor's properties
 	ARuntimeActorAsset();
+	~ARuntimeActorAsset();
 
 	FMeshContent MeshContent;
 	UPROPERTY()
@@ -35,7 +44,7 @@ public:
 	UTexture2D* LoadTextureFile(FString Path, bool SRGB = true);
 
 	UPROPERTY()
-	uint64 ContentID;
+	FString ContentID;
 
 	UPROPERTY(EditAnywhere)
 	UMaterialInterface* PBRMaterial;
@@ -58,6 +67,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	virtual void BeginDestroy() override;
 
 public:
 	void UpdatePositionToGround(FVector& Position);
@@ -71,6 +81,7 @@ protected:
 	TArray<RailwaysMaterial>& Materials;
 	ARuntimeActorAsset* ParentActor;
 public:
+
 	MaterialLoadAsyncTask(TArray<RailwaysMaterial>& InMaterials, ARuntimeActorAsset* InParentActor) : Materials(InMaterials), ParentActor(InParentActor) { }
 
 	FORCEINLINE TStatId GetStatId() const
