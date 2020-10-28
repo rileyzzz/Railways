@@ -13,6 +13,18 @@
 
 class MaterialLoadAsyncTask;
 
+USTRUCT()
+struct FMeshPart
+{
+	GENERATED_BODY()
+	
+public:
+	FMeshContent MeshContent;
+
+	UPROPERTY()
+	UMeshComponent* BuiltMesh;
+};
+
 UCLASS()
 class RAILWAYS_API ARuntimeActorAsset : public AActor
 {
@@ -30,11 +42,14 @@ private:
 	
 	void InitMaterialsAsync();
 public:
+
 	// Sets default values for this actor's properties
 	ARuntimeActorAsset();
 	~ARuntimeActorAsset();
 
-	FMeshContent MeshContent;
+	UPROPERTY()
+	TArray<FMeshPart> MeshParts;
+
 	UPROPERTY()
 	TArray<UMaterialInstanceDynamic*> MaterialInstances;
 
@@ -44,7 +59,7 @@ public:
 	UTexture2D* LoadTextureFile(FString Path, bool SRGB = true);
 
 	UPROPERTY()
-	FString ContentID;
+	uint64 ContentID;
 
 	UPROPERTY(EditAnywhere)
 	UMaterialInterface* PBRMaterial;
@@ -80,9 +95,10 @@ class MaterialLoadAsyncTask : public FNonAbandonableTask
 protected:
 	TArray<RailwaysMaterial>& Materials;
 	ARuntimeActorAsset* ParentActor;
+	FMeshPart* Part;
 public:
 
-	MaterialLoadAsyncTask(TArray<RailwaysMaterial>& InMaterials, ARuntimeActorAsset* InParentActor) : Materials(InMaterials), ParentActor(InParentActor) { }
+	MaterialLoadAsyncTask(TArray<RailwaysMaterial>& InMaterials, ARuntimeActorAsset* InParentActor, FMeshPart* InPart) : Materials(InMaterials), ParentActor(InParentActor), Part(InPart) { }
 
 	FORCEINLINE TStatId GetStatId() const
 	{

@@ -112,7 +112,7 @@ struct CONTENTSYSTEM_API FMeshContent
 {
 	GENERATED_BODY()
 public:
-	RailwaysImportData* MeshData;
+	RailwaysImportData* MeshData = nullptr;
 	FString DataPath; //textures etc
 private:
 	bool Serialize(FArchive& Ar);

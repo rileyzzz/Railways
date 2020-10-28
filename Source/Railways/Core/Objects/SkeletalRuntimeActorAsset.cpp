@@ -48,9 +48,10 @@ ASkeletalRuntimeActorAsset::ASkeletalRuntimeActorAsset()
 
 ASkeletalRuntimeActorAsset::~ASkeletalRuntimeActorAsset()
 {
-    if (SkeletalMesh)
+    for (const auto& SkeletalMesh : SkeletalMeshes)
     {
-        SkeletalMesh->ReleaseResources();
+        if (SkeletalMesh)
+            SkeletalMesh->ReleaseResources();
     }
 }
 
@@ -64,7 +65,7 @@ void ASkeletalRuntimeActorAsset::BeginPlay()
     MeshComponent->AttachTo(RootComponent);
     //MeshComponent->SetRenderStatic(false);
     //Skeleton = NewObject<USkeleton>(this, TEXT("Skeleton"));
-    SkeletalMesh = NewObject<USkeletalMesh>(this, TEXT("Mesh2"));
+    //SkeletalMesh = NewObject<USkeletalMesh>(this, TEXT("Mesh2"));
 
     //NewTile->RegisterComponent();
 
@@ -100,12 +101,21 @@ void ASkeletalRuntimeActorAsset::Tick(float DeltaTime)
     //frame++;
 }
 
+
+
 void ASkeletalRuntimeActorAsset::InitAsset()
 {
     Super::InitAsset(); //creates material instances
     //FSuspendRenderingThread suspend(false);
     //MeshComponent->SetRelativeScale3D(FVector(30.0f));
 
+    for (auto& Part : MeshParts)
+        SkeletalMeshes.Add(BuildMesh(Part));
+}
+
+USkeletalMesh* ASkeletalRuntimeActorAsset::BuildMesh(FMeshPart& Part)
+{
+    USkeletalMesh* SkeletalMesh = NewObject<USkeletalMesh>(this, NAME_Components);
 
 #if !USE_EDITOR_RENDER
     SkeletalMesh->ReleaseResources();
@@ -131,13 +141,13 @@ void ASkeletalRuntimeActorAsset::InitAsset()
     LODInfo.LODHysteresis = 0.2f;
 
 #if USE_EDITOR_RENDER
-    GenerateSkeletalRenderMesh(Vertices, Elements, LOD, LODInfo, MeshContent.MeshData->RootNode, MeshData->Bones.Num());
+    GenerateSkeletalRenderMesh(Vertices, Elements, LOD, LODInfo, Part.MeshContent.MeshData->RootNode, Part.MeshData->Bones.Num());
 #else
-    GenerateSkeletalRenderMesh(Vertices, Elements, LOD, LODInfo, MeshContent.MeshData->RootNode, MeshContent.MeshData->Bones.Num());
+    GenerateSkeletalRenderMesh(Vertices, Elements, LOD, LODInfo, Part.MeshContent.MeshData->RootNode, Part.MeshContent.MeshData->Bones.Num());
 #endif
 
     //material setup
-    for (int32 i = 0; i < MeshContent.MeshData->Materials.Num(); i++)
+    for (int32 i = 0; i < Part.MeshContent.MeshData->Materials.Num(); i++)
     {
         //default material
         SkeletalMesh->Materials.Add(UMaterial::GetDefaultMaterial(MD_Surface));
@@ -150,9 +160,9 @@ void ASkeletalRuntimeActorAsset::InitAsset()
     //}
 
     //bone setup
-    for (int i = 0; i < MeshContent.MeshData->Bones.Num(); i++)
+    for (int i = 0; i < Part.MeshContent.MeshData->Bones.Num(); i++)
     {
-        const auto& Bone = MeshContent.MeshData->Bones[i];
+        const auto& Bone = Part.MeshContent.MeshData->Bones[i];
 
         LOD->RequiredBones.Add(i);
         LOD->ActiveBoneIndices.Add(i);
@@ -220,9 +230,9 @@ void ASkeletalRuntimeActorAsset::InitAsset()
     for (const auto& Element : Elements)
     {
         LOD->IndexBuffer.Add(Element);
-//#else
-        //LOD->MultiSizeIndexContainer.GetIndexBuffer()->AddItem(Element);
-    }
+        //#else
+                //LOD->MultiSizeIndexContainer.GetIndexBuffer()->AddItem(Element);
+}
 #else
     LOD->MultiSizeIndexContainer.CopyIndexBuffer(Elements);
 #endif
@@ -236,7 +246,7 @@ void ASkeletalRuntimeActorAsset::InitAsset()
     FBoxSphereBounds Bounds(BoundBox);
     Bounds = Bounds.ExpandBy(100000.0f);
     SkeletalMesh->SetImportedBounds(Bounds);
-    
+
     SkeletalMesh->ResetLODInfo();
     SkeletalMesh->AddLODInfo(LODInfo);
     UE_LOG(LogTemp, Warning, TEXT("lod count %i"), SkeletalMesh->GetLODInfoArray().Num());
@@ -245,7 +255,7 @@ void ASkeletalRuntimeActorAsset::InitAsset()
     //SkeletalMesh->ReleaseResources();
     //SkeletalMesh->AllocateResourceForRendering();
     //SkeletalMesh->InitResources();
-    
+
     //SkeletalMesh->Build();
     SkeletalMesh->PostEditChange();
 #else
@@ -259,11 +269,11 @@ void ASkeletalRuntimeActorAsset::InitAsset()
     SkeletalMesh->Skeleton = NewObject<USkeleton>();
     SkeletalMesh->Skeleton->MergeAllBonesToBoneTree(SkeletalMesh);
 
-//#if !USE_EDITOR_RENDER && WITH_EDITOR
-//    //Add a dummy LOD so it doesn't complain
-//    FSkeletalMeshLODModel* DummyLOD = new FSkeletalMeshLODModel();
-//    SkeletalMesh->GetImportedModel()->LODModels.Add(DummyLOD);
-//#endif
+    //#if !USE_EDITOR_RENDER && WITH_EDITOR
+    //    //Add a dummy LOD so it doesn't complain
+    //    FSkeletalMeshLODModel* DummyLOD = new FSkeletalMeshLODModel();
+    //    SkeletalMesh->GetImportedModel()->LODModels.Add(DummyLOD);
+    //#endif
 
 #if WITH_EDITOR
     SkeletalMesh->CalculateInvRefMatrices();
@@ -274,7 +284,7 @@ void ASkeletalRuntimeActorAsset::InitAsset()
 
 
     MeshComponent->SetSkeletalMesh(SkeletalMesh);
-    
+
 
     //Animation = NewObject<UAnimSequence>(MeshComponent);
     ////Animation->AdditiveAnimType = AAT_LocalSpaceBase;
@@ -308,7 +318,8 @@ void ASkeletalRuntimeActorAsset::InitAsset()
     //
     //UE_LOG(LogTemp, Warning, TEXT("final track count %i"), Animation->GetRawAnimationData().Num());
     //
-    //MeshComponent->PlayAnimation(Animation, true);
+    //MeshComponent->PlayAnimation(Animation, true)
+    return SkeletalMesh;
 }
 
 void ASkeletalRuntimeActorAsset::MaterialInitCallback(int32 index)

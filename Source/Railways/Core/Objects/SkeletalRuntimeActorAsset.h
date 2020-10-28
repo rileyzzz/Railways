@@ -21,7 +21,9 @@ private:
 	//USkeleton* Skeleton;
 
 	UPROPERTY()
-	USkeletalMesh* SkeletalMesh;
+	TArray<USkeletalMesh*> SkeletalMeshes;
+
+	//USkeletalMesh* SkeletalMesh;
 
 	UPROPERTY()
 	USkeletalMeshComponent* MeshComponent;
@@ -47,6 +49,9 @@ private:
 public:
 
 	virtual void InitAsset() override;
+
+	USkeletalMesh* BuildMesh(FMeshPart& Part);
+
 
 	virtual void MaterialInitCallback(int32 index);
 

@@ -23,7 +23,8 @@ void MaterialLoadAsyncTask::DoWork()
         {
             bool SRGB = (Texture.Type == TextureType::Diffuse);
             //UE_LOG(LogTemp, Warning, TEXT("texture %s"), *(MeshContent.DataPath + Texture.Path));
-            UTexture2D* NewTexture = ParentActor->LoadTextureFile(ParentActor->MeshContent.DataPath + Texture.Path, SRGB);
+            if (!ParentActor) break;
+            UTexture2D* NewTexture = ParentActor->LoadTextureFile(Part->MeshContent.DataPath + Texture.Path, SRGB);
 
             if (NewTexture)
             {
@@ -46,6 +47,7 @@ void MaterialLoadAsyncTask::DoWork()
             }
         }
 
+        if (!ParentActor) break;
         AsyncTask(ENamedThreads::GameThread, [this, i, DynMaterial, TextureMap]() {
             for (const auto& tex : TextureMap)
             {
@@ -153,7 +155,9 @@ ARuntimeActorAsset::~ARuntimeActorAsset()
 
 void ARuntimeActorAsset::InitMaterialsAsync()
 {
-    (new FAutoDeleteAsyncTask<MaterialLoadAsyncTask>(MeshContent.MeshData->Materials, this))->StartBackgroundTask();
+    for(auto& Part : MeshParts)
+        (new FAutoDeleteAsyncTask<MaterialLoadAsyncTask>(Part.MeshContent.MeshData->Materials, this, &Part))->StartBackgroundTask();
+
     //MaterialLoadTask = new FAsyncTask<MaterialLoadAsyncTask>(MeshContent.MeshData->Materials, this);
     //MaterialLoadTask->StartBackgroundTask();
 }
@@ -168,7 +172,12 @@ void ARuntimeActorAsset::InitAsset()
         UContentSystemInterface* Interface = GameInstance->ContentInterface;
         ContentInfo = Interface->RetrieveContentData(TEXT("00000000"));
         UE_LOG(LogTemp, Display, TEXT("Content directory %s"), *ContentInfo.ContentDir);
-        MeshContent.LoadMesh(FPaths::Combine(ContentInfo.ContentDir, TEXT("pb15_lod0.rmsh")));
+
+        FMeshPart NewPart;
+        NewPart.MeshContent.LoadMesh(FPaths::Combine(ContentInfo.ContentDir, TEXT("pb15_lod0.rmsh")));
+        //MeshContent.LoadMesh(FPaths::Combine(ContentInfo.ContentDir, TEXT("pb15_lod0.rmsh")));
+        MeshParts.Add(NewPart);
+
         InitMaterialsAsync();
     }
     UE_LOG(LogTemp, Warning, TEXT("Mesh loaded"));

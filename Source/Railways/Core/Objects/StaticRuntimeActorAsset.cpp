@@ -88,7 +88,8 @@ void AStaticRuntimeActorAsset::InitAsset()
 {
     Super::InitAsset(); //creates material instances
 
-    BuildMeshNode(MeshContent.MeshData->RootNode);
+    for(const auto& Part : MeshParts)
+        BuildMeshNode(Part.MeshContent.MeshData->RootNode);
 }
 
 
