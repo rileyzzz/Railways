@@ -509,8 +509,19 @@ void UDynamicSplinePoint::RecursiveBuild(USplineComponent* Spline, TArray<UDynam
 
 void UDynamicSplinePoint::RefreshSegment(DynamicSplineSegment* Segment)
 {
-	Segment->Spline->SetWorldLocationAtSplinePoint(Segment->StartIndex, Segment->StartPoint->GetComponentTransform().GetLocation());
-	Segment->Spline->SetWorldLocationAtSplinePoint(Segment->StartIndex + 1, Segment->EndPoint->GetComponentTransform().GetLocation());
+	FVector StartPos = Segment->StartPoint->GetComponentTransform().GetLocation();
+	FVector EndPos = Segment->EndPoint->GetComponentTransform().GetLocation();
+	Segment->Spline->SetWorldLocationAtSplinePoint(Segment->StartIndex, StartPos);
+	Segment->Spline->SetWorldLocationAtSplinePoint(Segment->StartIndex + 1, EndPos);
+
+	if (Segment->StartPoint->Paths.Num() > 2)
+	{
+		FVector StartTangent = Segment->Spline->GetTangentAtSplinePoint(Segment->StartIndex, ESplineCoordinateSpace::World);
+		float StartDirection = FMath::Sign(FVector::DotProduct(StartTangent, EndPos - StartPos));
+		if (StartDirection == 0) StartDirection = 1;
+		Segment->Spline->SetTangentAtSplinePoint(Segment->StartIndex, StartTangent * StartDirection, ESplineCoordinateSpace::World);
+	}
+	
 	UpdateSegment(Segment);
 }
 

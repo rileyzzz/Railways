@@ -134,8 +134,9 @@ void AWorldTileDynamic::OnRep_Material()
     Provider->SetTileMaterial(Material);
 }
 
-AWorldTileDynamic::AWorldTileDynamic()
+AWorldTileDynamic::AWorldTileDynamic() : Adjacency() //set adjacency to nullptrs
 {
+    Terrain.ParentTile = this;
     if (HasAuthority()) SetReplicates(true);
     Provider = CreateDefaultSubobject<UWorldTileProvider>(TEXT("Provider"));
 
@@ -245,10 +246,56 @@ void FTerrainData::AddHeight(int x, int y, const float& height)
 
 float FTerrainData::GetHeight(int x, int y)
 {
-    if (x >= WORLD_SIZE) x = WORLD_SIZE - 1;
-    if (y >= WORLD_SIZE) y = WORLD_SIZE - 1;
-    if (x < 0) x = 0;
-    if (y < 0) y = 0;
-    if(heightData[x + y * WORLD_SIZE]) return heightData[x + y * WORLD_SIZE];
+    //if (x >= WORLD_SIZE) x = WORLD_SIZE - 1;
+    //if (y >= WORLD_SIZE) y = WORLD_SIZE - 1;
+    //if (x < 0) x = 0;
+    //if (y < 0) y = 0;
+
+    FTerrainData* TargetData = this;
+
+    //adjacency
+    AWorldTileDynamic* Adjacency;
+    if (y < 0)
+    {
+        Adjacency = TargetData->ParentTile->Adjacency[0];
+        if (Adjacency)
+        {
+            TargetData = &Adjacency->Terrain;
+            y += WORLD_SIZE - 1; //wrap around
+        }
+        else y = 0;
+    }
+    if (x >= WORLD_SIZE)
+    {
+        Adjacency = TargetData->ParentTile->Adjacency[1];
+        if (Adjacency)
+        {
+            TargetData = &Adjacency->Terrain;
+            x -= WORLD_SIZE - 1;
+        }
+        else x = WORLD_SIZE - 1;
+    }
+    if (y >= WORLD_SIZE)
+    {
+        Adjacency = TargetData->ParentTile->Adjacency[2];
+        if (Adjacency)
+        {
+            TargetData = &Adjacency->Terrain;
+            y -= WORLD_SIZE - 1;
+        }
+        else y = WORLD_SIZE - 1;
+    }
+    if (x < 0)
+    {
+        Adjacency = TargetData->ParentTile->Adjacency[3];
+        if (Adjacency)
+        {
+            TargetData = &Adjacency->Terrain;
+            x += WORLD_SIZE - 1; //wrap around
+        }
+        else x = 0;
+    }
+    //if(x < 0)
+    if(TargetData->heightData[x + y * WORLD_SIZE]) return TargetData->heightData[x + y * WORLD_SIZE];
     return 0.0f;
 }

@@ -2,6 +2,7 @@
 
 #include "WorldTileProvider.h"
 #include "WorldTileDynamic.h"
+#include "DrawDebugHelpers.h"
 
 UMaterialInterface* UWorldTileProvider::GetTileMaterial() const
 {
@@ -203,6 +204,9 @@ bool UWorldTileProvider::GetSectionMeshForLOD(int32 LODIndex, int32 SectionId, F
 			FVector Tangent(1, 0, dfdx);
 			Tangent.Normalize();
 
+			FVector PointLoc = Tile->GetActorLocation() + Position;
+			//DrawDebugLine(GetWorld(), PointLoc, PointLoc + Normal * 100.0f, FColor::Blue, false);
+			//DrawDebugLine(GetWorld(), PointLoc, PointLoc + Tangent * 100.0f, FColor::Orange, false);
 			FVector2D UV(xalpha, yalpha);
 
 			MeshData.Positions.Add(Position);

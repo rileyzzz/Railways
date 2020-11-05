@@ -2,6 +2,7 @@
 
 
 #include "HeightWorld.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 AHeightWorld::AHeightWorld()
@@ -39,6 +40,24 @@ void AHeightWorld::BeginPlay()
 	//Tiles[3]->Build(Material, 1, 1);
 }
 
+void AHeightWorld::LinkAdjacency(AWorldTileDynamic* A, AWorldTileDynamic* B, uint32 ADirection)
+{
+	//0, 2
+	//1, 3
+	//2, 0
+	//3, 1
+
+	//00, 10
+	//01, 11
+	//10, 00
+	//11, 01
+	uint32 BDirection = ADirection ^ (1UL << 1);
+	//BDirection ^= 1UL << 1;
+	UE_LOG(LogTemp, Warning, TEXT("adj link 2 %i %i"), ADirection, BDirection);
+	A->Adjacency[ADirection] = B;
+	B->Adjacency[BDirection] = A;
+}
+
 void AHeightWorld::TestForTile(int TileX, int TileY)
 {
 	TPair<int, int> TilePos(TileX, TileY);
@@ -72,19 +91,20 @@ void AHeightWorld::TestForTile(int TileX, int TileY)
 		Tiles.Add(TilePos, NewTile);
 		//Tiles.Add(NewTile);
 		UE_LOG(LogTemp, Log, TEXT("Created tile at %i %i"), TileX, TileY);
-		if (HasAuthority())
-		{
-			//for (unsigned int x = 0; x < WORLD_SIZE; x++)
-			//{
-			//	for (unsigned int y = 0; y < WORLD_SIZE; y++)
-			//	{
-			//		//float height = (float)FMath::Rand() / (float)RAND_MAX * 20.0f;
-			//		float height = FMath::Sin(x / 2.0f) * 80.0f;
-			//		NewTile->Terrain.AddHeight(x, y, height);
-			//	}
-			//}
-			//NewTile->ForceNetUpdate();
-		}
+		
+		AWorldTileDynamic** Adjacent;
+		Adjacent = Tiles.Find(TPair<int, int>(TileX, TileY - 1));
+		if(Adjacent) LinkAdjacency(NewTile, *Adjacent, 0);
+
+		Adjacent = Tiles.Find(TPair<int, int>(TileX + 1, TileY));
+		if(Adjacent) LinkAdjacency(NewTile, *Adjacent, 1);
+
+		Adjacent = Tiles.Find(TPair<int, int>(TileX, TileY + 1));
+		if(Adjacent) LinkAdjacency(NewTile, *Adjacent, 2);
+
+		Adjacent = Tiles.Find(TPair<int, int>(TileX - 1, TileY));
+		if(Adjacent) LinkAdjacency(NewTile, *Adjacent, 3);
+		
 	}
 }
 

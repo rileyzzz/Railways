@@ -642,6 +642,10 @@ void AWorldEditorPawn::EndMouse()
 									if (path == EditSplinePoint)
 										path = HitPoint;
 								}
+
+								if(segment.StartPoint == EditSplinePoint) segment.StartPoint = HitPoint;
+								if(segment.EndPoint == EditSplinePoint) segment.EndPoint = HitPoint;
+
 							}
 
 							EditSplinePoint->UnregisterComponent();

@@ -8,10 +8,14 @@
 #include "Net/UnrealNetwork.h"
 #include "WorldTileDynamic.generated.h"
 
+class AWorldTileDynamic;
+
 USTRUCT()
 struct FTerrainData
 {
 	GENERATED_BODY()
+
+	AWorldTileDynamic* ParentTile;
 
 	//float* heightData;
 	UPROPERTY()
@@ -63,6 +67,9 @@ protected:
 
 
 public:
+
+	AWorldTileDynamic* Adjacency[4];
+
 	//UPROPERTY(Replicated, ReplicatedUsing = OnRep_heightData)
 	UPROPERTY(Replicated)
 	FTerrainData Terrain;

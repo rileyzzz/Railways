@@ -22,6 +22,7 @@ protected:
 
 private:
 	
+	void LinkAdjacency(AWorldTileDynamic* A, AWorldTileDynamic* B, uint32 ADirection);
 
 public:	
 	// Called every frame
