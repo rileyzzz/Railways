@@ -84,6 +84,19 @@ void AHeightWorld::TestForTile(int TileX, int TileY)
 		NewTile->TileY = TileY;
 		NewTile->Material = Material;
 		NewTile->OnRep_Material(); //change material on the server
+
+		for (unsigned int y = 0; y < WORLD_SIZE; y++)
+		{
+			float yalpha = (float)y / (float)(WORLD_SIZE - 1);
+			for (unsigned int x = 0; x < WORLD_SIZE; x++)
+			{
+				float xalpha = (float)x / (float)(WORLD_SIZE - 1);
+				float height = WorldGen.noise((float)TileX + xalpha, (float)TileY + yalpha, 0.0f) * 1000.0f;
+				//height += WorldGen.noise(((float)TileX + xalpha) * 10.0f, ((float)TileY + yalpha) * 10.0f, 0.0f) * 10.0f;
+				NewTile->Terrain.SetHeightData(x, y, height);
+			}
+		}
+
 		NewTile->ForceNetUpdate(); //force update material on all clients
 
 		//NewTile->SetMobility(EComponentMobility::Type::Movable);
@@ -105,6 +118,10 @@ void AHeightWorld::TestForTile(int TileX, int TileY)
 		Adjacent = Tiles.Find(TPair<int, int>(TileX - 1, TileY));
 		if(Adjacent) LinkAdjacency(NewTile, *Adjacent, 3);
 		
+
+		//fix worldgen tangents
+		for (AWorldTileDynamic* adjacent : NewTile->Adjacency)
+			if(adjacent) adjacent->OnRep_heightData();
 	}
 }
 

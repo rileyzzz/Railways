@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "WorldTileDynamic.h"
+#include "../Util/PerlinNoise.h"
 #include "HeightWorld.generated.h"
 
 UCLASS()
@@ -24,6 +25,7 @@ private:
 	
 	void LinkAdjacency(AWorldTileDynamic* A, AWorldTileDynamic* B, uint32 ADirection);
 
+	PerlinNoise WorldGen = PerlinNoise(0);
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
