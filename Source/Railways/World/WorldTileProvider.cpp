@@ -224,9 +224,9 @@ bool UWorldTileProvider::GetSectionMeshForLOD(int32 LODIndex, int32 SectionId, F
 				//auto SharedEdge1 = glm::length(vTopRight - vBottomLeft);
 				//auto SharedEdge2 = glm::length(vBottomRight - vTopLeft);
 				float AHeight = Tile->Terrain.GetHeight(PointX, PointY);
-				float BHeight = Tile->Terrain.GetHeight(PointX + 1, PointY);
-				float CHeight = Tile->Terrain.GetHeight(PointX, PointY + 1);
-				float DHeight = Tile->Terrain.GetHeight(PointX + 1, PointY + 1);
+				float BHeight = Tile->Terrain.GetHeight(PointX + Simplify, PointY);
+				float CHeight = Tile->Terrain.GetHeight(PointX, PointY + Simplify);
+				float DHeight = Tile->Terrain.GetHeight(PointX + Simplify, PointY + Simplify);
 
 				float SharedEdge1 = BHeight - CHeight;
 				float SharedEdge2 = DHeight - AHeight;
@@ -291,8 +291,25 @@ bool UWorldTileProvider::GetCollisionMesh(FRuntimeMeshCollisionData& CollisionDa
 				uint32 BIndex = AIndex + 1;
 				uint32 CIndex = AIndex + SimplifySize;
 				uint32 DIndex = CIndex + 1;
-				CollisionTriangles.Add(AIndex, CIndex, BIndex);
-				CollisionTriangles.Add(BIndex, CIndex, DIndex);
+
+				float AHeight = Tile->Terrain.GetHeight(PointX, PointY);
+				float BHeight = Tile->Terrain.GetHeight(PointX + Simplify, PointY);
+				float CHeight = Tile->Terrain.GetHeight(PointX, PointY + Simplify);
+				float DHeight = Tile->Terrain.GetHeight(PointX + Simplify, PointY + Simplify);
+
+				float SharedEdge1 = BHeight - CHeight;
+				float SharedEdge2 = DHeight - AHeight;
+
+				if (FMath::Abs(SharedEdge2) < FMath::Abs(SharedEdge1))
+				{
+					CollisionTriangles.Add(AIndex, CIndex, DIndex);
+					CollisionTriangles.Add(AIndex, DIndex, BIndex);
+				}
+				else
+				{
+					CollisionTriangles.Add(AIndex, CIndex, BIndex);
+					CollisionTriangles.Add(BIndex, CIndex, DIndex);
+				}
 			}
 		}
 	}
